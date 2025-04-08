@@ -1,7 +1,7 @@
 # 🚀 DOGPUCCINO
 Proyecto Integral realizado por : Juan Carlos Perea y Jose Antonio Campos
 
-![Portada](./assets/imagenes/Portada-Readme/portadad.png)
+![Portada](./assets/Imagenes/Portada-Readme/portada.png)
 
 ## 💻 Tecnologías
  - React
