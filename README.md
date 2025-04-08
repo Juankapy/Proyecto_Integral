@@ -9,6 +9,6 @@ Proyecto Integral realizado por : Juan Carlos Perea y Jose Antonio Campos
  - Java / JPA
 
 
- ## Autor
+ ## Autores
  [@Juankapy](https://github.com/Juankapy)
  [@JACR-GIT](https://github.com/JACR-GIT)
