@@ -1,4 +1,4 @@
-# 🚀 DOGPUCCINO
+# :dog: DOGPUCCINO
 Proyecto Integral realizado por : Juan Carlos Perea y Jose Antonio Campos
 
 ![Portada](./assets/Imagenes/Portada-Readme/portada.png)
