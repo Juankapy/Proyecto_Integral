@@ -7,6 +7,9 @@ Proyecto Integral realizado por : Juan Carlos Perea y Jose Antonio Campos
  - React
  - Oracle
  - Java / JPA
+ - Java FX
+ - SQL
+ - HTML / CSS
 
 
  ## Autores
