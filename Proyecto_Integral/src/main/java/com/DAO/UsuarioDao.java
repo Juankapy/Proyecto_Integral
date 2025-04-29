@@ -1,4 +1,4 @@
-package com.DAO;
+package com.dao;
 
 public class UsuarioDao {
 }

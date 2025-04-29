@@ -10,7 +10,7 @@ module com.proyecto_integral {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires java.sql;
 
     opens com.proyecto_integral to javafx.fxml;
-    exports com.proyecto_integral;
 }
