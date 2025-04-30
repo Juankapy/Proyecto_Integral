@@ -1,12 +1,12 @@
 # :dog: DOGPUCCINO
 Proyecto Integral realizado por : Juan Carlos Perea y Jose Antonio Campos
 
-![Portada](./assets/Imagenes/Portada-Readme/portada.png)
+![Portada](./Portada-Readme/portada.png)
 
 ## 💻 Tecnologías
  - React
  - Oracle
- - Java / JPA
+ - Java / JDBC
  - Java FX
  - SQL
  - HTML / CSS
