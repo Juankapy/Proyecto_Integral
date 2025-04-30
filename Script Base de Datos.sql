@@ -1,3 +1,19 @@
+-- Tablas dependientes (relaciones)
+DROP TABLE Notificaciones_Recibidas;
+DROP TABLE Identificacion_Patologias;
+DROP TABLE Peticiones_Adopcion;
+DROP TABLE Reservas_Citas;
+DROP TABLE Redes_Sociales_Protectora;
+
+-- Tablas principales
+DROP TABLE Notificacion;
+DROP TABLE Patologia;
+DROP TABLE Perros;
+DROP TABLE Raza;
+DROP TABLE Protectora;
+DROP TABLE Cliente;
+DROP TABLE Usuario;
+
 -- Tabla Usuario
 CREATE TABLE Usuario (
     ID_Usuario NUMBER PRIMARY KEY,
@@ -8,7 +24,7 @@ CREATE TABLE Usuario (
 -- Tabla Cliente
 CREATE TABLE Cliente (
     ID_Cliente NUMBER PRIMARY KEY,
-    NIF VARCHAR2(15),
+    NIF VARCHAR2(15) UNIQUE,
     Nombre VARCHAR2(100) NOT NULL,
     Apellido VARCHAR2(100)NOT NULL,
     Telefono VARCHAR2(20)NOT NULL,
@@ -80,7 +96,7 @@ CREATE TABLE Reservas_Citas (
 -- Tabla Peticiones de Adopción
 CREATE TABLE Peticiones_Adopcion (
     ID_Peticion NUMBER PRIMARY KEY,
-    Fecha DATE DEFAULT SYSDATE,
+    Fecha DATE,
     Estado VARCHAR2(20) CHECK (Estado IN ('Pendiente', 'Aceptada', 'Rechazada')),
     ID_Cliente NUMBER,
     ID_Perro NUMBER,
@@ -103,4 +119,13 @@ CREATE TABLE Notificaciones_Recibidas (
     PRIMARY KEY (ID_Usuario, ID_Notificacion),
     FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario),
     FOREIGN KEY (ID_Notificacion) REFERENCES Notificacion(ID_Notificacion)
+);
+
+-- Tabla Redes Sociales de Protectoras
+CREATE TABLE Redes_Sociales (
+    ID_Red NUMBER PRIMARY KEY,
+    Plataforma VARCHAR2(50) NOT NULL,
+    URL VARCHAR2(255) NOT NULL,
+    ID_Protectora NUMBER NOT NULL,
+    FOREIGN KEY (ID_Protectora) REFERENCES Protectora(ID_Protectora)
 );

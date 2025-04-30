@@ -66,16 +66,5 @@ public class Protectora {
     public void setRedesSociales(String redesSociales) {
         this.redesSociales = redesSociales;
     }
-    @Override
-    public String toString() {
-        return "Protectora{" +
-                "id=" + id +
-                ", cif='" + cif + '\'' +
-                ", nombre='" + nombre + '\'' +
-                ", direccion=" + direccion +
-                ", telefono='" + telefono + '\'' +
-                ", email='" + email + '\'' +
-                ", redesSociales='" + redesSociales + '\'' +
-                '}';
-    }
+
 }

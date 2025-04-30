@@ -31,11 +31,4 @@ public class Raza {
         this.nombre = nombre;
     }
 
-    @Override
-    public String toString() {
-        return "Raza{" +
-                "id=" + id +
-                ", nombre='" + nombre + '\'' +
-                '}';
-    }
 }

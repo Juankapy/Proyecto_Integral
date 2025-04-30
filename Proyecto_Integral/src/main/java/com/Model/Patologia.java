@@ -39,13 +39,4 @@ public class Patologia {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
-
-    @Override
-    public String toString() {
-        return "Patologia{" +
-                "id=" + id +
-                ", nombre='" + nombre + '\'' +
-                ", descripcion='" + descripcion + '\'' +
-                '}';
-    }
 }
