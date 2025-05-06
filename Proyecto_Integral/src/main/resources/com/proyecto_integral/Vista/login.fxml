@@ -10,50 +10,50 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Button?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="401.0" prefWidth="624.0" style="-fx-background-color: #f5f1ea;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"  fx:controller="main.java.com.Controller.LoginController">
+<AnchorPane prefHeight="550.0" prefWidth="814.0" style="-fx-background-color: #f5f1ea;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.com.Controller.LoginController">
    <children>
-      <HBox fx:id="HboxImg" layoutX="358.0" prefHeight="404.0" prefWidth="269.0">
+      <HBox fx:id="HboxImg" layoutX="447.0" prefHeight="550.0" prefWidth="353.0">
          <children>
-            <ImageView fx:id="ImgLateralLogin" fitHeight="401.0" fitWidth="267.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="ImgLateralLogin" fitHeight="550.0" fitWidth="373.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../../assets/Imagenes/perros/ImgLogin.jpg" />
                </image>
             </ImageView>
          </children>
       </HBox>
-      <TextField fx:id="TxtCorreo" layoutX="89.0" layoutY="149.0" prefHeight="10.0" prefWidth="183.0" style="-fx-border-color: #d2691e; -fx-border-radius: 8px;" />
-      <Label layoutX="88.0" layoutY="122.0" text="Correo eléctronico">
+      <TextField fx:id="TxtCorreo" layoutX="85.0" layoutY="199.0" prefHeight="36.0" prefWidth="269.0" style="-fx-border-color: #d2691e; -fx-border-radius: 8px;" />
+      <Label layoutX="88.0" layoutY="162.0" text="Correo eléctronico">
          <font>
-            <Font name="Modern No. 20" size="16.0" />
+            <Font size="18.0" />
          </font></Label>
-      <Label layoutX="88.0" layoutY="210.0" text="Contraseña">
+      <Label layoutX="85.0" layoutY="265.0" text="Contraseña">
          <font>
-            <Font name="Modern No. 20" size="16.0" />
+            <Font size="18.0" />
          </font></Label>
-      <ImageView fx:id="ImgIconoDog" fitHeight="72.0" fitWidth="92.0" layoutX="1.0" layoutY="329.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="ImgIconoDog" fitHeight="86.0" fitWidth="90.0" layoutX="21.0" layoutY="429.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../../../assets/Imagenes/iconos/icono-bgless.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="ImgUsuario" fitHeight="58.0" fitWidth="67.0" layoutX="151.0" layoutY="38.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="ImgUsuario" fitHeight="72.0" fitWidth="72.0" layoutX="184.0" layoutY="33.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../../../assets/Imagenes/iconos/usuario-orange.png" />
          </image>
       </ImageView>
-      <Button fx:id="BtnConfirmar" layoutX="134.0" layoutY="298.0" mnemonicParsing="false" prefHeight="21.0" prefWidth="93.0" style="-fx-background-color: #d2691e; -fx-background-radius: 12px;" text="Confirmar" textFill="#fafafa">
+      <Button fx:id="BtnConfirmar" layoutX="169.0" layoutY="382.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="101.0" style="-fx-background-color: #d2691e; -fx-background-radius: 12px;" text="Confirmar" textFill="#fafafa">
          <font>
-            <Font name="Modern No. 20" size="14.0" />
+            <Font size="16.0" />
          </font></Button>
-      <Label layoutX="143.0" layoutY="355.0" text="¿No tienes cuenta?" wrapText="true">
+      <Label layoutX="211.0" layoutY="476.0" text="¿No tienes cuenta?" wrapText="true">
          <font>
-            <Font size="12.0" />
+            <Font size="14.0" />
          </font>
       </Label>
-      <Hyperlink layoutX="244.0" layoutY="352.0" text="Resgistrate" underline="true">
+      <Hyperlink layoutX="329.0" layoutY="472.0" text="Resgistrate" underline="true">
          <font>
-            <Font size="12.0" />
+            <Font size="14.0" />
          </font>
       </Hyperlink>
-      <TextField fx:id="TxtContra" layoutX="89.0" layoutY="238.0" prefHeight="10.0" prefWidth="183.0" style="-fx-border-color: #d2691e; -fx-border-radius: 8px;" />
+      <TextField fx:id="TxtContra" layoutX="85.0" layoutY="301.0" prefHeight="36.0" prefWidth="269.0" style="-fx-border-color: #d2691e; -fx-border-radius: 8px;" />
    </children>
 </AnchorPane>
