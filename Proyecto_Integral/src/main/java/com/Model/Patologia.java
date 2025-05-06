@@ -1,13 +1,9 @@
-package com.Model;
+package main.java.com.Model;
 
 public class Patologia {
     private int id;
     private String nombre;
     private String descripcion;
-
-    // Constructor vacío
-    public Patologia() {
-    }
 
     // Constructor con todos los atributos
     public Patologia(int id, String nombre, String descripcion) {
@@ -38,14 +34,5 @@ public class Patologia {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
-    }
-
-    @Override
-    public String toString() {
-        return "Patologia{" +
-                "id=" + id +
-                ", nombre='" + nombre + '\'' +
-                ", descripcion='" + descripcion + '\'' +
-                '}';
     }
 }

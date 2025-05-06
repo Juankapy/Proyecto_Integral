@@ -1,4 +1,4 @@
-package com.Model;
+package main.java.com.Model;
 
 import java.time.LocalDate;
 
@@ -11,10 +11,6 @@ public class Cliente {
     private String telefono;
     private String email;
     private String nif;
-
-    // Constructor vacío
-    public Cliente() {
-    }
 
     // Constructor con todos los atributos
     public Cliente(String nombre, String apellido1, String apellido2, LocalDate fechaNacimiento, Direccion direccion, String telefono, String email, String nif) {

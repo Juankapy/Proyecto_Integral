@@ -1,12 +1,8 @@
-package com.Model;
+package main.java.com.Model;
 
 public class Raza {
     private int id;
     private String nombre;
-
-    // Constructor vacío
-    public Raza() {
-    }
 
     // Constructor con todos los atributos
     public Raza(int id, String nombre) {
@@ -31,11 +27,4 @@ public class Raza {
         this.nombre = nombre;
     }
 
-    @Override
-    public String toString() {
-        return "Raza{" +
-                "id=" + id +
-                ", nombre='" + nombre + '\'' +
-                '}';
-    }
 }

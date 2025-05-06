@@ -1,14 +1,10 @@
-package com.Model;
+package main.java.com.Model;
 
 public class Direccion {
     private String provincia;
     private String ciudad;
     private String calle;
     private String codigoPostal;
-
-    // Constructor vacío
-    public Direccion() {
-    }
 
     // Constructor con todos los atributos
     public Direccion(String provincia, String ciudad, String calle, String codigoPostal) {
