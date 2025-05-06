@@ -1,4 +1,4 @@
-package com.Model;
+package main.java.com.Model;
 
 public class Protectora {
     private int id;
@@ -8,10 +8,6 @@ public class Protectora {
     private String telefono;
     private String email;
     private String redesSociales;
-
-    // Constructor vacío
-    public Protectora() {
-    }
 
     // Constructor con todos los atributos
     public Protectora(int id, String cif, String nombre, Direccion direccion, String telefono, String email, String redesSociales) {

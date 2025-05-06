@@ -1,13 +1,9 @@
-package com.Model;
+package main.java.com.Model;
 
 public class Patologia {
     private int id;
     private String nombre;
     private String descripcion;
-
-    // Constructor vacío
-    public Patologia() {
-    }
 
     // Constructor con todos los atributos
     public Patologia(int id, String nombre, String descripcion) {

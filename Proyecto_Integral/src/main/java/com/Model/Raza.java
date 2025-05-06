@@ -1,12 +1,8 @@
-package com.Model;
+package main.java.com.Model;
 
 public class Raza {
     private int id;
     private String nombre;
-
-    // Constructor vacío
-    public Raza() {
-    }
 
     // Constructor con todos los atributos
     public Raza(int id, String nombre) {
