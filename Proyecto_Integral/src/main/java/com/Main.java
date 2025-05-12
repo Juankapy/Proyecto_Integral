@@ -1,4 +1,4 @@
-package main.java.com;
+package com;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class Main extends Application {
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/main/resources/com/proyecto_integral/Vista/login.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("com/proyecto_integral/Vista/login.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 814, 550);
         stage.setScene(scene);
         stage.setTitle("Inicio de Sesión - Dogpuccino");
