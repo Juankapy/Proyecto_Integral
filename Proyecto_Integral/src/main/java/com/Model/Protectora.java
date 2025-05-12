@@ -1,4 +1,4 @@
-package com.Model;
+package main.java.com.Model;
 
 public class Protectora {
     private int id;
@@ -8,10 +8,6 @@ public class Protectora {
     private String telefono;
     private String email;
     private String redesSociales;
-
-    // Constructor vacío
-    public Protectora() {
-    }
 
     // Constructor con todos los atributos
     public Protectora(int id, String cif, String nombre, Direccion direccion, String telefono, String email, String redesSociales) {
@@ -66,16 +62,5 @@ public class Protectora {
     public void setRedesSociales(String redesSociales) {
         this.redesSociales = redesSociales;
     }
-    @Override
-    public String toString() {
-        return "Protectora{" +
-                "id=" + id +
-                ", cif='" + cif + '\'' +
-                ", nombre='" + nombre + '\'' +
-                ", direccion=" + direccion +
-                ", telefono='" + telefono + '\'' +
-                ", email='" + email + '\'' +
-                ", redesSociales='" + redesSociales + '\'' +
-                '}';
-    }
+
 }

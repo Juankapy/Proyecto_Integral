@@ -1,4 +1,4 @@
-package com.Model;
+package main.java.com.Model;
 
 import java.time.LocalDate;
 
@@ -11,9 +11,6 @@ public class Perro {
     private boolean adoptado;
     private Raza raza;
 
-    // Constructor vacío
-    public Perro() {
-    }
 
     // Constructor con todos los atributos
     public Perro(int id, String nombre, String foto, LocalDate fechaNacimiento, String sexo, boolean adoptado, Raza raza) {
