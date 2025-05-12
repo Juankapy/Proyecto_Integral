@@ -12,11 +12,11 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="233.0" prefWidth="557.0" style="-fx-background-color: #f5f1ea;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Label layoutX="84.0" layoutY="178.0" text="Usuario">
+      <Label fx:id="LabelUsuario" layoutX="84.0" layoutY="178.0" onDragDetected="#PulsarCliente" text="Cliente">
          <font>
             <Font name="Modern No. 20" size="16.0" />
          </font></Label>
-      <Label layoutX="379.0" layoutY="178.0" text="Protectora">
+      <Label fx:id="LabelProtectora" layoutX="379.0" layoutY="178.0" onDragDetected="#PulsarProtectora" text="Protectora">
          <font>
             <Font name="Modern No. 20" size="16.0" />
          </font></Label>
@@ -25,7 +25,7 @@
             <Image url="@../../../assets/Imagenes/iconos/icono-bgless.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="ImgCliente" fitHeight="106.0" fitWidth="103.0" layoutX="59.0" layoutY="51.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fx:id="ImgProtectora" fitHeight="106.0" fitWidth="103.0" layoutX="362.0" layoutY="51.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="ImgCliente" fitHeight="106.0" fitWidth="103.0" layoutX="59.0" layoutY="51.0" onDragDetected="#PulsarCliente" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="ImgProtectora" fitHeight="106.0" fitWidth="103.0" layoutX="362.0" layoutY="51.0" onDragDetected="#PulsarProtectora" pickOnBounds="true" preserveRatio="true" />
    </children>
 </AnchorPane>
