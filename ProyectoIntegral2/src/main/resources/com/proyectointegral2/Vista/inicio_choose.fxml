@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="233.0" prefWidth="557.0" style="-fx-background-color: #f5f1ea;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyectointegral2.Controller.InicioChooseController">
+   <children>
+      <ImageView fitHeight="58.0" fitWidth="52.0" layoutX="253.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../assets/Imagenes/iconos/icono-bgless.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="ImgCliente" fitHeight="106.0" fitWidth="103.0" layoutX="59.0" layoutY="51.0" onDragDetected="#PulsarCliente" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="ImgProtectora" fitHeight="106.0" fitWidth="103.0" layoutX="362.0" layoutY="51.0" onDragDetected="#PulsarProtectora" pickOnBounds="true" preserveRatio="true" />
+      <Button fx:id="BtnCliente" layoutX="85.0" layoutY="174.0" mnemonicParsing="false" onAction="#PulsarCliente" text="Cliente" />
+      <Button fx:id="BtnProtectora" layoutX="388.0" layoutY="174.0" mnemonicParsing="false" onAction="#PulsarProtectora" text="Protectora" />
+   </children>
+</AnchorPane>

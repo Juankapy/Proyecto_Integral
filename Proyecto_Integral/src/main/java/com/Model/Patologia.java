@@ -1,4 +1,4 @@
-package main.java.com.Model;
+package com.Model;
 
 public class Patologia {
     private int id;
