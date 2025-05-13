@@ -1,4 +1,4 @@
-package com.Controller;
+package main.java.com.Controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,7 +10,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.input.MouseEvent;
 import javafx.event.ActionEvent;
-import main.java.com.Main;
 
 import java.io.IOException;
 

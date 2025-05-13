@@ -19,11 +19,11 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #F5F1EA;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.DetallesPerroController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #F5F1EA;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.com.Controller.DetallesPerroController">
     <top>
         <HBox alignment="CENTER_RIGHT" prefHeight="60.0" BorderPane.alignment="CENTER">
             <children>
-                <Label text="Detalles de perro" textFill="#3498DB">
+                <Label text="Detalles de perro" >
                     <font>
                         <Font name="System Bold" size="24.0" />
                     </font>
@@ -47,42 +47,39 @@
                 </ImageView>
                 <VBox alignment="CENTER_LEFT" prefHeight="363.0" prefWidth="537.0" spacing="10.0" HBox.hgrow="ALWAYS">
                     <children>
-                        <Label fx:id="lblNombrePerro" text="Nombre" textFill="#D2691E">
-                            <font>
-                                <Font name="System Bold" size="28.0" />
-                            </font>
-                            <VBox.margin>
-                                <Insets bottom="10.0" />
-                            </VBox.margin>
-                        </Label>
+                  <Text fx:id="TxtNombre" fill="CHOCOLATE" strokeType="OUTSIDE" strokeWidth="0.0" text="Nombre" wrappingWidth="143.9140625">
+                     <font>
+                        <Font name="System Bold" size="28.0" />
+                     </font>
+                  </Text>
                         <TextFlow>
                             <children>
                                 <Text style="-fx-font-weight: bold; -fx-font-size: 15px;" text="Edad: " />
-                                <Text fx:id="txtEdad" style="-fx-fill: #2980B9; -fx-font-size: 15px;" text="3 años." />
+                                <Text fx:id="TxtEdad" style="-fx-fill: #2980B9; -fx-font-size: 15px;" text="3 años." />
                             </children>
                         </TextFlow>
                         <TextFlow>
                             <children>
                                 <Text style="-fx-font-weight: bold; -fx-font-size: 15px;" text="Raza: " />
-                                <Text fx:id="txtRaza" style="-fx-fill: #2980B9; -fx-font-size: 15px;" text="Husky Siberiano." />
+                                <Text fx:id="TxtRaza" style="-fx-fill: #2980B9; -fx-font-size: 15px;" text="Husky Siberiano." />
                             </children>
                         </TextFlow>
                         <TextFlow>
                             <children>
                                 <Text style="-fx-font-weight: bold; -fx-font-size: 15px;" text="Sexo: " />
-                                <Text fx:id="txtSexo" style="-fx-fill: #2980B9; -fx-font-size: 15px;" text="Hembra." />
+                                <Text fx:id="TxtSexo" style="-fx-fill: #2980B9; -fx-font-size: 15px;" text="Hembra." />
                             </children>
                         </TextFlow>
                         <TextFlow>
                             <children>
                                 <Text style="-fx-font-weight: bold; -fx-font-size: 15px;" text="Protectora: " />
-                                <Text fx:id="txtProtectora" style="-fx-fill: #2980B9; -fx-font-size: 15px;" text="Protector." />
+                                <Text fx:id="TxtProtectora" style="-fx-fill: #2980B9; -fx-font-size: 15px;" text="Protector." />
                             </children>
                         </TextFlow>
                         <TextFlow>
                             <children>
                                 <Text style="-fx-font-weight: bold; -fx-font-size: 15px;" text="Patología: " />
-                                <Text fx:id="txtPatologia" style="-fx-fill: #2980B9; -fx-font-size: 15px;" text="Ninguna." />
+                                <Text fx:id="TxtPatologia" style="-fx-fill: #2980B9; -fx-font-size: 15px;" text="Ninguna." />
                             </children>
                         </TextFlow>
                     </children>
@@ -109,7 +106,7 @@
                     </children>
                 </VBox>
                 <Region HBox.hgrow="ALWAYS" />
-                <Button fx:id="btnReservarCita" mnemonicParsing="false" style="-fx-background-color: #D2691E; -fx-text-fill: white; -fx-background-radius: 20; -fx-font-size: 16px; -fx-font-weight: bold;" text="Reservar cita">
+                <Button fx:id="BtnReservarCita" mnemonicParsing="false" onAction="#ReservarCita" style="-fx-background-color: #D2691E; -fx-text-fill: white; -fx-background-radius: 20; -fx-font-size: 16px; -fx-font-weight: bold;" text="Reservar cita">
                     <padding>
                         <Insets bottom="10.0" left="25.0" right="25.0" top="10.0" />
                     </padding>

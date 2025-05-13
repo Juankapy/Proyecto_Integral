@@ -1,4 +1,4 @@
-package com.Controller;
+package main.java.com.Controller;
 
 public class MainClienteController {
 }
