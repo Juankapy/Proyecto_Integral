@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="471.0" prefWidth="673.0" style="-fx-background-color: #f5f1ea;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.com.Controller.RegistroProtectoraController">
+   <children>
+      <HBox fx:id="HboxImg" layoutX="358.0" prefHeight="404.0" prefWidth="269.0">
+         <children>
+            <ImageView fx:id="ImgLateralLogin" fitHeight="473.0" fitWidth="319.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../assets/Imagenes/perros/ImgLogin.jpg" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
+      <TextField fx:id="TxtNombre" layoutX="39.0" layoutY="98.0" prefHeight="25.0" prefWidth="124.0" style="-fx-border-color: #d2691e; -fx-border-radius: 8px;" AnchorPane.bottomAnchor="348.0" AnchorPane.leftAnchor="39.0" AnchorPane.rightAnchor="510.0" AnchorPane.topAnchor="98.0" />
+      <Label layoutX="40.0" layoutY="75.0" text="Nombre">
+         <font>
+            <Font name="Modern No. 20" size="16.0" />
+         </font></Label>
+      <ImageView fx:id="ImgIconoDog" fitHeight="72.0" fitWidth="92.0" layoutX="2.0" layoutY="400.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../assets/Imagenes/iconos/icono-bgless.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="ImgUsuario" fitHeight="50.0" fitWidth="51.0" layoutX="158.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../assets/Imagenes/iconos/usuario-orange.png" />
+         </image>
+      </ImageView>
+      <Button fx:id="BtnConfirmar" layoutX="137.0" layoutY="424.0" mnemonicParsing="false" onAction="#ConfirmarRegistroProtectora" prefHeight="21.0" prefWidth="93.0" style="-fx-background-color: #d2691e; -fx-background-radius: 12px;" text="Confirmar" textFill="#fafafa">
+         <font>
+            <Font name="Modern No. 20" size="14.0" />
+         </font></Button>
+      <Label layoutX="193.0" layoutY="75.0" text="Apellidos">
+         <font>
+            <Font name="Modern No. 20" size="16.0" />
+         </font>
+      </Label>
+      <TextField fx:id="TxtApellido" layoutX="192.0" layoutY="98.0" prefHeight="25.0" prefWidth="137.0" style="-fx-border-color: #d2691e; -fx-border-radius: 8px;" AnchorPane.bottomAnchor="348.0" AnchorPane.leftAnchor="192.0" AnchorPane.rightAnchor="344.0" AnchorPane.topAnchor="98.0" />
+      <TextField fx:id="TxtDireccion" layoutX="39.0" layoutY="156.0" prefHeight="25.0" prefWidth="124.0" style="-fx-border-color: #d2691e; -fx-border-radius: 8px;" AnchorPane.bottomAnchor="290.0" AnchorPane.leftAnchor="39.0" AnchorPane.rightAnchor="510.0" AnchorPane.topAnchor="156.0" />
+      <Label layoutX="194.0" layoutY="132.0" text="Provincia">
+         <font>
+            <Font name="Modern No. 20" size="16.0" />
+         </font>
+      </Label>
+      <Label layoutX="40.0" layoutY="132.0" text="Dirección">
+         <font>
+            <Font name="Modern No. 20" size="16.0" />
+         </font>
+      </Label>
+      <TextField fx:id="TxtProvincia" layoutX="192.0" layoutY="156.0" prefHeight="25.0" prefWidth="137.0" style="-fx-border-color: #d2691e; -fx-border-radius: 8px;" AnchorPane.bottomAnchor="290.0" AnchorPane.leftAnchor="192.0" AnchorPane.rightAnchor="344.0" AnchorPane.topAnchor="156.0" />
+      <Label layoutX="44.0" layoutY="248.0" text="Ciudad">
+         <font>
+            <Font name="Modern No. 20" size="16.0" />
+         </font>
+      </Label>
+      <Label layoutX="43.0" layoutY="190.0" text="CP">
+         <font>
+            <Font name="Modern No. 20" size="16.0" />
+         </font>
+      </Label>
+      <TextField fx:id="TxtCP" layoutX="42.0" layoutY="216.0" prefHeight="25.0" prefWidth="124.0" style="-fx-border-color: #d2691e; -fx-border-radius: 8px;" AnchorPane.bottomAnchor="230.0" AnchorPane.leftAnchor="42.0" AnchorPane.rightAnchor="507.0" AnchorPane.topAnchor="216.0" />
+      <TextField fx:id="TxtCiudad" layoutX="43.0" layoutY="271.0" prefHeight="25.0" prefWidth="124.0" style="-fx-border-color: #d2691e; -fx-border-radius: 8px;" AnchorPane.bottomAnchor="175.0" AnchorPane.leftAnchor="43.0" AnchorPane.rightAnchor="506.0" AnchorPane.topAnchor="271.0" />
+      <Label layoutX="194.0" layoutY="190.0" text="Teléfono">
+         <font>
+            <Font name="Modern No. 20" size="16.0" />
+         </font>
+      </Label>
+      <TextField fx:id="TxtTel" layoutX="193.0" layoutY="215.0" prefHeight="25.0" prefWidth="137.0" style="-fx-border-color: #d2691e; -fx-border-radius: 8px;" AnchorPane.bottomAnchor="231.0" AnchorPane.leftAnchor="193.0" AnchorPane.rightAnchor="343.0" AnchorPane.topAnchor="215.0" />
+      <Label layoutX="42.0" layoutY="296.0" text="Correo eléctronico">
+         <font>
+            <Font name="Modern No. 20" size="16.0" />
+         </font>
+      </Label>
+      <TextField fx:id="TxtCorreo" layoutX="42.0" layoutY="321.0" prefHeight="25.0" prefWidth="288.0" style="-fx-border-color: #d2691e; -fx-border-radius: 8px;" AnchorPane.bottomAnchor="125.0" AnchorPane.leftAnchor="42.0" AnchorPane.rightAnchor="343.0" AnchorPane.topAnchor="321.0" />
+      <TextField fx:id="TxtContra" layoutX="44.0" layoutY="374.0" prefHeight="25.0" prefWidth="288.0" style="-fx-border-color: #d2691e; -fx-border-radius: 8px;" AnchorPane.bottomAnchor="72.0" AnchorPane.leftAnchor="44.0" AnchorPane.rightAnchor="341.0" AnchorPane.topAnchor="374.0" />
+      <Label layoutX="45.0" layoutY="350.0" text="Contraseña">
+         <font>
+            <Font name="Modern No. 20" size="16.0" />
+         </font>
+      </Label>
+      <ImageView fx:id="ImgIconoSalida" fitHeight="25.0" fitWidth="20.0" layoutX="18.0" layoutY="19.0" opacity="0.86" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../assets/Imagenes/iconos/salir.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="193.0" layoutY="248.0" text="CIF">
+         <font>
+            <Font name="Modern No. 20" size="16.0" />
+         </font>
+      </Label>
+      <TextField fx:id="TxtCIF" layoutX="191.0" layoutY="271.0" prefHeight="25.0" prefWidth="137.0" style="-fx-border-color: #d2691e; -fx-border-radius: 8px;" AnchorPane.bottomAnchor="175.0" AnchorPane.leftAnchor="191.0" AnchorPane.rightAnchor="345.0" AnchorPane.topAnchor="271.0" />
+   </children>
+</AnchorPane>
