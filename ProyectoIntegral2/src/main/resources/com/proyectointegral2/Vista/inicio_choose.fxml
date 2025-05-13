@@ -10,9 +10,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Button?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="233.0" prefWidth="557.0" style="-fx-background-color: #f5f1ea;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:controller="com.proyectointegral2.Controller.InicioChooseController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="233.0" prefWidth="557.0" style="-fx-background-color: #f5f1ea;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Label fx:id="LabelUsuario" layoutX="84.0" layoutY="178.0" onDragDetected="#PulsarCliente" text="Cliente">
+      <Label fx:id="LabelCliente" layoutX="84.0" layoutY="178.0" onDragDetected="#PulsarCliente" text="Cliente">
          <font>
             <Font name="Modern No. 20" size="16.0" />
          </font></Label>

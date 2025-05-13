@@ -4,6 +4,6 @@ module main.java.com {
     requires javafx.fxml;
     requires javafx.graphics;
 
-    opens com to javafx.fxml;
     opens com.Controller to javafx.fxml;
+    opens com to javafx.graphics;
 }
