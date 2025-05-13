@@ -45,9 +45,7 @@ public class RegistroProtectoraController {
 
         CerrarVentana();
     }
-
-    @FXML
-    public void CerrarVentana(javafx.scene.input.MouseEvent event) {
+    public void CerrarVentana() {
         // Cierra la ventana actual
         Stage stage = (Stage) ImgLateralLogin.getScene().getWindow();
         stage.close();
@@ -63,4 +61,22 @@ public class RegistroProtectoraController {
             e.printStackTrace();
         }
     }
-}
+    @FXML
+    public void CerrarVentana(javafx.scene.input.MouseEvent event) {
+        try {
+            javafx.fxml.FXMLLoader fxmlLoader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/proyectointegral2/Vista/ventana_anterior.fxml"));
+            javafx.scene.Scene scene = new javafx.scene.Scene(fxmlLoader.load());
+            Stage stage = new Stage();
+            stage.setTitle("Ventana anterior");
+            stage.setScene(scene);
+            stage.show();
+            Stage myStage = (Stage) ((ImageView) event.getSource()).getScene().getWindow();
+            myStage.close();
+        } catch (Exception e) {
+            javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Error inesperado: " + e.getMessage());
+            alert.showAndWait();
+        }
+    }}
