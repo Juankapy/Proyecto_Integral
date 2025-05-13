@@ -28,6 +28,7 @@ public class InicioChooseController {
         abrirVentanaRegistro("/com/proyectointegral2/Vista/registro_cliente.fxml", "Registro Cliente");
     }
 
+
     @FXML
     private void PulsarProtectora(Event event) {
         abrirVentanaRegistro("/com/proyectointegral2/Vista/registro_protectora.fxml", "Registro Protectora");

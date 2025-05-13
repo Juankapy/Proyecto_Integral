@@ -36,7 +36,7 @@
             <Image url="@../../../assets/Imagenes/iconos/usuario-orange.png" />
          </image>
       </ImageView>
-      <Button fx:id="BtnConfirmar" layoutX="136.0" layoutY="387.0" mnemonicParsing="false" onAction="#ConfirmarRegistro" prefHeight="21.0" prefWidth="93.0" style="-fx-background-color: #d2691e; -fx-background-radius: 12px;" text="Confirmar" textFill="#fafafa">
+      <Button fx:id="BtnConfirmar" layoutX="136.0" layoutY="387.0" mnemonicParsing="false" onAction="#ConfirmarRegistroCliente" prefHeight="21.0" prefWidth="93.0" style="-fx-background-color: #d2691e; -fx-background-radius: 12px;" text="Confirmar" textFill="#fafafa">
          <font>
             <Font name="Modern No. 20" size="14.0" />
          </font></Button>
