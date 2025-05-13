@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane fx:id="mainBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1080.0" style="-fx-background-color: #FDF5E6;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.com.Controller.MainProtectoraController">
+<BorderPane fx:id="mainBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1100.0" style="-fx-background-color: #FDF5E6;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.com.Controller.MainProtectoraController">
     <top>
         <HBox alignment="CENTER_LEFT" prefHeight="70.0" spacing="10.0" BorderPane.alignment="CENTER">
             <padding>
@@ -36,122 +36,129 @@
         </HBox>
     </top>
     <center>
-        <VBox spacing="15.0" BorderPane.alignment="CENTER">
-            <padding>
-                <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
-            </padding>
-            <children>
-                <HBox alignment="CENTER_LEFT" spacing="10.0">
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent; -fx-background: transparent;" VBox.vgrow="ALWAYS">
+            <content>
+                <VBox spacing="25.0">
+                    <padding>
+                        <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
+                    </padding>
                     <children>
-                        <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-border-width: 0 0 3 0; -fx-padding: 0 0 5 0;" text="Mis perros en adopción">
-                            <font>
-                                <Font name="System Bold" size="22.0" />
-                            </font>
-                        </Label>
-                        <Region HBox.hgrow="ALWAYS" />
-                        <Button fx:id="BtnNuevoPerro" mnemonicParsing="false" onAction="#NuevoPerro" prefHeight="36.0" prefWidth="234.0" style="-fx-background-color: #E67E22; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" text="+ Añadir nuevo perro">
-                            <padding>
-                                <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
-                            </padding>
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Button>
-                    </children>
-                    <VBox.margin>
-                        <Insets bottom="10.0" />
-                    </VBox.margin>
-                </HBox>
-
-                <ScrollPane fx:id="dogScrollPane" fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent; -fx-background: transparent;" VBox.vgrow="ALWAYS">
-                    <content>
-                        <GridPane fx:id="dogGrid" hgap="20.0" prefHeight="375.0" prefWidth="1076.0" vgap="20.0">
-                            <columnConstraints>
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="220.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="220.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="220.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="220.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="220.0" />
-                            </columnConstraints>
-                            <rowConstraints>
-                                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                            </rowConstraints>
+                        <VBox spacing="10.0">
                             <children>
-                                <VBox fx:id="dogCard_r0_c0" alignment="TOP_LEFT" prefWidth="220.0" spacing="0.0" style="-fx-background-color: white; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <HBox alignment="CENTER_LEFT" spacing="10.0">
                                     <children>
-                                        <ImageView fx:id="dogImage_r0_c0" fitHeight="180.0" fitWidth="181.0" pickOnBounds="true"> <!-- preserveRatio podría ser true o false según tus imágenes -->
-                                            <image>
-                                                <Image url="@../../../assets/Imagenes/perros/perro6.jpg" />
-                                            </image>
-                                        </ImageView>
-                                        <Label fx:id="nameAgeLabel_r0_c0" alignment="CENTER" prefHeight="40.0" prefWidth="220.0" style="-fx-background-color: #A9D18E; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;" text="Nombre, edad" />
-                                        <VBox spacing="4.0" style="-fx-padding: 10;">
+                                        <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-border-width: 0 0 3 0; -fx-padding: 0 0 5 0;" text="Mis perros en adopción">
+                                            <font>
+                                                <Font name="System Bold" size="22.0" />
+                                            </font>
+                                        </Label>
+                                        <Region HBox.hgrow="ALWAYS" />
+                                        <Button fx:id="BtnNuevoPerro" mnemonicParsing="false" onAction="#NuevoPerro" prefHeight="36.0" prefWidth="234.0" style="-fx-background-color: #E67E22; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" text="+ Añadir nuevo perro">
+                                            <padding>
+                                                <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                                            </padding>
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Button>
+                                    </children>
+                                </HBox>
+
+                                <GridPane fx:id="dogGrid" hgap="20.0" vgap="20.0">
+                                    <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="220.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="220.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="220.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="220.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="220.0" />
+                                    </columnConstraints>
+                                    <rowConstraints>
+                                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+
+                                    </rowConstraints>
+                                    <children>
+                                        <VBox alignment="TOP_LEFT" prefWidth="220.0" spacing="0.0" style="-fx-background-color: white; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);" GridPane.columnIndex="0" GridPane.rowIndex="0">
                                             <children>
-                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                                    <children>
-                                                        <Text style="-fx-font-weight: bold;" text="Estado:" />
-                                                        <TextFlow>
-                                                            <Text fx:id="statusText_r0_c0" style="-fx-fill: #27AE60;" text="En adopción" />
-                                                        </TextFlow>
-                                                    </children>
+                                                <ImageView fitHeight="180.0" fitWidth="220.0" pickOnBounds="true">
+                                                    <image><Image url="@../../../assets/Imagenes/perros/perro6.jpg" /></image>
+                                                </ImageView>
+                                                <Label alignment="CENTER" prefHeight="40.0" prefWidth="220.0" style="-fx-background-color: #A9D18E; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;" text="Nombre, edad" />
+                                                <VBox spacing="4.0" style="-fx-padding: 10;">
+                                                    <Label text="Raza: Ejemplo" />
+                                                    <Label text="Descripción: Ejemplo." wrapText="true" />
+                                                </VBox>
+                                                <Region VBox.vgrow="ALWAYS" />
+                                                <HBox alignment="CENTER_RIGHT" spacing="10.0" style="-fx-padding: 0 10 10 10;">
+                                                    <Button onMouseClicked="#Editar" style="-fx-background-color: transparent; -fx-border-color: #3498DB; -fx-text-fill: #3498DB; -fx-border-radius: 3; -fx-border-width: 1.5px;" text="Editar" />
+                                                    <Button onMouseClicked="#Eliminar" style="-fx-background-color: transparent; -fx-border-color: #E74C3C; -fx-text-fill: #E74C3C; -fx-border-radius: 3; -fx-border-width: 1.5px;" text="Eliminar" />
                                                 </HBox>
-                                                <Label fx:id="breedLabel_r0_c0" text="Raza: Golden Retriever" />
-                                                <Label fx:id="descriptionLabel_r0_c0" text="Descripción: Muy sociable y activo." wrapText="true" />
-                                                <Label fx:id="familyLabel_r0_c0" text="Perfecto para familias" />
                                             </children>
                                         </VBox>
-                                        <Region VBox.vgrow="ALWAYS" /> <!-- Para empujar botones al fondo -->
-                                        <HBox alignment="CENTER_RIGHT" prefHeight="36.0" prefWidth="181.0" spacing="10.0" style="-fx-padding: 0 10 10 10;">
-                                            <children>
-                                                <Button fx:id="BtnEditar1" mnemonicParsing="false" onMouseClicked="#Editar" style="-fx-background-color: transparent; -fx-border-color: #3498DB; -fx-text-fill: #3498DB; -fx-border-radius: 3; -fx-border-width: 1.5px;" text="Editar" />
-                                                <Button fx:id="BtnEliminar1" mnemonicParsing="false" onMouseClicked="#Eliminar" style="-fx-background-color: transparent; -fx-border-color: #E74C3C; -fx-text-fill: #E74C3C; -fx-border-radius: 3; -fx-border-width: 1.5px;" text="Eliminar" />
-                                            </children>
-                                        </HBox>
                                     </children>
-                                </VBox>
-
-                                <VBox fx:id="dogCard_r0_c1" alignment="TOP_LEFT" prefHeight="335.0" prefWidth="181.0" spacing="0.0" style="-fx-background-color: white; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                                    <children>
-                                        <ImageView fx:id="dogImage_r0_c1" fitHeight="182.0" fitWidth="178.0" pickOnBounds="true">
-                                            <image>
-                                                <Image url="@../../../assets/Imagenes/perros/perro10.jpg" />
-                                            </image>
-                                        </ImageView>
-                                        <Label fx:id="nameAgeLabel_r0_c1" alignment="CENTER" prefHeight="40.0" prefWidth="220.0" style="-fx-background-color: #A9D18E; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;" text="Nombre, edad" />
-                                        <VBox spacing="4.0" style="-fx-padding: 10;">
-                                            <children>
-                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                                    <children>
-                                                        <Text style="-fx-font-weight: bold;" text="Estado:" />
-                                                        <TextFlow>
-                                                            <Text fx:id="statusText_r0_c1" style="-fx-fill: #3498DB;" text="Adoptado" />
-                                                        </TextFlow>
-                                                    </children>
-                                                </HBox>
-                                                <Label fx:id="breedLabel_r0_c1" text="Raza: Pastor Alemán" />
-                                                <Label fx:id="descriptionLabel_r0_c1" text="Descripción: Muy sociable y activo." wrapText="true" />
-                                                <Label fx:id="familyLabel_r0_c1" text="Perfecto para familias" />
-                                            </children>
-                                        </VBox>
-                                        <Region VBox.vgrow="ALWAYS" />
-                                        <HBox alignment="CENTER_RIGHT" spacing="10.0" style="-fx-padding: 0 10 10 10;">
-                                            <children>
-                                                <Button fx:id="editButton_r0_c1" mnemonicParsing="false" onMouseClicked="#Editar" style="-fx-background-color: transparent; -fx-border-color: #3498DB; -fx-text-fill: #3498DB; -fx-border-radius: 3; -fx-border-width: 1.5px;" text="Editar" />
-                                                <Button fx:id="BtnEliminar2" mnemonicParsing="false" onMouseClicked="#Eliminar" style="-fx-background-color: transparent; -fx-border-color: #E74C3C; -fx-text-fill: #E74C3C; -fx-border-radius: 3; -fx-border-width: 1.5px;" text="Eliminar" />
-                                            </children>
-                                        </HBox>
-                                    </children>
-                                </VBox>
-
-
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                    </padding>
+                                </GridPane>
                             </children>
-                            <padding>
-                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                            </padding>
-                        </GridPane>
-                    </content>
-                </ScrollPane>
-            </children>
-        </VBox>
+                        </VBox>
+
+                        <!-- SECCIÓN DE REGISTROS (Tablas) -->
+                        <VBox spacing="10.0">
+                            <children>
+                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                    <children>
+                                        <Label fx:id="lblRegistroTitulo" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #5D4037;" text="Registro de mis perros">
+                                            <font>
+                                                <Font name="System Bold" size="18.0" />
+                                            </font>
+                                        </Label>
+                                        <Region HBox.hgrow="ALWAYS" />
+                                        <Button fx:id="BtnToggleRegistro" mnemonicParsing="false" onAction="#ToggleRegistroView" style="-fx-background-color: #6495ED; -fx-text-fill: white; -fx-background-radius: 5; -fx-font-weight: bold;" text="Registro de adopciones">
+                                            <graphic>
+                                                <ImageView fitHeight="14.0" fitWidth="14.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+
+                                                        <Image url="@../../../assets/Imagenes/iconos/change.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+
+                                <StackPane fx:id="tablasStackPane" prefHeight="300.0">
+                                    <children>
+                                        <TableView fx:id="TablaRegistroPerros" style="-fx-border-width: 2;">
+                                            <columns>
+                                                <TableColumn fx:id="colPerroNombre" prefWidth="150.0" text="Nombre" />
+                                                <TableColumn fx:id="colPerroFecha" prefWidth="120.0" text="Fecha Ingreso" />
+                                                <TableColumn fx:id="colPerroEstado" prefWidth="150.0" text="Estado Actual" />
+                                                <TableColumn fx:id="colPerroNotas" prefWidth="350.0" text="Notas Adicionales" />
+                                            </columns>
+                                            <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
+                                        </TableView>
+
+                                        <!-- Tabla para Registro de Adopciones (inicialmente no visible) -->
+                                        <TableView fx:id="tablaRegistroAdopciones" style="-fx-border-color: #8A2BE2; -fx-border-width: 2;" visible="false">
+                                            <columns>
+                                                <TableColumn fx:id="colAdopNombrePerro" prefWidth="150.0" text="Nombre del Perro" />
+                                                <TableColumn fx:id="colAdopFecha" prefWidth="120.0" text="Fecha Adopción" />
+                                                <TableColumn fx:id="colAdopHora" prefWidth="100.0" text="Hora" />
+                                                <TableColumn fx:id="colAdopCausante" prefWidth="200.0" text="Nombre del Adoptante" />
+                                                <TableColumn fx:id="colAdopContacto" prefWidth="180.0" text="Contacto Adoptante" />
+                                            </columns>
+                                            <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
+                                        </TableView>
+                                    </children>
+                                </StackPane>
+                            </children>
+                            <VBox.margin>
+                                <Insets top="20.0" />
+                            </VBox.margin>
+                        </VBox>
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane>
     </center>
 </BorderPane>

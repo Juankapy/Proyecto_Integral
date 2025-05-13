@@ -2,11 +2,17 @@ package main.java.com.Controller;
 
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.event.ActionEvent;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+
+import java.io.IOException;
 
 public class RegistroProtectoraController {
 
@@ -64,8 +70,19 @@ public class RegistroProtectoraController {
     }
 
     @FXML
-    void fafafa(ActionEvent event) {
+    void Volver(MouseEvent event) {
+        String loginFxmlFile = "/main/resources/com/proyecto_integral/Vista/login.fxml";
+        String loginTitle = "Inicio de Sesión - Dogpuccino";
 
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(loginFxmlFile));
+            Parent root = loader.load();
+            Scene scene = ImgIconoSalida.getScene();
+            scene.setRoot(root);
+        } catch (IOException e) {
+            System.err.println("Error al cargar: " + loginFxmlFile);
+            e.printStackTrace();
+        }
     }
 
 }

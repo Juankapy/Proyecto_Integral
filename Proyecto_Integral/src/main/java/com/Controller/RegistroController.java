@@ -72,9 +72,8 @@ public class RegistroController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(loginFxmlFile));
             Parent root = loader.load();
-            Scene scene = ImgIconoSalida.getScene(); // Necesitarías inyectar ImgIconoSalida con @FXML
+            Scene scene = ImgIconoSalida.getScene();
             scene.setRoot(root);
-            // ((Stage) scene.getWindow()).setTitle(loginTitle); // Opcional para cambiar el título
         } catch (IOException e) {
             System.err.println("Error al cargar: " + loginFxmlFile);
             e.printStackTrace();
