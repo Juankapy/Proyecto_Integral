@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import com.proyectointegral2.MainApp;
 
@@ -35,20 +36,21 @@ public class LoginController {
     @FXML
     private HBox HboxImg;
 
+    @FXML
+    void ConfirmarInicio(MouseEvent event) { // O ActionEvent
+        System.out.println("Botón Confirmar Inicio presionado. Navegando a vista principal...");
 
+        String mainClienteFxmlFile = "/com/proyectointegral2/Vista/Main.fxml";
+        String mainClienteTitle = "Panel Cliente - Dogpuccino";
+
+        MainApp.changeScene(mainClienteFxmlFile, mainClienteTitle, true);
+    }
 
     @FXML
     void IrARegistro(ActionEvent event) {
         String choosingFxmlFile = "/com/proyectointegral2/Vista/InicioChoose.fxml";
+        String choosingTitle = "Selección de Rol - Dogpuccino";
 
-        String choosingTitle = "Selecciona rol de Nuevo Usuario - Dogpuccino";
-
-        if (MainApp.getPrimaryStage() != null) {
-            MainApp.changeScene(choosingFxmlFile, choosingTitle);
-
-        } else {
-            System.err.println("Error en LoginController: PrimaryStage en Main no está inicializado. No se puede cambiar a la escena de registro.");
-        }
+        MainApp.changeScene(choosingFxmlFile, choosingTitle, false);
     }
-
 }
