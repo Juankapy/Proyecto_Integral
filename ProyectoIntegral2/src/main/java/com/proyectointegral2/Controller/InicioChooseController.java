@@ -12,11 +12,7 @@ import java.io.IOException;
 
 public class InicioChooseController {
 
-    @FXML
-    private Button BtnCliente;
 
-    @FXML
-    private Button BtnProtectora;
 
     @FXML
     private ImageView ImgCliente;
@@ -25,13 +21,13 @@ public class InicioChooseController {
     private ImageView ImgProtectora;
 
     @FXML
-    private void PulsarCliente(Event event) {
+    private void SeleccionarCliente(Event event) {
         abrirVentanaRegistro("/com/proyectointegral2/Vista/registro_cliente.fxml", "Registro Cliente");
     }
 
 
     @FXML
-    private void PulsarProtectora(Event event) {
+    private void SeleccionarProtectora(Event event) {
         abrirVentanaRegistro("/com/proyectointegral2/Vista/registro_protectora.fxml", "Registro Protectora");
     }
 
@@ -43,7 +39,6 @@ public class InicioChooseController {
             stage.setTitle(titulo);
             stage.show();
         } catch (IOException e) {
-            // Aquí puedes mostrar una alerta si lo deseas
             e.printStackTrace();
         }
     }
