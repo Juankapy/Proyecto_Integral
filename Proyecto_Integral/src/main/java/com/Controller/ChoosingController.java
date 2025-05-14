@@ -1,10 +1,10 @@
-package main.java.com.Controller;
+package com.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import main.java.com.Main;
+import com.Main;
 
 public class ChoosingController {
 
@@ -20,7 +20,7 @@ public class ChoosingController {
     @FXML
     void SeleccionarCliente(MouseEvent event) {
         System.out.println("Rol Usuario seleccionado.");
-        String registroUsuarioFxml = "/main/resources/com/proyecto_integral/Vista/registro.fxml"; // O como se llame tu FXML de registro de usuario
+        String registroUsuarioFxml = "/com/proyecto_integral/Vista/registro.fxml"; // O como se llame tu FXML de registro de usuario
         String titulo = "Registro de Usuario";
 
         if (Main.getPrimaryStage() != null) {
@@ -33,7 +33,7 @@ public class ChoosingController {
     @FXML
     void SeleccionarProtectora(MouseEvent event) {
         System.out.println("Rol Protectora seleccionado.");
-        String registroProtectoraFxml = "/main/resources/com/proyecto_integral/Vista/registro_protectora.fxml"; // O como se llame tu FXML de registro de protectora
+        String registroProtectoraFxml = "/com/proyecto_integral/Vista/registro_protectora.fxml"; // O como se llame tu FXML de registro de protectora
         String titulo = "Registro de Protectora";
 
         if (Main.getPrimaryStage() != null) {

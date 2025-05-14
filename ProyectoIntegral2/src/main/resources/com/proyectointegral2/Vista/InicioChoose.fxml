@@ -17,7 +17,7 @@
 
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="537.0" prefWidth="898.0" spacing="50.0" style="-fx-background-color: #F5F1EA;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.Controller.ChoosingController">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="537.0" prefWidth="898.0" spacing="50.0" style="-fx-background-color: #F5F1EA;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyectointegral2.Controller.InicioChooseController">
    <padding>
       <Insets bottom="50.0" left="50.0" right="50.0" top="30.0" />
    </padding>
@@ -35,7 +35,7 @@
          </VBox.margin>
       </VBox>
 
-      <HBox alignment="CENTER" prefHeight="335.0" prefWidth="785.0" spacing="100.0" VBox.vgrow="ALWAYS"> <!-- Aumentado el espaciado -->
+      <HBox alignment="CENTER" prefHeight="335.0" prefWidth="785.0" spacing="100.0" VBox.vgrow="ALWAYS">
          <children>
             <VBox alignment="CENTER" spacing="15.0">
                <children>

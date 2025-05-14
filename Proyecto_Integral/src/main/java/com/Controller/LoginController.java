@@ -1,4 +1,4 @@
-package main.java.com.Controller;
+package com.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -7,7 +7,7 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import main.java.com.Main;
+import com.Main;
 
 public class LoginController {
 
@@ -40,7 +40,7 @@ public class LoginController {
     @FXML
     void IrARegistro(ActionEvent event) {
         // Asume que RegistroView.fxml está en src/main/resources/com/proyecto_integral/Vista/
-        String choosingFxmlFile = "/main/resources/com/proyecto_integral/Vista/inicio_choose.fxml";
+        String choosingFxmlFile = "/com/proyecto_integral/Vista/inicio_choose.fxml";
 
         // Título para la ventana de Registro
         String choosingTitle = "Selecciona rol de Nuevo Usuario - Dogpuccino";

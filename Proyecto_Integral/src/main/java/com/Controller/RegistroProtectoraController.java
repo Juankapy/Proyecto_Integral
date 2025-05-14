@@ -1,4 +1,4 @@
-package main.java.com.Controller;
+package com.Controller;
 
 
 import javafx.fxml.FXML;
@@ -71,7 +71,7 @@ public class RegistroProtectoraController {
 
     @FXML
     void Volver(MouseEvent event) {
-        String loginFxmlFile = "/main/resources/com/proyecto_integral/Vista/login.fxml";
+        String loginFxmlFile = "/com/proyecto_integral/Vista/login.fxml";
         String loginTitle = "Inicio de Sesión - Dogpuccino";
 
         try {

@@ -1,4 +1,4 @@
-package main.java.com;
+package com;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -17,7 +17,7 @@ public class Main extends Application {
     public void start(Stage stage) throws IOException {
         primaryStage = stage;
 
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/main/resources/com/proyecto_integral/Vista/login.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/com/proyecto_integral/Vista/FormularioPerro.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root); // El tamaño se definirá en el FXML o por los min/max del Stage
 

@@ -1,4 +1,4 @@
-package main.java.com.Controller;
+package com.Controller;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -22,7 +22,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import main.java.com.Main; // Asegúrate que esta importación sea correcta
+import com.Main; // Asegúrate que esta importación sea correcta
 
 import java.io.InputStream;
 

@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Button?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="471.0" prefWidth="673.0" style="-fx-background-color: #f5f1ea;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.com.Controller.RegistroProtectoraController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="471.0" prefWidth="673.0" style="-fx-background-color: #f5f1ea;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyectointegral2.Controller.RegistroProtectoraController">
    <children>
       <HBox fx:id="HboxImg" layoutX="358.0" prefHeight="404.0" prefWidth="269.0">
          <children>
