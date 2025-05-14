@@ -21,7 +21,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="487.0" prefWidth="650.0" style="-fx-background-color: #f5f1ea;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyectointegral2.Controller.RegistroClienteController">
+<AnchorPane prefHeight="550.0" prefWidth="650.0" style="-fx-background-color: #f5f1ea;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyectointegral2.Controller.RegistroClienteController">
    <children>
       <StackPane prefWidth="297.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -170,7 +170,7 @@
          </children>
       </VBox>
 
-      <ImageView fx:id="ImgIconoSalida" fitHeight="25.0" fitWidth="20.0" onMouseClicked="#Volver" opacity="0.86" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0" style="-fx-cursor: hand;">
+      <ImageView fx:id="ImgIconoSalida" fitHeight="25.0" fitWidth="20.0" onMouseClicked="#Volver" opacity="0.86" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0">
          <image>
             <Image url="@../../../assets/Imagenes/iconos/salir.png" />
          </image>

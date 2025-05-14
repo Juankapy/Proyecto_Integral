@@ -12,7 +12,7 @@ import java.net.URL;
 public class MainApp extends Application {
 
     private static Stage primaryStage;
-    private static final double FIXED_VIEW_WIDTH = 814;
+    private static final double FIXED_VIEW_WIDTH = 815;
     private static final double FIXED_VIEW_HEIGHT = 550;
 
     @Override
@@ -43,7 +43,6 @@ public class MainApp extends Application {
         return primaryStage;
     }
 
-    // Método de ayuda para configurar vistas de tamaño fijo
     private static void configureStageForFixedView(Stage stage, String title) {
         stage.setTitle(title);
         stage.setResizable(false);

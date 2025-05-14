@@ -28,6 +28,7 @@ public class InicioChooseController {
         } else {
             System.err.println("Error en SeleccionRolController: PrimaryStage no inicializado.");
         }
+        MainApp.changeScene(registroUsuarioFxml, titulo, false);
     }
 
     @FXML
@@ -41,6 +42,8 @@ public class InicioChooseController {
         } else {
             System.err.println("Error en SeleccionRolController: PrimaryStage no inicializado.");
         }
+
+        MainApp.changeScene(registroProtectoraFxml, titulo, false);
     }
 
 }
