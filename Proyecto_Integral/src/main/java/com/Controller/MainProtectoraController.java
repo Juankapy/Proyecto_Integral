@@ -1,4 +1,4 @@
-package com.proyectointegral2.Controller;
+package com.Controller;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -22,7 +22,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import com.proyectointegral2.MainApp; // Asegúrate que esta importación sea correcta
+import com.Main; // Asegúrate que esta importación sea correcta
 
 import java.io.InputStream;
 
@@ -158,8 +158,8 @@ public class MainProtectoraController {
         // Navegar a la ventana de añadir perro
         String anadirPerroFxml = "/main/resources/com/proyecto_integral/Vista/DetallesPerro.fxml";
         String titulo = "Añadir Nuevo Perro";
-        if (MainApp.getPrimaryStage() != null) { // Verifica si Main.primaryStage ha sido inicializado
-            MainApp.changeScene(anadirPerroFxml, titulo);
+        if (Main.getPrimaryStage() != null) { // Verifica si Main.primaryStage ha sido inicializado
+            Main.changeScene(anadirPerroFxml, titulo);
         } else {
             System.err.println("PrimaryStage en Main no está inicializado. No se puede cambiar de escena.");
         }

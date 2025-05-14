@@ -1,4 +1,5 @@
-package com.proyectointegral2.Controller;
+package com.Controller;
+
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

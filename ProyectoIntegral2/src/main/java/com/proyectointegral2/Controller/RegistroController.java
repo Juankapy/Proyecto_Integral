@@ -63,7 +63,7 @@ public class RegistroController {
 
     @FXML
     private void Volver(MouseEvent event) {
-        String loginFxmlFile = "/main/resources/com/proyecto_integral/Vista/login.fxml";
+        String loginFxmlFile = "/main/resources/com/proyecto_integral/Vista/Login.fxml";
         String loginTitle = "Inicio de Sesión - Dogpuccino";
 
         try {

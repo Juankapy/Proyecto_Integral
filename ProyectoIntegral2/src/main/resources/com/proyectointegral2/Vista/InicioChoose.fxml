@@ -35,7 +35,7 @@
          </VBox.margin>
       </VBox>
 
-      <HBox alignment="CENTER" prefHeight="335.0" prefWidth="785.0" spacing="100.0" VBox.vgrow="ALWAYS"> <!-- Aumentado el espaciado -->
+      <HBox alignment="CENTER" prefHeight="335.0" prefWidth="785.0" spacing="100.0" VBox.vgrow="ALWAYS">
          <children>
             <VBox alignment="CENTER" spacing="15.0">
                <children>

@@ -5,6 +5,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
+<<<<<<< HEAD
 <BorderPane fx:id="mainBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1080.0" style="-fx-background-color: #FDF5E6;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.com.Controller.MainClienteController">
     <top>
         <HBox alignment="CENTER_LEFT" prefHeight="70.0" spacing="10.0" BorderPane.alignment="CENTER">
@@ -199,4 +200,200 @@
             </children>
         </VBox>
     </center>
+=======
+<BorderPane fx:id="mainBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1080.0" style="-fx-background-color: #FDF5E6;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyectointegral2.Controller.MainClienteController">
+   <top>
+      <HBox alignment="CENTER_LEFT" prefHeight="70.0" spacing="10.0" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="10.0" left="30.0" right="30.0" top="10.0" />
+         </padding>
+         <children>
+            <ImageView fx:id="logoImageView" fitHeight="76.0" fitWidth="179.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../assets/Imagenes/iconos/dogiconlateral.png" />
+               </image>
+            </ImageView>
+            <Region HBox.hgrow="ALWAYS" />
+            <ImageView fx:id="IconBandeja" fitHeight="40.0" fitWidth="40.0" onMouseClicked="#Bandeja" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../assets/Imagenes/iconos/bandeja-de-entrada-blue.png" />
+               </image>
+               <HBox.margin>
+                  <Insets right="10.0" />
+               </HBox.margin>
+            </ImageView>
+            <ImageView fx:id="userIcon" fitHeight="40.0" fitWidth="40.0" onMouseClicked="#DetallesUsuario" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../assets/Imagenes/iconos/usuario-main-blue.png" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
+   </top>
+   <center>
+      <VBox spacing="20.0" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="20.0" left="40.0" right="40.0" top="10.0" />
+         </padding>
+         <children>
+            <HBox alignment="CENTER_LEFT" prefHeight="40.0" spacing="15.0">
+               <children>
+                  <Button fx:id="BtnReservar" mnemonicParsing="false" onMouseClicked="#Reservar" style="-fx-background-color: #D2691E; -fx-text-fill: white; -fx-background-radius: 20; -fx-font-weight: bold;" text="Reservar cita">
+                     <padding>
+                        <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                     </padding>
+                  </Button>
+                  <Button fx:id="BtnAdopciones" mnemonicParsing="false" onAction="#Adopciones" style="-fx-background-color: #8FBC8F; -fx-text-fill: white; -fx-background-radius: 20; -fx-font-weight: bold;" text="Adopciones">
+                     <padding>
+                        <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                     </padding>
+                  </Button>
+                  <Button fx:id="BtnEventos" mnemonicParsing="false" onAction="#Eventos" style="-fx-background-color: #6495ED; -fx-text-fill: white; -fx-background-radius: 20; -fx-font-weight: bold;" text="Eventos">
+                     <padding>
+                        <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                     </padding>
+                  </Button>
+                  <Region HBox.hgrow="SOMETIMES" />
+                  <ImageView fx:id="searchIcon" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../assets/Imagenes/iconos/buscar.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
+                  </ImageView>
+                  <TextField fx:id="searchTextField" prefHeight="31.0" prefWidth="220.0" promptText="Buscar..." style="-fx-background-color: #fdf5e6; -fx-background-radius: 15; -fx-border-radius: 15; -fx-border-color: #B0B0B0; -fx-padding: 5 10 5 10; -fx-border-color: #6495ed;" />
+               </children>
+            </HBox>
+            <ScrollPane fx:id="dogScrollPane" fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent; -fx-background: transparent;" VBox.vgrow="ALWAYS">
+               <content>
+                  <GridPane fx:id="dogGrid" hgap="20.0" vgap="20.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <!-- Definición para la primera fila -->
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                        <!-- Definición para la segunda fila -->
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <!-- PRIMERA FILA DE PERROS DE EJEMPLO -->
+                        <VBox alignment="TOP_CENTER" spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                           <children>
+                              <ImageView fx:id="dogImage_r0_c0" fitHeight="160.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../assets/Imagenes/perros/perro1.jpg" />
+                                 </image>
+                              </ImageView>
+                              <Label fx:id="nameAgeLabel_r0_c0" alignment="CENTER" style="-fx-background-color: #C8E6C9; -fx-padding: 5 10 5 10; -fx-background-radius: 5; -fx-min-width: 160;" text="Nombre, edad" textAlignment="CENTER" />
+                           </children>
+                        </VBox>
+                        <VBox alignment="TOP_CENTER" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                           <children>
+                              <ImageView fx:id="dogImage_r0_c1" fitHeight="160.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../assets/Imagenes/perros/perro1.jpg" />
+                                 </image>
+                              </ImageView>
+                              <Label fx:id="nameAgeLabel_r0_c1" alignment="CENTER" style="-fx-background-color: #C8E6C9; -fx-padding: 5 10 5 10; -fx-background-radius: 5; -fx-min-width: 160;" text="Nombre, edad" textAlignment="CENTER" />
+                           </children>
+                        </VBox>
+                        <VBox alignment="TOP_CENTER" spacing="5.0" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                           <children>
+                              <ImageView fx:id="dogImage_r0_c2" fitHeight="160.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../assets/Imagenes/perros/perro1.jpg" />
+                                 </image>
+                              </ImageView>
+                              <Label fx:id="nameAgeLabel_r0_c2" alignment="CENTER" style="-fx-background-color: #C8E6C9; -fx-padding: 5 10 5 10; -fx-background-radius: 5; -fx-min-width: 160;" text="Nombre, edad" textAlignment="CENTER" />
+                           </children>
+                        </VBox>
+                        <VBox alignment="TOP_CENTER" spacing="5.0" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                           <children>
+                              <ImageView fx:id="dogImage_r0_c3" fitHeight="160.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../assets/Imagenes/perros/perro1.jpg" />
+                                 </image>
+                              </ImageView>
+                              <Label fx:id="nameAgeLabel_r0_c3" alignment="CENTER" style="-fx-background-color: #C8E6C9; -fx-padding: 5 10 5 10; -fx-background-radius: 5; -fx-min-width: 160;" text="Nombre, edad" textAlignment="CENTER" />
+                           </children>
+                        </VBox>
+                        <VBox alignment="TOP_CENTER" spacing="5.0" GridPane.columnIndex="4" GridPane.rowIndex="0">
+                           <children>
+                              <ImageView fx:id="dogImage_r0_c4" fitHeight="160.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../assets/Imagenes/perros/perro1.jpg" />
+                                 </image>
+                              </ImageView>
+                              <Label fx:id="nameAgeLabel_r0_c4" alignment="CENTER" style="-fx-background-color: #C8E6C9; -fx-padding: 5 10 5 10; -fx-background-radius: 5; -fx-min-width: 160;" text="Nombre, edad" textAlignment="CENTER" />
+                           </children>
+                        </VBox>
+
+                        <!-- SEGUNDA FILA DE PERROS DE EJEMPLO -->
+                        <VBox alignment="TOP_CENTER" spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                           <children>
+                              <ImageView fx:id="dogImage_r1_c0" fitHeight="160.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../assets/Imagenes/perros/perro1.jpg" />
+                                 </image>
+                              </ImageView>
+                              <Label fx:id="nameAgeLabel_r1_c0" alignment="CENTER" style="-fx-background-color: #C8E6C9; -fx-padding: 5 10 5 10; -fx-background-radius: 5; -fx-min-width: 160;" text="Nombre, edad" textAlignment="CENTER" />
+                           </children>
+                        </VBox>
+                        <VBox alignment="TOP_CENTER" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <ImageView fx:id="dogImage_r1_c1" fitHeight="160.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../assets/Imagenes/perros/perro1.jpg" />
+                                 </image>
+                              </ImageView>
+                              <Label fx:id="nameAgeLabel_r1_c1" alignment="CENTER" style="-fx-background-color: #C8E6C9; -fx-padding: 5 10 5 10; -fx-background-radius: 5; -fx-min-width: 160;" text="Nombre, edad" textAlignment="CENTER" />
+                           </children>
+                        </VBox>
+                        <VBox alignment="TOP_CENTER" spacing="5.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                           <children>
+                              <ImageView fx:id="dogImage_r1_c2" fitHeight="160.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../assets/Imagenes/perros/perro1.jpg" />
+                                 </image>
+                              </ImageView>
+                              <Label fx:id="nameAgeLabel_r1_c2" alignment="CENTER" style="-fx-background-color: #C8E6C9; -fx-padding: 5 10 5 10; -fx-background-radius: 5; -fx-min-width: 160;" text="Nombre, edad" textAlignment="CENTER" />
+                           </children>
+                        </VBox>
+                        <VBox alignment="TOP_CENTER" spacing="5.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                           <children>
+                              <ImageView fx:id="dogImage_r1_c3" fitHeight="160.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../assets/Imagenes/perros/perro1.jpg" />
+                                 </image>
+                              </ImageView>
+                              <Label fx:id="nameAgeLabel_r1_c3" alignment="CENTER" style="-fx-background-color: #C8E6C9; -fx-padding: 5 10 5 10; -fx-background-radius: 5; -fx-min-width: 160;" text="Nombre, edad" textAlignment="CENTER" />
+                           </children>
+                        </VBox>
+                        <VBox alignment="TOP_CENTER" spacing="5.0" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                           <children>
+                              <ImageView fx:id="dogImage_r1_c4" fitHeight="160.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../assets/Imagenes/perros/perro1.jpg" />
+                                 </image>
+                              </ImageView>
+                              <Label fx:id="nameAgeLabel_r1_c4" alignment="CENTER" style="-fx-background-color: #C8E6C9; -fx-padding: 5 10 5 10; -fx-background-radius: 5; -fx-min-width: 160;" text="Nombre, edad" textAlignment="CENTER" />
+                           </children>
+                        </VBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </GridPane>
+               </content>
+            </ScrollPane>
+         </children>
+      </VBox>
+   </center>
+>>>>>>> JuanK
 </BorderPane>

@@ -2,22 +2,26 @@ package com.proyectointegral2.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
-
-import java.io.IOException;
-
+import com.proyectointegral2.MainApp;
 
 public class LoginController {
+
+    @FXML
+    private ImageView ImgUsuario;
+
+    @FXML
+    private ImageView ImgLateralLogin;
+
     @FXML
     private Button BtnConfirmar;
+
+    @FXML
+    private ImageView ImgIconoDog;
 
     @FXML
     private TextField TxtContra;
@@ -26,27 +30,25 @@ public class LoginController {
     private TextField TxtCorreo;
 
     @FXML
-    private Hyperlink HlnkRegistrarse;
+    private Hyperlink HyRegistrarse;
 
     @FXML
-    public void PulsarRegistrarse(ActionEvent actionEvent) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/proyectointegral2/Vista/inicio_choose.fxml"));
-            Stage stage = new Stage();
-            stage.setScene(new Scene(loader.load()));
-            stage.setTitle("Tipo de Usuario");
-            stage.show();
-        } catch (IOException e) {
-            mostrarAlerta("Error", "No se pudo cargar la ventana de registro.");
-            e.printStackTrace();
+    private HBox HboxImg;
+
+
+
+    @FXML
+    void IrARegistro(ActionEvent event) {
+        String choosingFxmlFile = "/com/proyectointegral2/Vista/InicioChoose.fxml";
+
+        String choosingTitle = "Selecciona rol de Nuevo Usuario - Dogpuccino";
+
+        if (MainApp.getPrimaryStage() != null) {
+            MainApp.changeScene(choosingFxmlFile, choosingTitle);
+
+        } else {
+            System.err.println("Error en LoginController: PrimaryStage en Main no está inicializado. No se puede cambiar a la escena de registro.");
         }
     }
 
-    private void mostrarAlerta(String titulo, String mensaje) {
-        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
-        alerta.setTitle(titulo);
-        alerta.setHeaderText(null);
-        alerta.setContentText(mensaje);
-        alerta.showAndWait();
-    }
 }

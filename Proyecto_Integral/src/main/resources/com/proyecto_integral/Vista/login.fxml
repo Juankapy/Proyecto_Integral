@@ -49,7 +49,7 @@
             <Font size="14.0" />
          </font>
       </Label>
-      <Hyperlink layoutX="329.0" layoutY="472.0" text="Resgistrate" underline="true">
+      <Hyperlink fx:id="HyRegistrarse" layoutX="329.0" layoutY="472.0" onAction="#IrARegistro" text="Resgistrate" underline="true">
          <font>
             <Font size="14.0" />
          </font>
