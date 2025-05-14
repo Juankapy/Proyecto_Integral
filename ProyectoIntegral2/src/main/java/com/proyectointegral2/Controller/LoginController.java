@@ -1,5 +1,6 @@
 package com.proyectointegral2.Controller;
 
+import com.proyectointegral2.utils.UtilidadesVentana;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -37,20 +38,16 @@ public class LoginController {
     private HBox HboxImg;
 
     @FXML
-    void ConfirmarInicio(MouseEvent event) { // O ActionEvent
-        System.out.println("Botón Confirmar Inicio presionado. Navegando a vista principal...");
-
+    void ConfirmarInicio(MouseEvent event) {
         String mainClienteFxmlFile = "/com/proyectointegral2/Vista/Main.fxml";
         String mainClienteTitle = "Panel Cliente - Dogpuccino";
-
-        MainApp.changeScene(mainClienteFxmlFile, mainClienteTitle, true);
+        UtilidadesVentana.cambiarEscena(mainClienteFxmlFile, mainClienteTitle, true);
     }
 
     @FXML
     void IrARegistro(ActionEvent event) {
         String choosingFxmlFile = "/com/proyectointegral2/Vista/InicioChoose.fxml";
         String choosingTitle = "Selección de Rol - Dogpuccino";
-
-        MainApp.changeScene(choosingFxmlFile, choosingTitle, false);
+        UtilidadesVentana.cambiarEscena(choosingFxmlFile, choosingTitle, false);
     }
 }

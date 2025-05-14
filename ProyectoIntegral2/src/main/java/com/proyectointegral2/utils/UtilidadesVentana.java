@@ -1,27 +1,97 @@
 package com.proyectointegral2.utils;
 
-
-import javafx.scene.control.Button;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
+import java.io.IOException;
+import java.net.URL;
 
 public class UtilidadesVentana {
 
-    public void cerrarVentana(Button boton) {
-        Stage stage = (Stage) boton.getScene().getWindow();
-        stage.close();
+    private static Stage primaryStageRef;
+
+    public static void setPrimaryStage(Stage stage) {
+        primaryStageRef = stage;
     }
 
-    private Stage ventanaAnterior;
+    private static final double DEFAULT_FIXED_WIDTH = 814; // Ejemplo
+    private static final double DEFAULT_FIXED_HEIGHT = 550; // Ejemplo
 
-    public void setVentanaAnterior(Stage stage) {
-        this.ventanaAnterior = stage;
+    private static void configureStageForFixedView(String title) {
+        if (primaryStageRef == null) return;
+        primaryStageRef.setTitle(title);
+        primaryStageRef.setResizable(false);
+        primaryStageRef.setFullScreen(false);
+        primaryStageRef.setMaximized(false);
+        primaryStageRef.sizeToScene();
+        primaryStageRef.centerOnScreen();
     }
-    public void volverAVentanaAnterior(Button boton) {
-        Stage ventanaActual = (Stage) boton.getScene().getWindow();
-        ventanaActual.close();
 
-        if (ventanaAnterior != null) {
-            ventanaAnterior.show();
+    private static void configureStageForDynamicView(String title) {
+        if (primaryStageRef == null) return;
+        primaryStageRef.setTitle(title);
+        primaryStageRef.setResizable(true);
+        primaryStageRef.setFullScreen(true);
+    }
+
+    public static void cambiarEscena(String fxmlFile, String title, boolean isDynamicSize) {
+        if (primaryStageRef == null) {
+            System.err.println("Error en UtilidadesVentana: PrimaryStage no ha sido inicializado. Llama a setPrimaryStage() primero.");
+            return;
+        }
+        try {
+            URL resourceUrl = UtilidadesVentana.class.getResource(fxmlFile);
+            if (resourceUrl == null) {
+                System.err.println("Error: No se pudo encontrar el archivo FXML: " + fxmlFile + ". Verifica la ruta.");
+                mostrarAlertaError("Error de Navegación", "No se pudo cargar la vista solicitada:\n" + fxmlFile);
+                return;
+            }
+            FXMLLoader loader = new FXMLLoader(resourceUrl);
+            Parent root = loader.load();
+
+            Scene currentScene = primaryStageRef.getScene();
+            if (currentScene == null) {
+                currentScene = new Scene(root);
+                primaryStageRef.setScene(currentScene);
+            } else {
+                currentScene.setRoot(root);
+            }
+
+            if (isDynamicSize) {
+                configureStageForDynamicView(title);
+            } else {
+                configureStageForFixedView(title);
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error al cargar FXML: " + fxmlFile);
+            e.printStackTrace();
+            mostrarAlertaError("Error de Carga", "Ocurrió un error al intentar cargar la vista:\n" + fxmlFile);
         }
     }
+
+    public static void cambiarEscena(String fxmlFile, String title) {
+        cambiarEscena(fxmlFile, title, false); // Por defecto, las vistas son de tamaño fijo
+    }
+
+
+    public static void mostrarAlertaError(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
+
+    public static void mostrarAlertaInformacion(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
+    //  más tipos de alertas (CONFIRMATION, WARNING)
 }
