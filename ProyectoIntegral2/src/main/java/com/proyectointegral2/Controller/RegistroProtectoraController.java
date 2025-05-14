@@ -1,82 +1,71 @@
 package com.proyectointegral2.Controller;
 
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.event.ActionEvent;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.event.ActionEvent;
-import javafx.stage.Stage;
-import com.proyectointegral2.Model.Direccion;
-import com.proyectointegral2.Model.Protectora;
-import com.proyectointegral2.dao.ProtectoraDao;
+import javafx.scene.layout.HBox;
 
 public class RegistroProtectoraController {
-    @FXML private ImageView ImgLateralLogin;
-    @FXML private TextField TxtNombre;
-    @FXML private TextField TxtApellido; // No se usa en Protectora, pero está en el FXML
-    @FXML private TextField TxtDireccion;
-    @FXML private TextField TxtProvincia;
-    @FXML private TextField TxtCiudad;
-    @FXML private TextField TxtCP;
-    @FXML private TextField TxtTel;
-    @FXML private TextField TxtCorreo;
-    @FXML private TextField TxtContra; // No se usa en Protectora, pero está en el FXML
-    @FXML private TextField TxtCIF;
-    @FXML private Button BtnConfirmar;
 
     @FXML
-    void ConfirmarRegistroProtectora(ActionEvent event) throws Exception {
-        String nombre = TxtNombre.getText();
-        String cif = TxtCIF.getText();
-        String provincia = TxtProvincia.getText();
-        String ciudad = TxtCiudad.getText();
-        String calle = TxtDireccion.getText();
-        String codigoPostal = TxtCP.getText();
-        String telefono = TxtTel.getText();
-        String email = TxtCorreo.getText();
-        // Puedes añadir redes sociales si tienes un campo para ello
-        String redesSociales = null;
+    private ImageView ImgLateralLogin;
 
-        Direccion direccion = new Direccion(provincia, ciudad, calle, codigoPostal);
-        Protectora protectora = new Protectora(0, cif, nombre, direccion, telefono, email, redesSociales);
-
-        ProtectoraDao protectoraDao = new ProtectoraDao();
-        protectoraDao.insertarProtectora(protectora);
-
-        CerrarVentana();
-    }
-    public void CerrarVentana() {
-        // Cierra la ventana actual
-        Stage stage = (Stage) ImgLateralLogin.getScene().getWindow();
-        stage.close();
-
-        // Carga la ventana anterior
-        try {
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/ruta/a/ventana_anterior.fxml"));
-            javafx.scene.Parent root = loader.load();
-            Stage newStage = new Stage();
-            newStage.setScene(new javafx.scene.Scene(root));
-            newStage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
     @FXML
-    public void CerrarVentana(javafx.scene.input.MouseEvent event) {
-        try {
-            javafx.fxml.FXMLLoader fxmlLoader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/proyectointegral2/Vista/ventana_anterior.fxml"));
-            javafx.scene.Scene scene = new javafx.scene.Scene(fxmlLoader.load());
-            Stage stage = new Stage();
-            stage.setTitle("Ventana anterior");
-            stage.setScene(scene);
-            stage.show();
-            Stage myStage = (Stage) ((ImageView) event.getSource()).getScene().getWindow();
-            myStage.close();
-        } catch (Exception e) {
-            javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText(null);
-            alert.setContentText("Error inesperado: " + e.getMessage());
-            alert.showAndWait();
-        }
-    }}
+    private TextField TxtTel;
+
+    @FXML
+    private TextField TxtNombre;
+
+    @FXML
+    private TextField TxtProvincia;
+
+    @FXML
+    private ImageView ImgIconoDog;
+
+    @FXML
+    private TextField TxtContra;
+
+    @FXML
+    private TextField TxtCP;
+
+    @FXML
+    private HBox HboxImg;
+
+    @FXML
+    private TextField TxtDireccion;
+
+    @FXML
+    private TextField TxtCiudad;
+
+    @FXML
+    private ImageView ImgUsuario;
+
+    @FXML
+    private TextField TxtApellido;
+
+    @FXML
+    private Button BtnConfirmar;
+
+    @FXML
+    private ImageView ImgIconoSalida;
+
+    @FXML
+    private TextField TxtCIF;
+
+    @FXML
+    private TextField TxtCorreo;
+
+    @FXML
+    void ConfirmarRegistroProtectora(ActionEvent event) {
+
+    }
+
+    @FXML
+    void fafafa(ActionEvent event) {
+
+    }
+
+}
