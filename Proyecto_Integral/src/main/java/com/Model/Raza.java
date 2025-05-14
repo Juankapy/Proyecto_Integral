@@ -1,4 +1,4 @@
-package main.java.com.Model;
+package com.Model;
 
 public class Raza {
     private int id;
