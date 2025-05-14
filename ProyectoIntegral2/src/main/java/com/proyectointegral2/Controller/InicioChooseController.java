@@ -1,10 +1,9 @@
 package com.proyectointegral2.Controller;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import com.proyectointegral2.MainApp;
+import com.proyectointegral2.utils.UtilidadesVentana;
 
 public class InicioChooseController {
 
@@ -19,32 +18,19 @@ public class InicioChooseController {
 
     @FXML
     void SeleccionarCliente(MouseEvent event) {
-        System.out.println("Rol Usuario seleccionado.");
-        String registroUsuarioFxml = "/com/proyectointegral2/Vista/RegistroCliente.fxml"; // O como se llame tu FXML de registro de usuario
-        String titulo = "Registro de Usuario";
+        System.out.println("Rol Usuario/Cliente seleccionado.");
+        String registroClienteFxml = "/com/proyectointegral2/Vista/RegistroCliente.fxml";
+        String titulo = "Registro de Cliente";
 
-        if (MainApp.getPrimaryStage() != null) {
-            MainApp.changeScene(registroUsuarioFxml, titulo);
-        } else {
-            System.err.println("Error en SeleccionRolController: PrimaryStage no inicializado.");
-        }
-        MainApp.changeScene(registroUsuarioFxml, titulo, false);
+        UtilidadesVentana.cambiarEscena(registroClienteFxml, titulo, false);
     }
 
     @FXML
     void SeleccionarProtectora(MouseEvent event) {
         System.out.println("Rol Protectora seleccionado.");
-        String registroProtectoraFxml = "/com/proyectointegral2/Vista/RegistroProtectora.fxml"; // O como se llame tu FXML de registro de protectora
+        String registroProtectoraFxml = "/com/proyectointegral2/Vista/RegistroProtectora.fxml";
         String titulo = "Registro de Protectora";
 
-        if (MainApp.getPrimaryStage() != null) {
-            MainApp.changeScene(registroProtectoraFxml, titulo);
-        } else {
-            System.err.println("Error en SeleccionRolController: PrimaryStage no inicializado.");
-        }
-
-        MainApp.changeScene(registroProtectoraFxml, titulo, false);
+        UtilidadesVentana.cambiarEscena(registroProtectoraFxml, titulo, false);
     }
-
 }
-

@@ -1,6 +1,7 @@
 package com.proyectointegral2.Controller;
 
 
+import com.proyectointegral2.utils.UtilidadesVentana;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -71,18 +72,10 @@ public class RegistroProtectoraController {
 
     @FXML
     void Volver(MouseEvent event) {
-        String loginFxmlFile = "/com/proyectointegral2/Vista/Login.fxml";
+        String loginFxml = "/com/proyectointegral2/Vista/Login.fxml";
         String loginTitle = "Inicio de Sesión - Dogpuccino";
+        UtilidadesVentana.cambiarEscena(loginFxml, loginTitle, false);
 
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(loginFxmlFile));
-            Parent root = loader.load();
-            Scene scene = ImgIconoSalida.getScene();
-            scene.setRoot(root);
-        } catch (IOException e) {
-            System.err.println("Error al cargar: " + loginFxmlFile);
-            e.printStackTrace();
-        }
     }
 
 }
