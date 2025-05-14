@@ -40,7 +40,7 @@
             <Image url="@../../../assets/Imagenes/iconos/usuario-orange.png" />
          </image>
       </ImageView>
-      <Button fx:id="BtnConfirmar" layoutX="169.0" layoutY="382.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="101.0" style="-fx-background-color: #d2691e; -fx-background-radius: 12px;" text="Confirmar" textFill="#fafafa">
+      <Button fx:id="BtnConfirmar" layoutX="169.0" layoutY="382.0" mnemonicParsing="false" onMouseClicked="#ConfirmarInicio" prefHeight="36.0" prefWidth="101.0" style="-fx-background-color: #d2691e; -fx-background-radius: 12px;" text="Confirmar" textFill="#fafafa">
          <font>
             <Font size="16.0" />
          </font></Button>

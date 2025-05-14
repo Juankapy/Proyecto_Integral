@@ -9,6 +9,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+
 public class MainClienteController {
 
     @FXML
@@ -30,6 +39,9 @@ public class MainClienteController {
     private GridPane dogGrid;
 
     @FXML
+    private ImageView IconBandeja;
+
+    @FXML
     private Button BtnReservar;
 
     @FXML
@@ -40,9 +52,6 @@ public class MainClienteController {
 
     @FXML
     private ImageView dogImage_r1_c4;
-
-    @FXML
-    private Button btnEventos;
 
     @FXML
     private ImageView dogImage_r1_c3;
@@ -69,13 +78,10 @@ public class MainClienteController {
     private Label nameAgeLabel_r1_c3;
 
     @FXML
-    private Button btnAdopciones;
-
-    @FXML
     private Label nameAgeLabel_r1_c4;
 
     @FXML
-    private ImageView cartIcon;
+    private Button BtnAdopciones;
 
     @FXML
     private ImageView dogImage_r0_c4;
@@ -105,6 +111,9 @@ public class MainClienteController {
     private ImageView userIcon;
 
     @FXML
+    private Button BtnEventos;
+
+    @FXML
     void Reservar(ActionEvent event) {
 
     }
@@ -116,6 +125,16 @@ public class MainClienteController {
 
     @FXML
     void Eventos(ActionEvent event) {
+
+    }
+
+    @FXML
+    void Bandeja(ActionEvent event) {
+
+    }
+
+    @FXML
+    void DetallesUsuario(ActionEvent event) {
 
     }
 

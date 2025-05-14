@@ -1,56 +1,77 @@
 package com.proyectointegral2;
 
-import com.sun.tools.javac.Main;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import java.io.IOException;
-import java.util.Objects;
+import java.net.URL;
 
 public class MainApp extends Application {
 
     private static Stage primaryStage;
+    private static final double FIXED_VIEW_WIDTH = 814;
+    private static final double FIXED_VIEW_HEIGHT = 550;
 
     @Override
     public void start(Stage stage) throws IOException {
         primaryStage = stage;
 
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/com/proyectointegral2/Vista/Login.fxml"));
+        String initialFxmlPath = "/com/proyectointegral2/Vista/Login.fxml";
+        URL fxmlUrl = MainApp.class.getResource(initialFxmlPath);
+
+        if (fxmlUrl == null) {
+            System.err.println("¡ERROR CRÍTICO! No se pudo encontrar el FXML inicial en: " + initialFxmlPath);
+            throw new IOException("No se pudo encontrar el recurso FXML inicial: " + initialFxmlPath);
+        }
+
+        FXMLLoader fxmlLoader = new FXMLLoader(fxmlUrl);
         Parent root = fxmlLoader.load();
-        Scene scene = new Scene(root); // El tamaño se definirá en el FXML o por los min/max del Stage
+        Scene scene = new Scene(root);
 
         stage.setScene(scene);
         stage.setTitle("Inicio de Sesión - Dogpuccino");
-        stage.setResizable(false); // Esto es lo principal para bloquear el redimensionamiento
+
+        configureStageForFixedView(stage, "Inicio de Sesión - Dogpuccino");
+
         stage.show();
     }
 
-    /**
-     * Método estático para obtener el Stage principal.
-     * Útil si necesitas pasar el Stage a diálogos o nuevas ventanas.
-     * @return El Stage principal de la aplicación.
-     */
     public static Stage getPrimaryStage() {
         return primaryStage;
     }
 
-    /**
-     * Cambia la vista (el nodo raíz) de la escena principal.
-     * @param fxmlFile La ruta al archivo FXML a cargar (ej. "/com/paquete/vista.fxml").
-     * @param title El nuevo título para la ventana.
-     */
-    public static void changeScene(String fxmlFile, String title) {
+    // Método de ayuda para configurar vistas de tamaño fijo
+    private static void configureStageForFixedView(Stage stage, String title) {
+        stage.setTitle(title);
+        stage.setResizable(false);
+        stage.setFullScreen(false);
+        stage.sizeToScene();
+        stage.centerOnScreen();
+    }
+
+    private static void configureStageForDynamicView(Stage stage, String title) {
+        stage.setTitle(title);
+        stage.setResizable(true);
+        stage.setMaximized(true);
+
+    }
+
+    public static void changeScene(String fxmlFile, String title, boolean isDynamicSize) {
         if (primaryStage == null) {
             System.err.println("Error: PrimaryStage no ha sido inicializado. No se puede cambiar la escena.");
             return;
         }
         try {
-            FXMLLoader loader = new FXMLLoader(Main.class.getResource(fxmlFile));
+            URL resourceUrl = MainApp.class.getResource(fxmlFile);
+            if (resourceUrl == null) {
+                System.err.println("Error: No se pudo encontrar el archivo FXML para cambiar escena: " + fxmlFile + ". Verifica la ruta.");
+                return;
+            }
+            FXMLLoader loader = new FXMLLoader(resourceUrl);
             Parent root = loader.load();
-            primaryStage.setTitle(title);
 
             Scene currentScene = primaryStage.getScene();
             if (currentScene == null) {
@@ -60,17 +81,22 @@ public class MainApp extends Application {
                 currentScene.setRoot(root);
             }
 
-
-
+            if (isDynamicSize) {
+                configureStageForDynamicView(primaryStage, title);
+            } else {
+                configureStageForFixedView(primaryStage, title);
+            }
 
         } catch (IOException e) {
             System.err.println("Error al cargar FXML: " + fxmlFile);
             e.printStackTrace();
-        } catch (NullPointerException e) {
-            System.err.println("Error: No se pudo encontrar el archivo FXML: " + fxmlFile + ". Verifica la ruta.");
-            e.printStackTrace();
         }
     }
+
+    public static void changeScene(String fxmlFile, String title) {
+        changeScene(fxmlFile, title, false);
+    }
+
 
     public static void main(String[] args) {
         launch(args);

@@ -299,6 +299,10 @@ public class MainProtectoraController {
         return cardVBox;
     }
 
+    public void ToggleRegistroView(ActionEvent actionEvent) {
+
+    }
+
 
     // --- Clases Modelo de Ejemplo (en un proyecto real, irían en archivos separados) ---
     public static class RegistroPerroEntry {
