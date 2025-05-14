@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import java.io.IOException;
+import java.util.*;
 
 public class InicioChooseController {
 
@@ -38,6 +39,11 @@ public class InicioChooseController {
             stage.setScene(new Scene(loader.load()));
             stage.setTitle(titulo);
             stage.show();
+
+            // Cerrar la ventana actual
+            Stage ventanaActual = (Stage) ImgCliente.getScene().getWindow();
+            ventanaActual.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         }

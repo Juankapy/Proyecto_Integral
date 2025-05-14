@@ -4,7 +4,25 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="850e23de-3df3-4e39-bb04-a6dd84ae8106" name="Changes" comment="" />
+    <list default="true" id="850e23de-3df3-4e39-bb04-a6dd84ae8106" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/proyectointegral2/Controller/InicioChooseController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/proyectointegral2/Controller/InicioChooseController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/proyectointegral2/MainApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/proyectointegral2/MainApp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/assets/Imagenes/iconos/protectora_icon.png" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/assets/Imagenes/iconos/protectora_icon.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Controller/InicioChooseController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Controller/InicioChooseController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Controller/RegistroClienteController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Controller/RegistroClienteController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Controller/RegistroProtectoraController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Controller/RegistroProtectoraController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/proyectointegral2/MainApp.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/proyectointegral2/MainApp.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Vista/DetallesPerro.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Vista/DetallesPerro.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Vista/FormularioPerro.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Vista/FormularioPerro.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Vista/Main.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Vista/Main.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Vista/inicio_choose.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Vista/inicio_choose.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Vista/registro_cliente.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Vista/registro_cliente.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Vista/registro_protectora.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Vista/registro_protectora.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/proyectointegral2/dao/ClienteDao.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/proyectointegral2/dao/ClienteDao.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/proyectointegral2/dao/ProtectoraDao.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/proyectointegral2/dao/ProtectoraDao.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/module-info.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/module-info.class" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -33,7 +51,7 @@
     &quot;Application.MainApp.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Jose&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/damda/OneDrive/Escritorio/Proyecto_Integral/ProyectoIntegral2&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -61,6 +79,8 @@
       <workItem from="1747118884447" duration="5100000" />
       <workItem from="1747129415781" duration="437000" />
       <workItem from="1747130114251" duration="306000" />
+      <workItem from="1747217831221" duration="1369000" />
+      <workItem from="1747219531173" duration="607000" />
     </task>
     <servers />
   </component>
