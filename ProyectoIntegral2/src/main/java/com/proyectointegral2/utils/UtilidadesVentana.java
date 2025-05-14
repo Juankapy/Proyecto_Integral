@@ -17,8 +17,8 @@ public class UtilidadesVentana {
         primaryStageRef = stage;
     }
 
-    private static final double DEFAULT_FIXED_WIDTH = 814; // Ejemplo
-    private static final double DEFAULT_FIXED_HEIGHT = 550; // Ejemplo
+    private static final double DEFAULT_FIXED_WIDTH = 814;
+    private static final double DEFAULT_FIXED_HEIGHT = 550;
 
     private static void configureStageForFixedView(String title) {
         if (primaryStageRef == null) return;
@@ -92,6 +92,25 @@ public class UtilidadesVentana {
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
+    }
+
+    // En UtilidadesVentana.java (NUEVO MÉTODO DE EJEMPLO)
+    public static void cambiarEscenaConRoot(Parent newRoot, String title, boolean isDynamicSize) {
+        if (primaryStageRef == null) { /* ... error ... */ return; }
+
+        Scene currentScene = primaryStageRef.getScene();
+        if (currentScene == null) {
+            currentScene = new Scene(newRoot);
+            primaryStageRef.setScene(currentScene);
+        } else {
+            currentScene.setRoot(newRoot);
+        }
+
+        if (isDynamicSize) {
+            configureStageForDynamicView(title); // Reusa tu método existente
+        } else {
+            configureStageForFixedView(title);  // Reusa tu método existente
+        }
     }
     //  más tipos de alertas (CONFIRMATION, WARNING)
 }
