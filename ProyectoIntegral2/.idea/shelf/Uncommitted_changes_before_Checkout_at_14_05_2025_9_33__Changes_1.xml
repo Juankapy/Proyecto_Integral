@@ -1,0 +1,19 @@
+<changelist name="Uncommitted_changes_before_Checkout_at_14_05_2025_9_33_[Changes]1" date="1747207991725" recycled="true" deleted="true">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_14_05_2025_9_33_[Changes]1/shelved.patch" />
+  <option name="DESCRIPTION" value="Uncommitted changes before Checkout at 14/05/2025 9:33 [Changes]" />
+  <binary>
+    <option name="BEFORE_PATH" value="target/classes/assets/Imagenes/iconos/protectora_icon.png" />
+    <option name="AFTER_PATH" value="target/classes/assets/Imagenes/iconos/protectora_icon.png" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_14_05_2025_9_33_[Changes]1/protectora_icon.png" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="target/classes/com/proyectointegral2/Controller/InicioChooseController.class" />
+    <option name="AFTER_PATH" value="target/classes/com/proyectointegral2/Controller/InicioChooseController.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_14_05_2025_9_33_[Changes]1/InicioChooseController.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="target/classes/com/proyectointegral2/Controller/RegistroClienteController.class" />
+    <option name="AFTER_PATH" value="target/classes/com/proyectointegral2/Controller/RegistroClienteController.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_14_05_2025_9_33_[Changes]1/RegistroClienteController.class" />
+  </binary>
+</changelist>
