@@ -2,6 +2,7 @@ package com.proyectointegral2.Controller;
 import com.proyectointegral2.utils.UtilidadesVentana;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -10,6 +11,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 
 
 public class MainClienteController {
@@ -125,10 +127,26 @@ public class MainClienteController {
 
     @FXML
     void Bandeja(MouseEvent event) {
-        String bandejaCitaFxmlFile = "/com/proyectointegral2/Vista/BandejasCitas.fxml";
-        String bandejaCitaTitle = "Panel Cliente - Dogpuccino";
-        UtilidadesVentana.cambiarEscena(bandejaCitaFxmlFile, bandejaCitaTitle, true);
-    }
+            System.out.println("Abriendo bandeja de citas como pop-up...");
+
+            String bandejaFxml = "/com/proyectointegral2/Vista/BandejasCitas.fxml";
+            String titulo = "Mis Citas Programadas";
+
+            Stage ownerStage = null;
+            if (event.getSource() instanceof Node) {
+                ownerStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            } else {
+                ownerStage = UtilidadesVentana.getPrimaryStage(); // Necesitarías un getPrimaryStage() en UtilidadesVentana o pasar MainApp.getPrimaryStage()
+            }
+            BandejaCitasController bandejaController = UtilidadesVentana.mostrarVentanaPopup(bandejaFxml, titulo, true, ownerStage);
+
+            if (bandejaController != null) {
+                System.out.println("Pop-up de bandeja de citas mostrado.");
+            } else {
+                System.err.println("No se pudo mostrar el pop-up de bandeja de citas.");
+            }
+        }
+
 
     @FXML
     void DetallesUsuario(MouseEvent event) {
@@ -138,8 +156,23 @@ public class MainClienteController {
     }
 
     public void IraDetallesPerro(MouseEvent mouseEvent) {
-        String detallesPerroFxmlFile = "/com/proyectointegral2/Vista/DetallesPerro.fxml";
-        String detallesPerroTitle = "Panel Cliente - Dogpuccino";
-        UtilidadesVentana.cambiarEscena(detallesPerroFxmlFile, detallesPerroTitle, true);
+        System.out.println("Abriendo bandeja de citas como pop-up...");
+
+        String bandejaFxml = "/com/proyectointegral2/Vista/DetallesPerro.fxml";
+        String titulo = "Detalle Perro";
+
+        Stage ownerStage = null;
+        if (mouseEvent.getSource() instanceof Node) {
+            ownerStage = (Stage) ((Node) mouseEvent.getSource()).getScene().getWindow();
+        } else {
+            ownerStage = UtilidadesVentana.getPrimaryStage(); // Necesitarías un getPrimaryStage() en UtilidadesVentana o pasar MainApp.getPrimaryStage()
+        }
+        BandejaCitasController bandejaController = UtilidadesVentana.mostrarVentanaPopup(bandejaFxml, titulo, true, ownerStage);
+
+        if (bandejaController != null) {
+            System.out.println("Pop-up de bandeja de citas mostrado.");
+        } else {
+            System.err.println("No se pudo mostrar el pop-up de bandeja de citas.");
+        }
     }
 }

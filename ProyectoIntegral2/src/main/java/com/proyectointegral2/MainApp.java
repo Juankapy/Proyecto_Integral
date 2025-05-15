@@ -16,23 +16,33 @@ public class MainApp extends Application {
         UtilidadesVentana.setPrimaryStage(stage);
 
         String initialFxmlPath = "/com/proyectointegral2/Vista/Login.fxml";
-        URL fxmlUrl = MainApp.class.getResource(initialFxmlPath);
+        String initialTitle = "Inicio de Sesión - Dogpuccino";
 
-        if (fxmlUrl == null) {
-            System.err.println("¡ERROR CRÍTICO! No se pudo encontrar el FXML inicial en: " + initialFxmlPath);
-            UtilidadesVentana.mostrarAlertaError
-                    ("Error Crítico", "No se pudo iniciar la aplicación." +
-                    "\nArchivo FXML principal no encontrado.");
-            throw new IOException("No se pudo encontrar el recurso FXML inicial: " + initialFxmlPath);
+        try {
+            URL resourceUrl = MainApp.class.getResource(initialFxmlPath);
+            if (resourceUrl == null) { /* ... error ... */
+                throw new IOException(/*...*/);
+            }
+            FXMLLoader fxmlLoader = new FXMLLoader(resourceUrl);
+            Parent root = fxmlLoader.load();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+
+            stage.setTitle(initialTitle);
+            stage.setResizable(false);
+            stage.setFullScreen(false);
+            stage.setMaximized(false);
+            stage.sizeToScene();
+            stage.centerOnScreen();
+
+            UtilidadesVentana.setFxmlActual(initialFxmlPath);
+
+            stage.show();
+        } catch (IOException e) {
+            System.err.println("¡ERROR CRÍTICO! No se pudo encontrar o cargar el FXML inicial en: " + initialFxmlPath);
+            UtilidadesVentana.mostrarAlertaError("Error Crítico", "No se pudo iniciar la aplicación.");
+            throw e;
         }
-
-        FXMLLoader fxmlLoader = new FXMLLoader(fxmlUrl);
-        Parent root = fxmlLoader.load();
-        Scene scene = new Scene(root);
-
-        stage.setScene(scene);
-        UtilidadesVentana.cambiarEscena(initialFxmlPath, "Inicio de Sesión - Dogpuccino", false); // Carga inicial con config fija
-        stage.show();
     }
 
 

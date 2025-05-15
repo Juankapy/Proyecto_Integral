@@ -4,111 +4,134 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+
 import java.io.IOException;
 import java.net.URL;
+import java.util.Stack; // Para el historial de navegación
 
 public class UtilidadesVentana {
 
     private static Stage primaryStageRef;
 
-    // Tamaños fijos por defecto para ventanas no dinámicas
+    // --- Constantes de Tamaño ---
     private static final double DEFAULT_FIXED_WIDTH = 814;
     private static final double DEFAULT_FIXED_HEIGHT = 550;
-
-    // Tamaños mínimos para ventanas dinámicas (cuando el usuario las redimensiona manualmente)
     private static final double MIN_DYNAMIC_WIDTH = 900;
     private static final double MIN_DYNAMIC_HEIGHT = 700;
+
+    // --- Pila para el Historial de Navegación ---
+    private static class VistaAnterior {
+        String fxmlFile;
+        String title;
+        boolean esDinamicaYMaximizada;
+
+        VistaAnterior(String fxmlFile, String title, boolean esDinamicaYMaximizada) {
+            this.fxmlFile = fxmlFile;
+            this.title = title;
+            this.esDinamicaYMaximizada = esDinamicaYMaximizada;
+        }
+    }
+    private static Stack<VistaAnterior> historialNavegacion = new Stack<>();
+    private static String fxmlActual = null; // Para saber cuál es la vista actual
 
 
     public static void setPrimaryStage(Stage stage) {
         primaryStageRef = stage;
     }
 
-    /**
-     * Configura el stage para ventanas de tamaño fijo, no redimensionables.
-     * Se centra en pantalla.
-     */
+    public static Stage getPrimaryStage() {
+        return primaryStageRef;
+    }
+
     private static void configurarStageParaVentanaFixed(String title) {
         if (primaryStageRef == null) return;
-
         primaryStageRef.setTitle(title);
-        primaryStageRef.setResizable(false);    // No redimensionable
-        primaryStageRef.setFullScreen(false);   // Asegurar que no esté en pantalla completa
-        primaryStageRef.setMaximized(false);    // Asegurar que no esté maximizada
-
+        primaryStageRef.setResizable(false);
+        primaryStageRef.setFullScreen(false);
+        primaryStageRef.setMaximized(false);
+        // Intentar que el FXML defina su tamaño primero
         Scene scene = primaryStageRef.getScene();
-        double targetWidth = DEFAULT_FIXED_WIDTH;
-        double targetHeight = DEFAULT_FIXED_HEIGHT;
-
         if (scene != null && scene.getRoot() != null) {
             Parent root = scene.getRoot();
-            double prefW = root.prefWidth(-1); // -1 para obtener el preferido
+            double prefW = root.prefWidth(-1);
             double prefH = root.prefHeight(-1);
-
-            if (prefW > 0 && prefW != javafx.scene.layout.Region.USE_COMPUTED_SIZE) {
-                targetWidth = prefW;
+            if (prefW > 0 && prefW != javafx.scene.layout.Region.USE_COMPUTED_SIZE &&
+                    prefH > 0 && prefH != javafx.scene.layout.Region.USE_COMPUTED_SIZE) {
+                primaryStageRef.setWidth(prefW);
+                primaryStageRef.setHeight(prefH);
+            } else {
+                primaryStageRef.setWidth(DEFAULT_FIXED_WIDTH);
+                primaryStageRef.setHeight(DEFAULT_FIXED_HEIGHT);
             }
-            if (prefH > 0 && prefH != javafx.scene.layout.Region.USE_COMPUTED_SIZE) {
-                targetHeight = prefH;
-            }
+        } else {
+            primaryStageRef.setWidth(DEFAULT_FIXED_WIDTH);
+            primaryStageRef.setHeight(DEFAULT_FIXED_HEIGHT);
         }
-
-        primaryStageRef.setWidth(targetWidth);
-        primaryStageRef.setHeight(targetHeight);
         primaryStageRef.centerOnScreen();
-        System.out.println("Ventana Fija Configurada: " + title + " a " + targetWidth + "x" + targetHeight);
     }
 
-    /**
-     * Configura el stage para ventanas dinámicas.
-     * Se abre MAXIMIZADA (con bordes, no pantalla completa) y es redimensionable.
-     */
     private static void configurarStageVentanaDinamicaMaximizada(String title) {
         if (primaryStageRef == null) return;
-
         primaryStageRef.setTitle(title);
-        primaryStageRef.setResizable(true);     // Redimensionable
-        primaryStageRef.setFullScreen(false);   // NO pantalla completa
-
-        // Establecer tamaños mínimos para cuando el usuario la desmaximice o redimensione
+        primaryStageRef.setResizable(true);
+        primaryStageRef.setFullScreen(false);
         primaryStageRef.setMinWidth(MIN_DYNAMIC_WIDTH);
         primaryStageRef.setMinHeight(MIN_DYNAMIC_HEIGHT);
-
-        // Maximizar la ventana
         primaryStageRef.setMaximized(true);
-        System.out.println("Ventana Dinámica Maximizada Configurada: " + title);
     }
 
     /**
-     * Cambia la escena actual del primaryStage.
-     * @param fxmlFile Ruta al archivo FXML.
-     * @param title Título de la nueva ventana.
-     * @param esDinamicaYMaximizada Si es true, la ventana será redimensionable y se abrirá maximizada.
-     *                             Si es false, será de tamaño fijo.
+     * Cambia la escena actual del primaryStage, guardando la actual en el historial.
      */
     public static void cambiarEscena(String fxmlFile, String title, boolean esDinamicaYMaximizada) {
-        if (primaryStageRef == null) {
-            System.err.println("Error en UtilidadesVentana: PrimaryStage no ha sido inicializado. Llama a setPrimaryStage() primero.");
-            return;
+        if (primaryStageRef == null) { /* ... error ... */ return; }
+
+        // Guardar la vista actual en el historial ANTES de cambiar,
+        // pero solo si no es la misma que la que vamos a cargar (evita duplicados al refrescar)
+        // y si fxmlActual no es null (primera carga).
+        if (fxmlActual != null && !fxmlActual.equals(fxmlFile)) {
+            // Necesitamos saber si la vista ACTUAL era dinámica o no.
+            // Esto es un poco más complejo de determinar sin pasar ese estado.
+            // Por ahora, asumiremos que podemos obtener el estado del stage actual.
+            // O, más simple, el que llama a "volver" debe saber a qué tipo de vista vuelve.
+            // Para un "volver" simple, la información guardada es la de la vista anterior.
+            boolean actualEsDinamica = primaryStageRef.isMaximized() || primaryStageRef.isFullScreen();
+            // No necesitamos guardar la actual si estamos haciendo "volver",
+            // eso se maneja en `volverAEscenaAnterior`.
+            // Este método `cambiarEscena` es para navegación "hacia adelante".
+            if(fxmlActual != null) { // Solo guardar si hay una vista actual definida
+                // Para determinar `actualEsDinamica` correctamente, necesitaríamos haberla guardado
+                // o inferirla. La forma más simple es que la VistaAnterior guarde su propio estado.
+                // Cuando llamamos a cambiarEscena, el fxmlActual y su configuración son lo que
+                // se convierte en la "vista anterior".
+                // De momento, no lo guardamos explícitamente si la siguiente vista es la misma.
+                // Esto necesita refinamiento para un historial robusto.
+                // Por simplicidad ahora, cada vez que se cambia de escena, guardamos la *anterior*
+                // (el `fxmlActual` que está a punto de ser reemplazado).
+
+                // Al navegar a una NUEVA escena (no al volver)
+                // guardamos la información de la escena que estamos dejando.
+                // El `esDinamicaYMaximizada` del `fxmlActual` es un poco un truco aquí.
+                // Lo ideal sería que VistaAnterior guarde este flag.
+                // Vamos a asumir que el `fxmlActual` tenía la configuración `actualEsDinamica`.
+                historialNavegacion.push(new VistaAnterior(fxmlActual, primaryStageRef.getTitle(), actualEsDinamica));
+                System.out.println("Historial: Añadido " + fxmlActual);
+            }
         }
+
+
         try {
             URL resourceUrl = UtilidadesVentana.class.getResource(fxmlFile);
-            if (resourceUrl == null) {
-                System.err.println("Error: No se pudo encontrar el archivo FXML: " + fxmlFile + ". Verifica la ruta.");
-                mostrarAlertaError("Error de Navegación", "No se pudo cargar la vista solicitada:\n" + fxmlFile);
-                return;
-            }
+            if (resourceUrl == null) { /* ... error ... */ return; }
             FXMLLoader loader = new FXMLLoader(resourceUrl);
             Parent root = loader.load();
 
             Scene currentScene = primaryStageRef.getScene();
             if (currentScene == null) {
-                // Definir un tamaño inicial antes de maximizar o fijar,
-                // esto ayuda a que el primer layout ocurra con dimensiones más predecibles.
-                double initialWidth = esDinamicaYMaximizada ? MIN_DYNAMIC_WIDTH : DEFAULT_FIXED_WIDTH;
-                double initialHeight = esDinamicaYMaximizada ? MIN_DYNAMIC_HEIGHT : DEFAULT_FIXED_HEIGHT;
-                currentScene = new Scene(root, initialWidth, initialHeight);
+                currentScene = new Scene(root);
                 primaryStageRef.setScene(currentScene);
             } else {
                 currentScene.setRoot(root);
@@ -119,20 +142,138 @@ public class UtilidadesVentana {
             } else {
                 configurarStageParaVentanaFixed(title);
             }
-            primaryStageRef.show(); // Asegurar que se muestre y apliquen los cambios
+            fxmlActual = fxmlFile; // Actualizar la vista actual
 
-        } catch (IOException e) {
-            System.err.println("Error al cargar FXML: " + fxmlFile);
-            e.printStackTrace();
-            mostrarAlertaError("Error de Carga", "Ocurrió un error al intentar cargar la vista:\n" + fxmlFile);
-        }
+        } catch (IOException e) { /* ... error ... */ }
     }
 
-    // Sobrecarga para mantener compatibilidad, asume tamaño fijo por defecto
     public static void cambiarEscena(String fxmlFile, String title) {
         cambiarEscena(fxmlFile, title, false);
     }
 
+
+    /**
+     * Vuelve a la escena anterior guardada en el historial.
+     */
+    public static void volverAEscenaAnterior() {
+        if (primaryStageRef == null) {
+            System.err.println("Error: PrimaryStage no inicializado.");
+            return;
+        }
+        if (historialNavegacion.isEmpty()) {
+            System.out.println("No hay escena anterior en el historial.");
+            // Opcional: ir a una pantalla principal por defecto o no hacer nada.
+            // cambiarEscena("/com/proyectointegral2/Vista/Login.fxml", "Login", false); // Ejemplo
+            return;
+        }
+
+        VistaAnterior vista = historialNavegacion.pop();
+        System.out.println("Historial: Volviendo a " + vista.fxmlFile);
+
+        try {
+            URL resourceUrl = UtilidadesVentana.class.getResource(vista.fxmlFile);
+            if (resourceUrl == null) {
+                System.err.println("Error: No se pudo encontrar FXML anterior: " + vista.fxmlFile);
+                // Intentar con la siguiente en el historial si existe, o mostrar error.
+                if (!historialNavegacion.isEmpty()) volverAEscenaAnterior();
+                else mostrarAlertaError("Error de Navegación", "No se pudo volver a la vista anterior.");
+                return;
+            }
+            FXMLLoader loader = new FXMLLoader(resourceUrl);
+            Parent root = loader.load();
+
+            Scene currentScene = primaryStageRef.getScene();
+            currentScene.setRoot(root); // No necesitamos crear nueva Scene
+
+            if (vista.esDinamicaYMaximizada) {
+                configurarStageVentanaDinamicaMaximizada(vista.title);
+            } else {
+                configurarStageParaVentanaFixed(vista.title);
+            }
+            fxmlActual = vista.fxmlFile; // Actualizar la vista actual
+
+        } catch (IOException e) {
+            System.err.println("Error al cargar FXML anterior: " + vista.fxmlFile);
+            e.printStackTrace();
+            mostrarAlertaError("Error de Carga", "Ocurrió un error al volver a la vista anterior.");
+        }
+    }
+
+
+    // --- Tus otros métodos (cambiarEscenaConRoot, mostrarVentanaPopup, alertas) ---
+    // El método cambiarEscenaConRoot también necesitaría lógica de historial similar a cambiarEscena
+    public static void cambiarEscenaConRoot(Parent newRoot, String title, boolean esDinamicaYMaximizada) {
+        if (primaryStageRef == null) { /* ... error ... */ return; }
+
+        // Guardar la vista actual en el historial ANTES de cambiar
+        if (fxmlActual != null) { // Solo si hay una vista actual que guardar
+            boolean actualEsDinamica = primaryStageRef.isMaximized() || primaryStageRef.isFullScreen();
+            historialNavegacion.push(new VistaAnterior(fxmlActual, primaryStageRef.getTitle(), actualEsDinamica));
+            System.out.println("Historial (con root): Añadido " + fxmlActual);
+        }
+
+        Scene currentScene = primaryStageRef.getScene();
+        if (currentScene == null) {
+            currentScene = new Scene(newRoot);
+            primaryStageRef.setScene(currentScene);
+        } else {
+            currentScene.setRoot(newRoot);
+        }
+
+        if (esDinamicaYMaximizada) {
+            configurarStageVentanaDinamicaMaximizada(title);
+        } else {
+            configurarStageParaVentanaFixed(title);
+        }
+        // Aquí no podemos saber el fxmlFile del newRoot fácilmente, así que fxmlActual
+        // no se actualiza de forma tan directa. Esto es una limitación si `volver` depende de fxmlActual.
+        // Una solución sería que cambiarEscenaConRoot también reciba el fxmlFile del newRoot.
+        // O que el "volver" no dependa de fxmlActual y siempre use la pila.
+        // Por ahora, fxmlActual no se actualiza aquí para evitar inconsistencias.
+        // Lo ideal es que `cambiarEscenaConRoot` se use menos para navegación principal
+        // y más para casos donde el `root` ya está preparado (ej. después de initData).
+    }
+
+    // ... (mostrarVentanaPopup, mostrarAlertaError, mostrarAlertaInformacion) ...
+    // (El código de estos métodos se mantiene como en tu versión)
+    public static <T> T mostrarVentanaPopup(String fxmlFile, String titulo, boolean esModal, Stage owner) {
+        try {
+            URL resourceUrl = UtilidadesVentana.class.getResource(fxmlFile);
+            if (resourceUrl == null) {
+                System.err.println("Error: No se pudo encontrar el archivo FXML para el pop-up: " + fxmlFile);
+                mostrarAlertaError("Error de Pop-up", "Vista no encontrada: " + fxmlFile);
+                return null;
+            }
+
+            FXMLLoader loader = new FXMLLoader(resourceUrl);
+            Parent root = loader.load();
+
+            Stage popupStage = new Stage();
+            popupStage.setTitle(titulo);
+
+            Scene popupScene = new Scene(root);
+            popupStage.setScene(popupScene);
+            popupStage.setResizable(false);
+
+            if (esModal) {
+                popupStage.initModality(Modality.WINDOW_MODAL);
+                if (owner != null) {
+                    popupStage.initOwner(owner);
+                } else if (primaryStageRef != null) {
+                    popupStage.initOwner(primaryStageRef);
+                }
+            }
+            popupStage.showAndWait();
+
+            return loader.getController();
+
+        } catch (IOException e) {
+            System.err.println("Error al cargar FXML para el pop-up: " + fxmlFile);
+            e.printStackTrace();
+            mostrarAlertaError("Error de Carga", "Ocurrió un error al cargar ventana emergente:\n" + fxmlFile);
+            return null;
+        }
+    }
 
     public static void mostrarAlertaError(String titulo, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -150,27 +291,7 @@ public class UtilidadesVentana {
         alert.showAndWait();
     }
 
-    public static void cambiarEscenaConRoot(Parent newRoot, String title, boolean esDinamicaYMaximizada) {
-        if (primaryStageRef == null) {
-            System.err.println("Error en UtilidadesVentana: PrimaryStage no ha sido inicializado.");
-            return;
-        }
-
-        Scene currentScene = primaryStageRef.getScene();
-        if (currentScene == null) {
-            double initialWidth = esDinamicaYMaximizada ? MIN_DYNAMIC_WIDTH : DEFAULT_FIXED_WIDTH;
-            double initialHeight = esDinamicaYMaximizada ? MIN_DYNAMIC_HEIGHT : DEFAULT_FIXED_HEIGHT;
-            currentScene = new Scene(newRoot, initialWidth, initialHeight);
-            primaryStageRef.setScene(currentScene);
-        } else {
-            currentScene.setRoot(newRoot);
-        }
-
-        if (esDinamicaYMaximizada) {
-            configurarStageVentanaDinamicaMaximizada(title);
-        } else {
-            configurarStageParaVentanaFixed(title);
-        }
-        primaryStageRef.show();
+    public static void setFxmlActual(String fxmlPath) {
+        fxmlActual = fxmlPath;
     }
 }
