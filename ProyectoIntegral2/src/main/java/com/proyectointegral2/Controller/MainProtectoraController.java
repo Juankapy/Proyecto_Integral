@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -97,4 +98,21 @@ public class MainProtectoraController {
 
     }
 
+    public void IrABandeja(MouseEvent mouseEvent) {
+        String bandejaCitaFxmlFile = "/com/proyectointegral2/Vista/BandejasCitas.fxml";
+        String bandejaCitaTitle = "Panel Cliente - Dogpuccino";
+        UtilidadesVentana.cambiarEscena(bandejaCitaFxmlFile, bandejaCitaTitle, true);
+    }
+
+    public void IrAPerfilUsuario(MouseEvent mouseEvent) {
+        String perfilUsuarioFxmlFile = "/com/proyectointegral2/Vista/PerfilUsuario.fxml";
+        String perfilUsuarioTitle = "Panel Cliente - Dogpuccino";
+        UtilidadesVentana.cambiarEscena(perfilUsuarioFxmlFile, perfilUsuarioTitle, true);
+    }
+
+    public void IrAFormularioPerro(ActionEvent actionEvent) {
+        String formularioPerroFxmlFile = "/com/proyectointegral2/Vista/FormularioPerro.fxml";
+        String formularioPerroTitle = "Panel Cliente - Dogpuccino";
+        UtilidadesVentana.cambiarEscena(formularioPerroFxmlFile, formularioPerroTitle, true);
+    }
 }

@@ -15,16 +15,7 @@ import javafx.scene.layout.GridPane;
 public class MainClienteController {
 
     @FXML
-    private Label nameAgeLabel_r0_c4;
-
-    @FXML
     private BorderPane mainBorderPane;
-
-    @FXML
-    private Label nameAgeLabel_r0_c3;
-
-    @FXML
-    private Label nameAgeLabel_r0_c2;
 
     @FXML
     private Label nameAgeLabel_r0_c1;
@@ -36,73 +27,82 @@ public class MainClienteController {
     private ImageView IconBandeja;
 
     @FXML
+    private ImageView ImgIconUsuario;
+
+    @FXML
     private Button BtnReservar;
 
     @FXML
     private TextField searchTextField;
 
     @FXML
+    private Label nameAgeLabel_r0_c11;
+
+    @FXML
     private ScrollPane dogScrollPane;
 
     @FXML
-    private ImageView dogImage_r1_c4;
+    private Label nameAgeLabel_r0_c11111;
 
     @FXML
-    private ImageView dogImage_r1_c3;
+    private Label nameAgeLabel_r0_c111111;
 
     @FXML
-    private ImageView dogImage_r1_c2;
+    private ImageView ImgPerro5;
 
     @FXML
-    private ImageView dogImage_r1_c1;
+    private ImageView ImgPerro6;
 
     @FXML
-    private ImageView dogImage_r1_c0;
+    private Label nameAgeLabel_r0_c11111111;
+
+    @FXML
+    private ImageView ImgPerro3;
+
+    @FXML
+    private ImageView ImgPerro4;
+
+    @FXML
+    private ImageView ImgPerro1;
+
+    @FXML
+    private ImageView ImgPerro2;
+
+    @FXML
+    private Label nameAgeLabel_r0_c1111;
 
     @FXML
     private Label nameAgeLabel_r0_c0;
 
     @FXML
-    private ImageView searchIcon;
+    private Label nameAgeLabel_r0_c111;
 
     @FXML
-    private Label nameAgeLabel_r1_c2;
-
-    @FXML
-    private Label nameAgeLabel_r1_c3;
-
-    @FXML
-    private Label nameAgeLabel_r1_c4;
+    private ImageView ImgPerro10;
 
     @FXML
     private Button BtnAdopciones;
 
     @FXML
-    private ImageView dogImage_r0_c4;
+    private ImageView ImgPerro9;
 
     @FXML
-    private ImageView dogImage_r0_c2;
+    private ImageView ImgPerro7;
 
     @FXML
-    private ImageView dogImage_r0_c3;
-
-    @FXML
-    private ImageView dogImage_r0_c0;
-
-    @FXML
-    private ImageView dogImage_r0_c1;
+    private ImageView ImgPerro8;
 
     @FXML
     private ImageView logoImageView;
 
     @FXML
+    private ImageView ImgIconBuscar;
+
+    @FXML
+    private Label nameAgeLabel_r0_c1111111;
+
+    @FXML
     private Label nameAgeLabel_r1_c0;
-
-    @FXML
-    private Label nameAgeLabel_r1_c1;
-
-    @FXML
-    private ImageView ImgIconUsuario;
 
     @FXML
     private Button BtnEventos;
@@ -137,4 +137,9 @@ public class MainClienteController {
         UtilidadesVentana.cambiarEscena(perfilUsuarioFxmlFile, perfilUsuarioTitle, true);
     }
 
+    public void IraDetallesPerro(MouseEvent mouseEvent) {
+        String detallesPerroFxmlFile = "/com/proyectointegral2/Vista/DetallesPerro.fxml";
+        String detallesPerroTitle = "Panel Cliente - Dogpuccino";
+        UtilidadesVentana.cambiarEscena(detallesPerroFxmlFile, detallesPerroTitle, true);
+    }
 }
