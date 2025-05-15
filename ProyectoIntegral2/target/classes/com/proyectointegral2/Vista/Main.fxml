@@ -30,11 +30,7 @@
          <children>
             <ImageView fx:id="logoImageView" fitHeight="76.0" fitWidth="179.0" pickOnBounds="true" preserveRatio="true">
                <image>
-<<<<<<< HEAD
-                  <Image url="@/assets/Imagenes/iconos/dogiconlateral.png" />
-=======
                   <Image url="@../../../assets/Imagenes/iconos/dogiconlateral.png" />
->>>>>>> main
                </image>
             </ImageView>
             <Region HBox.hgrow="ALWAYS" />
