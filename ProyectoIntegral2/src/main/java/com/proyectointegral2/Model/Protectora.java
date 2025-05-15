@@ -4,13 +4,14 @@ public class Protectora {
     private int id;
     private String cif;
     private String nombre;
-    private Direccion direccion; // Reutilizando la clase Direccion
+    private Direccion direccion;
     private String telefono;
     private String email;
     private String redesSociales;
+    private int idUsuario;
 
     // Constructor con todos los atributos
-    public Protectora(int id, String cif, String nombre, Direccion direccion, String telefono, String email, String redesSociales) {
+    public Protectora(int id, String cif, String nombre, Direccion direccion, String telefono, String email, String redesSociales, int idUsuario) {
         this.id = id;
         this.cif = cif;
         this.nombre = nombre;
@@ -18,6 +19,7 @@ public class Protectora {
         this.telefono = telefono;
         this.email = email;
         this.redesSociales = redesSociales;
+        this.idUsuario = idUsuario;
     }
     // Getters y Setters
     public int getId() {
@@ -62,5 +64,10 @@ public class Protectora {
     public void setRedesSociales(String redesSociales) {
         this.redesSociales = redesSociales;
     }
-
+    public int getIdUsuario() {
+        return idUsuario;
+    }
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
+    }
 }

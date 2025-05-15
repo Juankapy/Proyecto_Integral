@@ -25,17 +25,4 @@ public class UsuarioDao {
         }
         return null;
     }
-    public static Usuario obtenerPrimerUsuario() {
-        String sql = "SELECT * FROM usuario WHERE ID_USUARIO = 2";
-        try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return new Usuario(rs.getInt("id"), rs.getString("nombreusu"), rs.getString("contrasena"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }

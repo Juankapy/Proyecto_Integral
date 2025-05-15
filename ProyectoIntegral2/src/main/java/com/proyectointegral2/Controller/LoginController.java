@@ -56,6 +56,9 @@ public class LoginController {
             if (usuario != null) {
                 println("Usuario verificado: " + usuario.getNombreUsuario());
                 UtilidadesVentana.cambiarEscena(mainClienteFxmlFile, mainClienteTitle, true);
+            }else {
+                UtilidadesExcepciones.mostrarAdvertencia("El nombre de usuario o contraseña no son correctos.", "Error de inicio de sesión", "Fallo de credenciales");
+                println("Error al iniciar sesión: Usuario o contraseña incorrectos.");
             }
         } catch (Exception e) {
             UtilidadesExcepciones.mostrarError(e,"Error de inicio de sesión", "Usuario o contraseña incorrectos.");

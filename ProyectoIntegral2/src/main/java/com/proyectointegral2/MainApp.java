@@ -31,7 +31,7 @@ public class MainApp extends Application {
         Scene scene = new Scene(root);
 
         stage.setScene(scene);
-        UtilidadesVentana.cambiarEscena(initialFxmlPath, "Inicio de Sesión - Dogpuccino", false); // Carga inicial con config fija
+        UtilidadesVentana.cambiarEscena(initialFxmlPath, "Inicio de Sesión - Dogpuccino", false);
         stage.show();
     }
 
