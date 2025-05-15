@@ -11,11 +11,24 @@ import java.sql.SQLException;
 public class UsuarioDao {
 
     public static Usuario verificacionUsuario(String nombreUsu, String contrasena) {
-        String sql = "SELECT * FROM usuario WHERE NOMBRE_USU = ? AND CONTRASENA = ?";
+        String sql = "SELECT ID_USUARIO, NOMBRE_USU, CONTRASENA FROM usuario WHERE NOMBRE_USU = ? AND CONTRASENA = ?";
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, nombreUsu);
             stmt.setString(2, contrasena);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new Usuario(rs.getInt("id_usuario"), rs.getString("nombre_usu"), rs.getString("contrasena"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public static Usuario obtenerPrimerUsuario() {
+        String sql = "SELECT * FROM usuario WHERE ID_USUARIO = 2";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new Usuario(rs.getInt("id"), rs.getString("nombreusu"), rs.getString("contrasena"));
