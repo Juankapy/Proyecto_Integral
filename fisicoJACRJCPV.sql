@@ -1,4 +1,4 @@
--- Tablas dependientes (relaciones)
+/*-- Tablas dependientes (relaciones)
 DROP TABLE Notificaciones_Recibidas;
 DROP TABLE Identificacion_Patologias;
 DROP TABLE Peticiones_Adopcion;
@@ -13,7 +13,7 @@ DROP TABLE Raza;
 DROP TABLE Protectora;
 DROP TABLE Cliente;
 DROP TABLE Usuario;
-
+*/
 -- Tabla Usuario
 CREATE TABLE Usuario (
     ID_Usuario NUMBER PRIMARY KEY,
@@ -137,3 +137,85 @@ CREATE TABLE Redes_Sociales (
     CONSTRAINT pk_red_social PRIMARY KEY (ID_Protectora, Plataforma),
     FOREIGN KEY (ID_Protectora) REFERENCES Protectora(ID_Protectora)
 );
+
+-- 1. Usuario
+INSERT INTO Usuario (ID_Usuario, Nombre_Usu, Contrasena)
+VALUES (2, '1', '1');
+
+-- 2. Cliente
+INSERT INTO Cliente (
+    ID_Cliente, NIF, Nombre, Apellido1, Apellido2,
+    Provincia, Ciudad, Calle, CP, Telefono, Email, ID_Usuario
+)
+VALUES (
+    1, '12345678A', 'Juan', 'Pérez', 'Gómez',
+    'Madrid', 'Madrid', 'Calle Falsa 123', '28080', '600123456', 'juan@example.com', 1
+);
+
+-- 3. Protectora
+INSERT INTO Protectora (
+    ID_Protectora, Nombre, Telefono, Email,
+    Provincia, Ciudad, Calle, CP, ID_Usuario
+)
+VALUES (
+    1, 'Protectora Amigos', '910123456', 'contacto@protectora.org',
+    'Madrid', 'Madrid', 'Av. Libertad 45', '28080', NULL
+);
+
+-- 4. Raza
+INSERT INTO Raza (ID_Raza, Nombre_Raza)
+VALUES (1, 'Labrador');
+
+-- 5. Perros
+INSERT INTO Perros (
+    ID_Perro, Nombre, Sexo, FechaNacimiento, Adoptado, Foto,
+    ID_Protectora, ID_Raza
+)
+VALUES (
+    1, 'Rocky', 'Macho', TO_DATE('2020-05-10', 'YYYY-MM-DD'), 'N', NULL,
+    1, 1
+);
+
+-- 6. Patologia
+INSERT INTO Patologia (ID_Patologia, Nombre)
+VALUES (1, 'Displasia de cadera');
+
+-- 7. Identificacion_Patologias
+INSERT INTO Identificacion_Patologias (ID_Perro, ID_Patologia)
+VALUES (1, 1);
+
+-- 8. Reservas_Citas
+INSERT INTO Reservas_Citas (
+    ID_Cita, Fecha, Hora, Pago, ID_Cliente, ID_Perro
+)
+VALUES (
+    1, TO_DATE('2025-06-15', 'YYYY-MM-DD'), '10:30', 10, 1, 1
+);
+
+-- 9. Peticiones_Adopcion
+INSERT INTO Peticiones_Adopcion (
+    ID_Peticion, Fecha, Estado, ID_Cliente, ID_Perro
+)
+VALUES (
+    1, TO_DATE('2025-06-01', 'YYYY-MM-DD'), 'Pendiente', 1, 1
+);
+
+-- 10. Notificacion
+INSERT INTO Notificacion (
+    ID_Notificacion, Fecha, Descripcion, Estado
+)
+VALUES (
+    1, TO_DATE('2025-05-10', 'YYYY-MM-DD'), 'Tiene una nueva cita programada.', 'No Leída'
+);
+
+-- 11. Notificaciones_Recibidas
+INSERT INTO Notificaciones_Recibidas (ID_Usuario, ID_Notificacion)
+VALUES (1, 1);
+
+-- 12. Redes_Sociales
+INSERT INTO Redes_Sociales (
+    Plataforma, URL, ID_Protectora
+)
+VALUES (
+    'Instagram', 'https://instagram.com/protectoraamigos', 1
+);*/

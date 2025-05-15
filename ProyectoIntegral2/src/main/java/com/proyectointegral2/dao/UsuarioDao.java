@@ -10,15 +10,15 @@ import java.sql.SQLException;
 
 public class UsuarioDao {
 
-    public static Usuario buscarPorCorreoYContrasena(String correo, String contraseña) {
-        String sql = "SELECT * FROM usuarios WHERE correo = ? AND contrasena = ?";
+    public static Usuario verificacionUsuario(String nombreUsu, String contrasena) {
+        String sql = "SELECT * FROM usuario WHERE NOMBRE_USU = ? AND CONTRASENA = ?";
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, correo);
-            stmt.setString(2, contraseña);
+            stmt.setString(1, nombreUsu);
+            stmt.setString(2, contrasena);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return new Usuario(rs.getInt("id"), rs.getString("correo"), rs.getString("contrasena"));
+                return new Usuario(rs.getInt("id"), rs.getString("nombreusu"), rs.getString("contrasena"));
             }
         } catch (SQLException e) {
             e.printStackTrace();

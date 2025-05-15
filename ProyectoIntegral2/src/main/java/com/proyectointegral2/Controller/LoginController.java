@@ -29,7 +29,7 @@ public class LoginController {
     private TextField TxtContra;
 
     @FXML
-    private TextField TxtCorreo;
+    private TextField TxtNombreUsuario;
 
     @FXML
     private Hyperlink HyRegistrarse;
@@ -39,9 +39,21 @@ public class LoginController {
 
     @FXML
     void ConfirmarInicio(MouseEvent event) {
-        String mainClienteFxmlFile = "/com/proyectointegral2/Vista/Main.fxml";
-        String mainClienteTitle = "Panel Cliente - Dogpuccino";
-        UtilidadesVentana.cambiarEscena(mainClienteFxmlFile, mainClienteTitle, true);
+        String nombreUsu = TxtNombreUsuario.getText();
+        String contrasena = TxtContra.getText();
+
+        var usuario = com.proyectointegral2.dao.UsuarioDao.verificacionUsuario(nombreUsu, contrasena);
+
+        if (usuario != null) {
+            String mainClienteFxmlFile = "/com/proyectointegral2/Vista/Main.fxml";
+            String mainClienteTitle = "Panel Cliente - Dogpuccino";
+            UtilidadesVentana.cambiarEscena(mainClienteFxmlFile, mainClienteTitle, true);
+        } else {
+            UtilidadesVentana.mostrarAlertaError(
+                    "Credenciales incorrectas",
+                    "El correo o la contraseña son incorrectos. Intenta nuevamente."
+            );
+        }
     }
 
     @FXML
