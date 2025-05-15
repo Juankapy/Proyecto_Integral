@@ -14,11 +14,14 @@ import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+// No necesitas ActionEvent si todos tus botones/iconos usan onMouseClicked
+// import javafx.event.ActionEvent;
+
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.ArrayList; // Si ClienteDao.obtenerHistorialUsuario devuelve List
+import java.util.List;      // Si ClienteDao.obtenerHistorialUsuario devuelve List
 import java.util.Objects;
 
 public class PerfilUsuarioController {
@@ -43,7 +46,7 @@ public class PerfilUsuarioController {
 
     @FXML
     public void initialize() {
-        //this.clienteDAO = new ClienteDao(); // Instanciar tu DAO específico para Clientes/Usuarios
+        //this.clienteDAO = new ClienteDao();  Instanciar tu DAO específico para Clientes/Usuarios
         // La carga de datos se hará a través de initData()
         // cargarDatosEjemplo(); // Puedes llamar a esto si initData no se llama inmediatamente para tener algo visual
     }
@@ -113,17 +116,17 @@ public class PerfilUsuarioController {
 //            } else {
 //                cargarImagenPlaceholder();
 //            }
-
-            // --- LÓGICA DAO PARA OBTENER HISTORIAL ---
-            // List<String> historial = clienteDAO.obtenerHistorialCitasEventos(idUsuarioLogueado); // Asume este método en ClienteDao
-            // ----------------------------------------
-
-            // SIMULACIÓN HISTORIAL
-            List<String> historial = new ArrayList<>();
-            historial.add("15/05/2024 - Cita con Rocky (Ejemplo DAO)");
-            historial.add("01/05/2024 - Evento: Puertas Abiertas (Ejemplo DAO)");
-            // --- FIN SIMULACIÓN HISTORIAL ---
-
+//
+//            // --- LÓGICA DAO PARA OBTENER HISTORIAL ---
+//            // List<String> historial = clienteDAO.obtenerHistorialCitasEventos(idUsuarioLogueado); // Asume este método en ClienteDao
+//            // ----------------------------------------
+//
+//            // SIMULACIÓN HISTORIAL
+//            List<String> historial = new ArrayList<>();
+//            historial.add("15/05/2024 - Cita con Rocky (Ejemplo DAO)");
+//            historial.add("01/05/2024 - Evento: Puertas Abiertas (Ejemplo DAO)");
+//            // --- FIN SIMULACIÓN HISTORIAL ---
+//
 //            if (historial != null && !historial.isEmpty()) {
 //                listViewHistorial.setItems(FXCollections.observableArrayList(historial));
 //            } else {
@@ -203,17 +206,12 @@ public class PerfilUsuarioController {
     }
 
     @FXML
-    void handleVolver(MouseEvent event) {
-        System.out.println("Icono Volver presionado en PerfilUsuario. Navegando a MainCliente...");
-        // Asume que la pantalla principal del cliente es MainCliente.fxml y es dinámica
-        String mainClienteFxml = "/com/proyectointegral2/Vista/MainCliente.fxml"; // VERIFICA ESTA RUTA
-        String titulo = "Panel Principal Cliente";
-
-        // true porque MainCliente es dinámica (pantalla completa/redimensionable)
-        UtilidadesVentana.cambiarEscena(mainClienteFxml, titulo, true);
+    void Volver(MouseEvent event) {
+        System.out.println("Volviendo a la pantalla anterior...");
+        UtilidadesVentana.volverAEscenaAnterior();
     }
 
-    // Placeholder para un método que obtendría el ID del usuario logueado.
+    // Placeholder para un metodo que obtendría el ID del usuario logueado.
     // En una aplicación real, esto vendría de un gestor de sesión o se pasaría al controlador.
     // private int obtenerIdUsuarioLogueadoDesdeSesion() {
     //     // Lógica para obtener el ID del usuario actual.

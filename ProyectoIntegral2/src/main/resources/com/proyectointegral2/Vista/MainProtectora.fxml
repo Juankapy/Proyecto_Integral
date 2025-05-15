@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane fx:id="mainBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1100.0" style="-fx-background-color: #FDF5E6;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyectointegral2.Controller.MainProtectoraController">
+<BorderPane fx:id="mainBorderPane" prefHeight="900.0" prefWidth="1080.0" style="-fx-background-color: #FDF5E6;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyectointegral2.Controller.MainProtectoraController">
     <top>
         <HBox alignment="CENTER_LEFT" prefHeight="70.0" spacing="10.0" BorderPane.alignment="CENTER">
             <padding>
@@ -20,7 +20,7 @@
                     </image>
                 </ImageView>
                 <Region HBox.hgrow="ALWAYS" />
-                <ImageView fx:id="cartIcon" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                <ImageView fx:id="ImgIconBandeja" fitHeight="40.0" fitWidth="40.0" onMouseClicked="#IrABandeja" pickOnBounds="true" preserveRatio="true">
                     <image>
                         <Image url="@../../../assets/Imagenes/iconos/bandeja-de-entrada-blue.png" />
                     </image>
@@ -28,7 +28,7 @@
                         <Insets right="10.0" />
                     </HBox.margin>
                 </ImageView>
-                <ImageView fx:id="userIcon" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                <ImageView fx:id="ImgIconUsuario" fitHeight="40.0" fitWidth="40.0" onMouseClicked="#IrAPerfilUsuario" pickOnBounds="true" preserveRatio="true">
                     <image>
                         <Image url="@../../../assets/Imagenes/iconos/usuario-main-blue.png" />
                     </image>
@@ -48,7 +48,7 @@
                             <children>
                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
                                     <children>
-                                        <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-border-width: 0 0 3 0; -fx-padding: 0 0 5 0;" text="Mis perros en adopción">
+                                        <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-border-width: 0 0 3 0; -fx-padding: 0 0 5 0; -fx-text-fill:black" text="Mis perros en adopción">
                                             <font>
                                                 <Font name="System Bold" size="22.0" />
                                             </font>
@@ -65,7 +65,7 @@
                                     </children>
                                 </HBox>
 
-                                <GridPane fx:id="dogGrid" hgap="20.0" vgap="20.0">
+                                <GridPane fx:id="dogGrid" hgap="20.0" prefHeight="324.0" prefWidth="908.0" vgap="20.0">
                                     <columnConstraints>
                                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="220.0" />
                                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="220.0" />
@@ -78,27 +78,50 @@
 
                                     </rowConstraints>
                                     <children>
-                                        <VBox alignment="TOP_LEFT" prefWidth="220.0" spacing="0.0" style="-fx-background-color: white; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                        <VBox alignment="TOP_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="304.0" prefWidth="181.0" spacing="0.0" style="-fx-background-color: white; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="0">
                                             <children>
-                                                <ImageView fitHeight="180.0" fitWidth="220.0" pickOnBounds="true">
+                                                <ImageView fitHeight="180.0" fitWidth="179.0" pickOnBounds="true">
                                                     <image><Image url="@../../../assets/Imagenes/perros/perro6.jpg" /></image>
                                                 </ImageView>
                                                 <Label alignment="CENTER" prefHeight="40.0" prefWidth="220.0" style="-fx-background-color: #A9D18E; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;" text="Nombre, edad" />
                                                 <VBox spacing="4.0" style="-fx-padding: 10;">
                                                    <children>
-                                                       <Label text="Raza: Ejemplo" />
-                                                       <Label text="Descripción: Ejemplo." wrapText="true" />
+                                                       <Label style="-fx-text-fill:black" text="Raza: Ejemplo" />
+                                                       <Label style="-fx-text-fill:black" text="Descripción: Ejemplo." wrapText="true" />
                                                    </children>
                                                 </VBox>
                                                 <Region VBox.vgrow="ALWAYS" />
                                                 <HBox alignment="CENTER_RIGHT" spacing="10.0" style="-fx-padding: 0 10 10 10;">
                                                    <children>
-                                                       <Button onMouseClicked="#Editar" style="-fx-background-color: transparent; -fx-border-color: #3498DB; -fx-text-fill: #3498DB; -fx-border-radius: 3; -fx-border-width: 1.5px;" text="Editar" />
-                                                       <Button onMouseClicked="#Eliminar" style="-fx-background-color: transparent; -fx-border-color: #E74C3C; -fx-text-fill: #E74C3C; -fx-border-radius: 3; -fx-border-width: 1.5px;" text="Eliminar" />
+                                                       <Button fx:id="BtnEditar1" onAction="#IrAFormularioPerro" onMouseClicked="#Editar" style="-fx-background-color: transparent; -fx-border-color: #3498DB; -fx-text-fill: #3498DB; -fx-border-radius: 3; -fx-border-width: 1.5px;" text="Editar" />
+                                                       <Button fx:id="BtnEliminar1" onAction="#Eliminar" onMouseClicked="#Eliminar" style="-fx-background-color: transparent; -fx-border-color: #E74C3C; -fx-text-fill: #E74C3C; -fx-border-radius: 3; -fx-border-width: 1.5px;" text="Eliminar" />
                                                    </children>
                                                 </HBox>
                                             </children>
                                         </VBox>
+                              <VBox alignment="TOP_LEFT" layoutX="20.0" layoutY="20.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="304.0" prefWidth="181.0" spacing="0.0" style="-fx-background-color: white; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);" GridPane.columnIndex="1">
+                                 <children>
+                                    <ImageView fitHeight="180.0" fitWidth="179.0" pickOnBounds="true">
+                                       <image>
+                                          <Image url="@../../../assets/Imagenes/perros/perro14.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Label alignment="CENTER" prefHeight="40.0" prefWidth="220.0" style="-fx-background-color: #A9D18E; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;" text="Nombre, edad" />
+                                    <VBox spacing="4.0" style="-fx-padding: 10;">
+                                       <children>
+                                          <Label style="-fx-text-fill:black" text="Raza: Ejemplo" />
+                                          <Label style="-fx-text-fill:black" text="Descripción: Ejemplo." wrapText="true" />
+                                       </children>
+                                    </VBox>
+                                    <Region VBox.vgrow="ALWAYS" />
+                                    <HBox alignment="CENTER_RIGHT" spacing="10.0" style="-fx-padding: 0 10 10 10;">
+                                       <children>
+                                          <Button fx:id="BtnEditar2" onAction="#IrAFormularioPerro" onMouseClicked="#Editar" style="-fx-background-color: transparent; -fx-border-color: #3498DB; -fx-text-fill: #3498DB; -fx-border-radius: 3; -fx-border-width: 1.5px;" text="Editar" />
+                                          <Button fx:id="BtnEliminar2" onAction="#Eliminar" onMouseClicked="#Eliminar" style="-fx-background-color: transparent; -fx-border-color: #E74C3C; -fx-text-fill: #E74C3C; -fx-border-radius: 3; -fx-border-width: 1.5px;" text="Eliminar" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
                                     </children>
                                     <padding>
                                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

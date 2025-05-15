@@ -1,10 +1,12 @@
 package com.proyectointegral2.Controller;
 
 
+import com.proyectointegral2.utils.UtilidadesVentana;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 
 public class FormularioPerroController {
     @FXML
@@ -54,4 +56,11 @@ public class FormularioPerroController {
     }
 
 
+    @FXML
+    private void Volver(MouseEvent event) {
+        String mainProtectoraFxml = "/com/proyectointegral2/Vista/MainProtectora.fxml";
+        String mainProtectoraTitle = "Inicio de Sesión - Dogpuccino";
+        UtilidadesVentana.cambiarEscena(mainProtectoraFxml, mainProtectoraTitle, false);
+
+    }
 }

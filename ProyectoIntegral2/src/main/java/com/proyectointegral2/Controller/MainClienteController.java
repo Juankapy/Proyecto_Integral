@@ -1,36 +1,23 @@
 package com.proyectointegral2.Controller;
+import com.proyectointegral2.utils.UtilidadesVentana;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 
 public class MainClienteController {
 
     @FXML
-    private Label nameAgeLabel_r0_c4;
-
-    @FXML
     private BorderPane mainBorderPane;
-
-    @FXML
-    private Label nameAgeLabel_r0_c3;
-
-    @FXML
-    private Label nameAgeLabel_r0_c2;
 
     @FXML
     private Label nameAgeLabel_r0_c1;
@@ -42,76 +29,86 @@ public class MainClienteController {
     private ImageView IconBandeja;
 
     @FXML
+    private ImageView ImgIconUsuario;
+
+    @FXML
     private Button BtnReservar;
 
     @FXML
     private TextField searchTextField;
 
     @FXML
+    private Label nameAgeLabel_r0_c11;
+
+    @FXML
     private ScrollPane dogScrollPane;
 
     @FXML
-    private ImageView dogImage_r1_c4;
+    private Label nameAgeLabel_r0_c11111;
 
     @FXML
-    private ImageView dogImage_r1_c3;
+    private Label nameAgeLabel_r0_c111111;
 
     @FXML
-    private ImageView dogImage_r1_c2;
+    private ImageView ImgPerro5;
 
     @FXML
-    private ImageView dogImage_r1_c1;
+    private ImageView ImgPerro6;
 
     @FXML
-    private ImageView dogImage_r1_c0;
+    private Label nameAgeLabel_r0_c11111111;
+
+    @FXML
+    private ImageView ImgPerro3;
+
+    @FXML
+    private ImageView ImgPerro4;
+
+    @FXML
+    private ImageView ImgPerro1;
+
+    @FXML
+    private ImageView ImgPerro2;
+
+    @FXML
+    private Label nameAgeLabel_r0_c1111;
 
     @FXML
     private Label nameAgeLabel_r0_c0;
 
     @FXML
-    private ImageView searchIcon;
+    private Label nameAgeLabel_r0_c111;
 
     @FXML
-    private Label nameAgeLabel_r1_c2;
-
-    @FXML
-    private Label nameAgeLabel_r1_c3;
-
-    @FXML
-    private Label nameAgeLabel_r1_c4;
+    private ImageView ImgPerro10;
 
     @FXML
     private Button BtnAdopciones;
 
     @FXML
-    private ImageView dogImage_r0_c4;
+    private ImageView ImgPerro9;
 
     @FXML
-    private ImageView dogImage_r0_c2;
+    private ImageView ImgPerro7;
 
     @FXML
-    private ImageView dogImage_r0_c3;
-
-    @FXML
-    private ImageView dogImage_r0_c0;
-
-    @FXML
-    private ImageView dogImage_r0_c1;
+    private ImageView ImgPerro8;
 
     @FXML
     private ImageView logoImageView;
 
     @FXML
+    private ImageView ImgIconBuscar;
+
+    @FXML
+    private Label nameAgeLabel_r0_c1111111;
+
+    @FXML
     private Label nameAgeLabel_r1_c0;
 
     @FXML
-    private Label nameAgeLabel_r1_c1;
-
-    @FXML
-    private ImageView userIcon;
-
-    @FXML
     private Button BtnEventos;
+
 
     @FXML
     void Reservar(ActionEvent event) {
@@ -129,13 +126,53 @@ public class MainClienteController {
     }
 
     @FXML
-    void Bandeja(ActionEvent event) {
+    void Bandeja(MouseEvent event) {
+            System.out.println("Abriendo bandeja de citas como pop-up...");
 
-    }
+            String bandejaFxml = "/com/proyectointegral2/Vista/BandejasCitas.fxml";
+            String titulo = "Mis Citas Programadas";
+
+            Stage ownerStage = null;
+            if (event.getSource() instanceof Node) {
+                ownerStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            } else {
+                ownerStage = UtilidadesVentana.getPrimaryStage(); // Necesitarías un getPrimaryStage() en UtilidadesVentana o pasar MainApp.getPrimaryStage()
+            }
+            BandejaCitasController bandejaController = UtilidadesVentana.mostrarVentanaPopup(bandejaFxml, titulo, true, ownerStage);
+
+            if (bandejaController != null) {
+                System.out.println("Pop-up de bandeja de citas mostrado.");
+            } else {
+                System.err.println("No se pudo mostrar el pop-up de bandeja de citas.");
+            }
+        }
+
 
     @FXML
-    void DetallesUsuario(ActionEvent event) {
-
+    void DetallesUsuario(MouseEvent event) {
+        String perfilUsuarioFxmlFile = "/com/proyectointegral2/Vista/PerfilUsuario.fxml";
+        String perfilUsuarioTitle = "Panel Cliente - Dogpuccino";
+        UtilidadesVentana.cambiarEscena(perfilUsuarioFxmlFile, perfilUsuarioTitle, true);
     }
 
+    public void IraDetallesPerro(MouseEvent mouseEvent) {
+        System.out.println("Abriendo bandeja de citas como pop-up...");
+
+        String bandejaFxml = "/com/proyectointegral2/Vista/DetallesPerro.fxml";
+        String titulo = "Detalle Perro";
+
+        Stage ownerStage = null;
+        if (mouseEvent.getSource() instanceof Node) {
+            ownerStage = (Stage) ((Node) mouseEvent.getSource()).getScene().getWindow();
+        } else {
+            ownerStage = UtilidadesVentana.getPrimaryStage(); // Necesitarías un getPrimaryStage() en UtilidadesVentana o pasar MainApp.getPrimaryStage()
+        }
+        BandejaCitasController bandejaController = UtilidadesVentana.mostrarVentanaPopup(bandejaFxml, titulo, true, ownerStage);
+
+        if (bandejaController != null) {
+            System.out.println("Pop-up de bandeja de citas mostrado.");
+        } else {
+            System.err.println("No se pudo mostrar el pop-up de bandeja de citas.");
+        }
+    }
 }
