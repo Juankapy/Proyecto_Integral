@@ -25,7 +25,6 @@
          <children>
             <ImageView fx:id="logoImageView" fitHeight="76.0" fitWidth="179.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <!-- RUTA CAMBIADA: Asume que 'assets' está en la raíz de resources -->
                   <Image url="@/assets/Imagenes/iconos/dogiconlateral.png" />
                </image>
             </ImageView>
