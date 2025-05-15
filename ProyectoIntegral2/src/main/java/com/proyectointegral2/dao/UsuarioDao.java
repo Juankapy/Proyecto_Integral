@@ -1,24 +1,28 @@
 package com.proyectointegral2.dao;
 
+import com.proyectointegral2.Model.Usuario;
 import com.proyectointegral2.utils.ConexionDB;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class UsuarioDao {
 
-    public boolean verificarCredenciales(String correo, String contrasena) {
-        String query = "SELECT * FROM usuarios WHERE correo = ? AND contrasena = ?";
-        try (Connection connection = ConexionDB.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, correo);
-            statement.setString(2, contrasena);
-            ResultSet resultSet = statement.executeQuery();
-            return resultSet.next();
-        } catch (Exception e) {
+    public static Usuario buscarPorCorreoYContrasena(String correo, String contraseña) {
+        String sql = "SELECT * FROM usuarios WHERE correo = ? AND contrasena = ?";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, correo);
+            stmt.setString(2, contraseña);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new Usuario(rs.getInt("id"), rs.getString("correo"), rs.getString("contrasena"));
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
+        return null;
     }
 }
