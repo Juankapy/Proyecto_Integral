@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.image.Image?>
+
+<StackPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyectointegral2.Controller.BandejaCitasController">
+    <children>
+        <BorderPane fx:id="mainContentPane" style="-fx-background-color: #FDF5E6;">
+            <top>
+                <VBox alignment="CENTER" style="-fx-background-color: #E67E22;" BorderPane.alignment="CENTER">
+                    <children>
+                        <Label text="Mis Citas con Perritos" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="28.0" />
+                            </font>
+                            <padding>
+                                <Insets bottom="15.0" top="15.0" />
+                            </padding>
+                        </Label>
+                    </children>
+                </VBox>
+            </top>
+            <center>
+                <ScrollPane fx:id="citasScrollPane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="397.0" prefWidth="446.0" style="-fx-background-color: transparent; -fx-background: transparent;" BorderPane.alignment="CENTER">
+                    <content>
+                        <VBox fx:id="citasContainerVBox" alignment="TOP_CENTER" prefHeight="134.0" prefWidth="283.0" spacing="20.0">
+                            <padding>
+                                <Insets bottom="20.0" left="50.0" right="50.0" top="30.0" />
+                            </padding>
+                           <children>
+                               <!-- Las tarjetas de cita se añadirán aquí dinámicamente -->
+                               <!-- Ejemplo de una tarjeta (se creará en el controlador) -->
+   
+                               <VBox maxWidth="600.0" spacing="8.0" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #D0D0D0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);">
+                                   <children>
+                                       <Label text="Max - Siberian Husky" style="-fx-text-fill: black">
+                                 <font>
+                                    <Font name="System Bold" size="21.0" />
+                                 </font>
+                              </Label>
+                                       <Label text="Fecha: 30/04/2025" style="-fx-text-fill: black"/>
+                                       <Label text="Hora: 17:00" style="-fx-text-fill: black" />
+                                       <Label text="Lugar: Dogpuccino"  style="-fx-text-fill: black"/>
+                                       <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                                           <children>
+                                               <Button style="-fx-background-color: #3498DB; -fx-text-fill: white; -fx-background-radius: 5;" text="Modificar" />
+                                               <Button style="-fx-background-color: #E74C3C; -fx-text-fill: white; -fx-background-radius: 5;" text="Cancelar" />
+                                           </children>
+                                       </HBox>
+                                   </children>
+                               </VBox>
+                           </children>
+
+                        </VBox>
+                    </content>
+                </ScrollPane>
+            </center>
+            <bottom>
+                <HBox alignment="CENTER" prefHeight="80.0" BorderPane.alignment="CENTER">
+                    <children>
+                        <ImageView fx:id="logoFooter" fitHeight="109.0" fitWidth="102.0" pickOnBounds="true" preserveRatio="true">
+                            <image><Image url="@../../../assets/Imagenes/iconos/icono-bgless.png" /></image>
+                        </ImageView>
+                    </children>
+                </HBox>
+            </bottom>
+        </BorderPane>
+        <Label fx:id="lblNoCitas" style="-fx-font-size: 22px; -fx-text-fill: #707070;" text="No hay citas disponibles" visible="false">
+            <font>
+                <Font name="System Italic" size="22.0" />
+            </font>
+        </Label>
+    </children>
+</StackPane>

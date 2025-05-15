@@ -44,7 +44,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/artur/Desktop/Proyecto_Integral/Proyecto_Integral&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/damda/OneDrive/Documentos/GitHub/Proyecto_Integral/ProyectoIntegral2&quot;,
     &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -66,8 +66,13 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
+<<<<<<< HEAD
         <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.25410.129" />
         <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-IU-251.25410.129" />
+=======
+        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.25659.59" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.25659.59" />
+>>>>>>> main
       </set>
     </attachedChunks>
   </component>
@@ -86,9 +91,14 @@
       <workItem from="1747215571683" duration="75000" />
       <workItem from="1747216559492" duration="3463000" />
       <workItem from="1747234586657" duration="2105000" />
+<<<<<<< HEAD
       <workItem from="1747297115313" duration="1276000" />
       <workItem from="1747298408866" duration="40000" />
       <workItem from="1747298496922" duration="316000" />
+=======
+      <workItem from="1747293459989" duration="2737000" />
+      <workItem from="1747296231487" duration="2286000" />
+>>>>>>> main
     </task>
     <servers />
   </component>

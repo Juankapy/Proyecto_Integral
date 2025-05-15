@@ -59,7 +59,9 @@ public class RegistroClienteController {
 
     @FXML
     void ConfirmarRegistro(ActionEvent event) {
-
+        String mainClienteFxmlFile = "/com/proyectointegral2/Vista/Main.fxml";
+        String mainClienteTitle = "Panel Cliente - Dogpuccino";
+        UtilidadesVentana.cambiarEscena(mainClienteFxmlFile, mainClienteTitle, true);
     }
     @Deprecated
     void fafafa(ActionEvent event) {

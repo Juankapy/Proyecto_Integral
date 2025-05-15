@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane fx:id="formularioUsuarioPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="600.0" style="-fx-background-color: #F5F1EA;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyectointegral2.Controller.FormularioUsuarioController">
+<BorderPane fx:id="formularioUsuarioPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="600.0" style="-fx-background-color: #F5F1EA;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyectointegral2.Controller.FormularioUsuarioController">
     <top>
         <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="15.0" BorderPane.alignment="CENTER">
             <padding>
@@ -67,31 +68,31 @@
                             <children>
                                 <Label text="Nombre:" GridPane.halignment="RIGHT">
                                     <font><Font name="System Bold" size="14.0" /></font></Label>
-                                <TextField fx:id="TxtNombre" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" GridPane.columnIndex="1" />
+                                <TextField fx:id="TxtNombre" style="-fx-border-color: #d2691e; -fx-border-radius: 5; -fx-background-color: #f5f1ea;" GridPane.columnIndex="1" />
 
                                 <Label text="Apellidos:" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
                                     <font><Font name="System Bold" size="14.0" /></font></Label>
-                                <TextField fx:id="TxtApellidos" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                <TextField fx:id="TxtApellidos" style="-fx-border-color: #d2691e; -fx-border-radius: 5; -fx-background-color: #f5f1ea;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
                                 <Label text="Email:" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
                                     <font><Font name="System Bold" size="14.0" /></font></Label>
-                                <TextField fx:id="TxtEmail" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                <TextField fx:id="TxtEmail" style="-fx-border-color: #d2691e; -fx-border-radius: 5; -fx-background-color: #f5f1ea;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
                                 <Label text="Teléfono:" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
                                     <font><Font name="System Bold" size="14.0" /></font></Label>
-                                <TextField fx:id="TxtTelefono" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                <TextField fx:id="TxtTelefono" style="-fx-border-color: #d2691e; -fx-border-radius: 5; -fx-background-color: #f5f1ea;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
                                 <Label text="Dirección:" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
                                     <font><Font name="System Bold" size="14.0" /></font></Label>
-                                <TextField fx:id="TxtDireccion" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                <TextField fx:id="TxtDireccion" style="-fx-border-color: #d2691e; -fx-border-radius: 5; -fx-background-color: #f5f1ea;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 
                                 <Label text="Contraseña:" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
                                     <font><Font name="System Bold" size="14.0" /></font></Label>
-                                <PasswordField fx:id="TxtPassword" promptText="Dejar en blanco para no cambiar" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                <PasswordField fx:id="TxtPassword" promptText="Dejar en blanco para no cambiar" style="-fx-border-color: #d2691e; -fx-border-radius: 5; -fx-background-color: #f5f1ea;" GridPane.columnIndex="1" GridPane.rowIndex="5" />
 
                                 <Label text="Confirmar Contraseña:" GridPane.halignment="RIGHT" GridPane.rowIndex="6">
                                     <font><Font name="System Bold" size="14.0" /></font></Label>
-                                <PasswordField fx:id="TxtConfirmPassword" promptText="Dejar en blanco para no cambiar" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                <PasswordField fx:id="TxtConfirmPassword" promptText="Dejar en blanco para no cambiar" style="-fx-border-color: #d2691e; -fx-border-radius: 5; -fx-background-color: #f5f1ea;" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                             </children>
                         </GridPane>
                     </children>

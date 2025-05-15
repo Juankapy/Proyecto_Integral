@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -12,7 +18,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="perfilUsuarioPane" prefHeight="750.0" prefWidth="650.0" style="-fx-background-color: #F5F1EA;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyectointegral2.Controller.PerfilUsuarioController">
+<BorderPane fx:id="perfilUsuarioPane" prefHeight="750.0" prefWidth="650.0" style="-fx-background-color: #F5F1EA;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyectointegral2.Controller.PerfilUsuarioController">
     <top>
         <!-- Contenedor para el encabezado con icono de volver y título -->
         <BorderPane prefHeight="80.0">
@@ -20,10 +26,10 @@
                 <ImageView fx:id="imgIconoVolver" fitHeight="30.0" fitWidth="30.0" onMouseClicked="#Volver" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;" BorderPane.alignment="CENTER_LEFT">
                     <image>
                         <!-- Usa tu icono de salir o una flecha hacia la izquierda -->
-                        <Image url="@/assets/Imagenes/iconos/salir.png" />
+                        <Image url="@../../../assets/Imagenes/iconos/salir.png" />
                     </image>
                     <BorderPane.margin>
-                        <Insets left="25.0" top="5.0"/> <!-- Ajusta el margen según necesites -->
+                        <Insets left="25.0" top="5.0" /> <!-- Ajusta el margen según necesites -->
                     </BorderPane.margin>
                 </ImageView>
             </left>
@@ -32,7 +38,7 @@
                     <children>
                         <ImageView fx:id="imgIconoUsuarioGrande" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@/assets/Imagenes/iconos/usuario-main-blue.png" />
+                                <Image url="@../../../assets/Imagenes/iconos/usuario-main-blue.png" />
                             </image>
                         </ImageView>
                         <Label text="Perfil de usuario" textFill="#3E2723">
@@ -117,7 +123,7 @@
                                 </VBox>
                                 <ImageView fx:id="imgFotoPerfil" fitHeight="156.0" fitWidth="131.0" pickOnBounds="true" preserveRatio="true" style="-fx-background-color: #E0E0E0; -fx-background-radius: 8;">
                                     <image>
-                                        <Image url="@/assets/Imagenes/iconos/sinusuario.jpg" />
+                                        <Image url="@../../../assets/Imagenes/iconos/sinusuario.jpg" />
                                     </image>
                                 </ImageView>
                             </children>
@@ -147,7 +153,7 @@
             <children>
                 <ImageView fx:id="imgLogoDogpuccino" fitHeight="82.0" fitWidth="97.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@/assets/Imagenes/iconos/icono-bgless.png" />
+                        <Image url="@../../../assets/Imagenes/iconos/icono-bgless.png" />
                     </image>
                 </ImageView>
             </children>

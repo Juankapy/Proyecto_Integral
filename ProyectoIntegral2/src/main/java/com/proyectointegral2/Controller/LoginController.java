@@ -39,6 +39,7 @@ public class LoginController {
 
     @FXML
     void ConfirmarInicio(MouseEvent event) {
+<<<<<<< HEAD
         String nombreUsu = TxtNombreUsuario.getText();
         String contrasena = TxtContra.getText();
 
@@ -54,6 +55,11 @@ public class LoginController {
                     "El correo o la contraseña son incorrectos. Intenta nuevamente."
             );
         }
+=======
+//        String mainClienteFxmlFile = "/com/proyectointegral2/Vista/Main.fxml";
+//        String mainClienteTitle = "Panel Cliente - Dogpuccino";
+//        UtilidadesVentana.cambiarEscena(mainClienteFxmlFile, mainClienteTitle, true);
+>>>>>>> main
     }
 
     @FXML
