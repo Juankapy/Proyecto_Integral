@@ -1,7 +1,7 @@
 package com.proyectointegral2.Controller;
 
-import com.proyectointegral2.dao.ClienteDao; // Asumiendo que existe y está en este paquete
-import com.proyectointegral2.Model.Usuario;   // Asumiendo que existe y está en este paquete
+// Ya no necesitamos importar Usuario si no lo usamos para los datos del perfil aquí
+// import com.proyectointegral2.Model.Usuario;
 import com.proyectointegral2.utils.UtilidadesVentana;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -23,178 +23,236 @@ import java.util.Objects;
 
 public class PerfilUsuarioController {
 
-    @FXML private ImageView imgIconoVolver; // Para el botón de volver/salir
+    @FXML private ImageView imgIconoVolver;
     @FXML private ImageView imgIconoUsuarioGrande;
-    @FXML private Label TxtNombre;
-    @FXML private Label TxtEmail;
-    @FXML private Label TxtTelefono;
-    @FXML private Label TxtDireccion;
-    @FXML private Button BtnEditarDatos; // El fx:id en tu FXML es BtnEditarDatos, no btnEditarDatos
+    @FXML private Label TxtNombre; // Mostrará nombre + apellidos simulados
+    @FXML private Label TxtEmail;  // Mostrará email simulado
+    @FXML private Label TxtTelefono; // Mostrará teléfono simulado
+    @FXML private Label TxtDireccion; // Mostrará dirección simulada
+    @FXML private Button BtnEditarDatos;
     @FXML private ImageView imgFotoPerfil;
     @FXML private ListView<String> listViewHistorial;
     @FXML private ImageView imgLogoDogpuccino;
 
-    private ClienteDao clienteDAO; // Cambiado de UsuarioDao a ClienteDao
-    private Usuario usuarioActual;
-    private int idUsuarioLogueado; // Necesitarás una forma de establecer este ID
+    // Variables para almacenar los datos de perfil simulados
+    // Estos NO vienen del objeto Usuario (que solo tiene id, NombreUsuario, Contrasena)
+    private String perfilNombreSimulado;
+    private String perfilApellidosSimulados;
+    private String perfilEmailSimulado;
+    private String perfilTelefonoSimulado;
+    private String perfilDireccionSimulada;
+    private String perfilRutaFotoSimulada;
+
+    private int idUsuarioAutenticado; // ID del usuario que inició sesión
+    private String nombreUsuarioAutenticado; // Nombre de usuario del login
 
     private final String RUTA_PLACEHOLDER_PERFIL = "/assets/Imagenes/iconos/sinusuario.jpg";
 
-
     @FXML
     public void initialize() {
-        //this.clienteDAO = new ClienteDao(); // Instanciar tu DAO específico para Clientes/Usuarios
-        // La carga de datos se hará a través de initData()
-        // cargarDatosEjemplo(); // Puedes llamar a esto si initData no se llama inmediatamente para tener algo visual
+        System.out.println("PerfilUsuarioController inicializado. Esperando datos del usuario (simulados)...");
+        cargarImagenPlaceholder();
+        listViewHistorial.setPlaceholder(new Label("Cargando historial..."));
     }
 
     /**
-     * Método para ser llamado desde el controlador anterior para pasar el ID del usuario.
-     * Este método cargará los datos del perfil.
-     * @param idUsuario El ID del usuario (cliente) cuyos detalles se van a mostrar.
+     * Método para ser llamado DESPUÉS de cargar este FXML.
+     * Recibe el ID y el NombreUsuario del usuario autenticado.
+     * Los datos de perfil adicionales se simularán basados en el ID.
+     *
+     * @param idUsuario El ID del usuario autenticado.
+     * @param nombreUsuarioLogin El NombreUsuario del login.
      */
-    public void initData(int idUsuario) {
-        this.idUsuarioLogueado = idUsuario;
-        // Si clienteDAO no se inicializa en initialize() o es específico por usuario, hazlo aquí.
-        // this.clienteDAO = new ClienteDao();
-        cargarDatosPerfil();
+    public void initData(int idUsuario, String nombreUsuarioLogin) {
+        if (idUsuario <= 0) {
+            System.err.println("Error: ID de usuario inválido recibido en initData: " + idUsuario);
+            UtilidadesVentana.mostrarAlertaError("Error de Perfil", "No se pudo identificar el usuario para cargar el perfil.");
+            cargarDatosDeEjemploPorDefecto();
+            return;
+        }
+        this.idUsuarioAutenticado = idUsuario;
+        this.nombreUsuarioAutenticado = nombreUsuarioLogin; // Guardamos el nombre de usuario del login
+        System.out.println("initData llamado para Usuario ID: " + this.idUsuarioAutenticado + ", NombreUsuario: " + this.nombreUsuarioAutenticado);
+        cargarDatosDelPerfilSimulado();
     }
 
-    private void cargarDatosPerfil() {
-//        if (clienteDAO == null) { // Comprobación si no se inicializó en constructor o initialize
-//            this.clienteDAO = new ClienteDao();
-//        }
-//        if (idUsuarioLogueado <= 0) {
-//            System.err.println("ID de usuario no válido para cargar perfil.");
-//            UtilidadesVentana.mostrarAlertaError("Error de Perfil", "No se pudo identificar el usuario.");
-//            cargarDatosEjemplo(); // Fallback
-//            return;
-//        }
+    private void cargarDatosDelPerfilSimulado() {
+        System.out.println("Cargando datos de perfil simulados para Usuario ID: " + idUsuarioAutenticado);
 
-        // --- LÓGICA DAO PARA OBTENER USUARIO (CLIENTE) ---
-        // this.usuarioActual = clienteDAO.obtenerClientePorId(idUsuarioLogueado); // Asume que tienes un método así
-        // -------------------------------------------------
+        // Simulación de datos de perfil basada en idUsuarioAutenticado
+        // Estos datos son independientes del objeto Usuario de login
+        if (idUsuarioAutenticado == 1) { // Asumamos que este ID corresponde a "ana_g"
+            perfilNombreSimulado = "Ana";
+            perfilApellidosSimulados = "García López";
+            perfilEmailSimulado = "ana.garcia.sim@example.com"; // Puede ser diferente al nombreUsuario de login
+            perfilTelefonoSimulado = "600111222 (Sim)";
+            perfilDireccionSimulada = "Calle Sol Simulada, 1, Madrid";
+            perfilRutaFotoSimulada = "/assets/Imagenes/usuarios/ana_perfil_sim.png";
+        } else if (idUsuarioAutenticado == 2) { // Asumamos que este ID corresponde a "carlos_m"
+            perfilNombreSimulado = "Carlos";
+            perfilApellidosSimulados = "Martínez Ruiz";
+            perfilEmailSimulado = "carlos.m.sim@example.net";
+            perfilTelefonoSimulado = "600333444 (Sim)";
+            perfilDireccionSimulada = "Avenida Luna Simulada, 20, Barcelona";
+            perfilRutaFotoSimulada = null; // Para probar el placeholder
+        } else {
+            perfilNombreSimulado = "Usuario (" + Objects.requireNonNullElse(nombreUsuarioAutenticado, "ID: "+idUsuarioAutenticado) + ")";
+            perfilApellidosSimulados = "Simulado";
+            perfilEmailSimulado = "perfil.simulado@example.com";
+            perfilTelefonoSimulado = "N/A (Sim)";
+            perfilDireccionSimulada = "Dirección Simulada";
+            perfilRutaFotoSimulada = RUTA_PLACEHOLDER_PERFIL;
+        }
 
-        // SIMULACIÓN HASTA QUE EL DAO ESTÉ LISTO
-//        if (this.usuarioActual == null) { // Si el DAO no lo pudo cargar o está comentado
-//            System.out.println("ADVERTENCIA: No se pudo cargar usuario desde DAO o DAO no implementado. Usando datos de ejemplo para perfil.");
-//            // Crear un usuario de ejemplo si no se cargó nada
-//            this.usuarioActual = new Usuario(); // Necesitas un constructor en tu clase Usuario
-//            this.usuarioActual.setNombre("Juan (Ejemplo)");
-//            this.usuarioActual.setApellidos("Pérez (Ejemplo)");
-//            this.usuarioActual.setEmail("juan.ejemplo@dao.com");
-//            this.usuarioActual.setTelefono("+34 111222333");
-//            this.usuarioActual.setDireccion("Calle Ficticia 456, Ciudad DAO");
-//            this.usuarioActual.setRutaFotoPerfil(RUTA_PLACEHOLDER_PERFIL); // Usar placeholder
-//        }
-        // --- FIN SIMULACIÓN ---
+        // Mostrar datos de perfil simulados
+        TxtNombre.setText(perfilNombreSimulado + " " + perfilApellidosSimulados);
+        TxtEmail.setText(perfilEmailSimulado);
+        TxtTelefono.setText(perfilTelefonoSimulado);
+        TxtDireccion.setText(perfilDireccionSimulada);
 
+        if (perfilRutaFotoSimulada != null && !perfilRutaFotoSimulada.trim().isEmpty()) {
+            try {
+                String rutaCorregida = perfilRutaFotoSimulada.startsWith("/") ? perfilRutaFotoSimulada : "/" + perfilRutaFotoSimulada;
+                InputStream stream = getClass().getResourceAsStream(rutaCorregida);
+                if (stream != null) {
+                    imgFotoPerfil.setImage(new Image(stream));
+                    if (imgIconoUsuarioGrande != null) imgIconoUsuarioGrande.setImage(imgFotoPerfil.getImage());
+                } else {
+                    System.err.println("WARN (Sim): No se encontró la imagen de perfil en: " + rutaCorregida + ". Usando placeholder.");
+                    cargarImagenPlaceholder();
+                }
+            } catch (Exception e) {
+                System.err.println("ERROR (Sim): Excepción al cargar la imagen de perfil (" + perfilRutaFotoSimulada + "): " + e.getMessage());
+                cargarImagenPlaceholder();
+            }
+        } else {
+            System.out.println("INFO (Sim): Ruta de imagen de perfil no especificada. Usando placeholder.");
+            cargarImagenPlaceholder();
+        }
 
-//        if (usuarioActual != null) {
-//            TxtNombre.setText(Objects.requireNonNullElse(usuarioActual.getNombre() + " " + usuarioActual.getApellidos(), "No disponible"));
-//            TxtEmail.setText(Objects.requireNonNullElse(usuarioActual.getEmail(), "No disponible"));
-//            TxtTelefono.setText(Objects.requireNonNullElse(usuarioActual.getTelefono(), "No disponible"));
-//            TxtDireccion.setText(Objects.requireNonNullElse(usuarioActual.getDireccion(), "No disponible"));
-//
-//            String rutaImagen = usuarioActual.getRutaFotoPerfil();
-//            if (rutaImagen != null && !rutaImagen.isEmpty()) {
-//                try {
-//                    InputStream stream = getClass().getResourceAsStream(rutaImagen);
-//                    if (stream != null) {
-//                        imgFotoPerfil.setImage(new Image(stream));
-//                    } else {
-//                        System.err.println("No se encontró la imagen de perfil en: " + rutaImagen);
-//                        cargarImagenPlaceholder();
-//                    }
-//                } catch (Exception e) {
-//                    System.err.println("Excepción al cargar la imagen de perfil del usuario: " + e.getMessage());
-//                    cargarImagenPlaceholder();
-//                }
-//            } else {
-//                cargarImagenPlaceholder();
-//            }
+        // Simulación Historial
+        List<String> historialSimulado = new ArrayList<>();
+        historialSimulado.add("20/05/2024 - Cita con 'Bobby' (Simulado para " + nombreUsuarioAutenticado + ")");
+        historialSimulado.add("10/05/2024 - Evento: 'Feria de Adopción' (Simulado para " + nombreUsuarioAutenticado + ")");
+        // ... (más lógica de historial si es necesario) ...
 
-            // --- LÓGICA DAO PARA OBTENER HISTORIAL ---
-            // List<String> historial = clienteDAO.obtenerHistorialCitasEventos(idUsuarioLogueado); // Asume este método en ClienteDao
-            // ----------------------------------------
-
-            // SIMULACIÓN HISTORIAL
-            List<String> historial = new ArrayList<>();
-            historial.add("15/05/2024 - Cita con Rocky (Ejemplo DAO)");
-            historial.add("01/05/2024 - Evento: Puertas Abiertas (Ejemplo DAO)");
-            // --- FIN SIMULACIÓN HISTORIAL ---
-
-//            if (historial != null && !historial.isEmpty()) {
-//                listViewHistorial.setItems(FXCollections.observableArrayList(historial));
-//            } else {
-//                listViewHistorial.setPlaceholder(new Label("No hay historial de citas o eventos."));
-//                listViewHistorial.getItems().clear(); // Asegurarse de que esté vacío
-//            }
-//
-//        } else {
-//            UtilidadesVentana.mostrarAlertaError("Error de Perfil", "No se encontró el usuario con ID: " + idUsuarioLogueado);
-//            cargarDatosEjemplo(); // Fallback a datos de ejemplo si el usuario es nulo después de intentar cargar
-//        }
+        if (!historialSimulado.isEmpty()) {
+            listViewHistorial.setItems(FXCollections.observableArrayList(historialSimulado));
+        } else {
+            listViewHistorial.setPlaceholder(new Label("No hay historial de citas o eventos (simulado)."));
+            listViewHistorial.getItems().clear();
+        }
     }
 
-    private void cargarDatosEjemplo() { // Este método puede ser un fallback si el DAO falla
-        TxtNombre.setText("Usuario Ejemplo");
-        TxtEmail.setText("ejemplo@dominio.com");
+    private void cargarDatosDeEjemploPorDefecto() {
+        // Datos para cuando no se puede cargar un perfil específico
+        TxtNombre.setText("Usuario Ejemplo Fallback");
+        TxtEmail.setText("ejemplo@fallback.com");
         TxtTelefono.setText("+00 000 000 000");
-        TxtDireccion.setText("Dirección de Ejemplo, 123");
+        TxtDireccion.setText("Dirección Fallback, 123");
         cargarImagenPlaceholder();
 
         ObservableList<String> historialItems = FXCollections.observableArrayList(
-                "Dato de ejemplo 1 para historial",
-                "Dato de ejemplo 2 para historial"
+                "Historial de ejemplo 1 (Fallback)",
+                "Historial de ejemplo 2 (Fallback)"
         );
         listViewHistorial.setItems(historialItems);
+        listViewHistorial.setPlaceholder(new Label("No hay historial disponible."));
     }
 
     private void cargarImagenPlaceholder() {
         try {
             InputStream placeholderStream = getClass().getResourceAsStream(RUTA_PLACEHOLDER_PERFIL);
             if (placeholderStream != null) {
-                imgFotoPerfil.setImage(new Image(placeholderStream));
+                Image placeholderImage = new Image(placeholderStream);
+                imgFotoPerfil.setImage(placeholderImage);
+                if (imgIconoUsuarioGrande != null) imgIconoUsuarioGrande.setImage(placeholderImage);
             } else {
-                System.err.println("No se pudo cargar la imagen placeholder por defecto desde: " + RUTA_PLACEHOLDER_PERFIL);
+                System.err.println("ERROR CRÍTICO: No se pudo cargar la imagen placeholder por defecto desde: " + RUTA_PLACEHOLDER_PERFIL);
                 imgFotoPerfil.setImage(null);
-                imgFotoPerfil.setStyle("-fx-background-color: #E0E0E0; -fx-background-radius: 8;");
+                if (imgIconoUsuarioGrande != null) imgIconoUsuarioGrande.setImage(null);
             }
         } catch (Exception e) {
             System.err.println("Error crítico cargando imagen placeholder: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
     @FXML
     void IrAFormularioUsuario(MouseEvent event) {
-        System.out.println("Botón Editar Datos Personales presionado.");
+        System.out.println("Botón Editar Datos Personales presionado (simulación).");
+        if (idUsuarioAutenticado <= 0 && (perfilNombreSimulado == null || perfilNombreSimulado.equals("Usuario Ejemplo Fallback"))) {
+            UtilidadesVentana.mostrarAlertaError("Error de Edición", "No hay datos de usuario cargados para editar.");
+            return;
+        }
+
         String formularioUsuarioFxml = "/com/proyectointegral2/Vista/FormularioUsuario.fxml";
         String titulo = "Editar Perfil de Usuario";
 
-        // ANTES de cambiar de escena, necesitas obtener el controlador del formulario
-        // para pasarle el objeto 'usuarioActual' o su 'idUsuarioLogueado'.
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(formularioUsuarioFxml));
             Parent root = loader.load();
 
             FormularioUsuarioController formularioController = loader.getController();
-            if (usuarioActual != null) { // Preferible pasar el objeto si ya lo tienes
-                formularioController.initDataParaEdicion(usuarioActual);
-            } else if (idUsuarioLogueado > 0) { // Como fallback, si solo tienes el ID
-                // Necesitarías un initData(int id) en FormularioUsuarioController
-                // o cargar el usuario aquí y luego pasarlo. Por ahora, asumimos que tienes usuarioActual.
-                // Si no, FormularioUsuarioController necesitaría cargar el usuario por ID.
-                UtilidadesVentana.mostrarAlertaError("Error Edición", "No hay datos de usuario para editar.");
-                return;
+            if (formularioController != null) {
+                // Pasar los datos simulados al controlador del formulario.
+                // FormularioUsuarioController necesitará un método para aceptar estos datos.
+                // Ejemplo: formularioController.initDataParaEdicionSimulada(
+                // idUsuarioAutenticado, nombreUsuarioAutenticado, perfilNombreSimulado, perfilApellidosSimulados,
+                // perfilEmailSimulado, perfilTelefonoSimulado, perfilDireccionSimulada, perfilRutaFotoSimulada);
+
+                // O, si FormularioUsuarioController va a usar tu clase Usuario original (solo con id, NombreUsuario, Contrasena)
+                // Y el formulario de edición solo permite cambiar, por ejemplo, NombreUsuario y Contrasena:
+                com.proyectointegral2.Model.Usuario usuarioDeLogin = new com.proyectointegral2.Model.Usuario(
+                        idUsuarioAutenticado,
+                        nombreUsuarioAutenticado,
+                        "" // Contraseña actual no se pasa o se maneja de forma segura
+                );
+                // Y FormularioUsuarioController tendría un método:
+                // formularioController.initDataParaEdicionLogin(usuarioDeLogin);
+                // Y el formulario de edición manejaría los campos de perfil adicionales internamente o los obtendría de otra forma.
+
+                // Por ahora, como simplificación, supongamos que el FormularioUsuarioController
+                // puede tomar los datos de perfil simulados (tendrás que crear ese método en FormularioUsuarioController):
+                System.out.println("Pasando datos simulados al formulario de edición...");
+                // formularioController.initDataParaEdicionConDatosSimulados(idUsuarioAutenticado, perfilNombreSimulado, perfilApellidosSimulados, ...etc );
+
+
+                // ----- INICIO BLOQUE MODIFICADO PARA PASAR DATOS SIMULADOS -----
+                // Asumimos que FormularioUsuarioController tiene un método para tomar datos básicos
+                // y que los campos de perfil se cargarán/editarán allí.
+                // Por ahora, vamos a pasar el ID y el nombre de usuario de login.
+                // Y el FormularioUsuarioController deberá simular la carga del resto de datos de perfil para edición.
+                if (idUsuarioAutenticado > 0) {
+                    // Necesitas un método en FormularioUsuarioController como:
+                    // public void initDataParaEdicion(int idUsuario, String nombreUsuarioLogin)
+                    // O si tu FormularioUsuarioController tiene un método que acepta un objeto Usuario (el de login)
+                    com.proyectointegral2.Model.Usuario usuarioLogin = new com.proyectointegral2.Model.Usuario(idUsuarioAutenticado, nombreUsuarioAutenticado, "contraseña_actual_no_visible");
+                    // Y en FormularioUsuarioController: public void initDataParaEdicion(Usuario usuarioLogin)
+                    // Este es un ejemplo, ajusta según tu FormularioUsuarioController
+                    // formularioController.initDataConUsuarioLogin(usuarioLogin);
+
+                    UtilidadesVentana.mostrarAlertaInformacion("Edición Simulada",
+                            "Abriendo formulario de edición para el usuario (simulado) con ID: " + idUsuarioAutenticado +
+                                    "\nNombre de Login: " + nombreUsuarioAutenticado +
+                                    "\nNombre Perfil: " + perfilNombreSimulado + " " + perfilApellidosSimulados +
+                                    "\nEmail Perfil: " + perfilEmailSimulado +
+                                    "\nTeléfono Perfil: " + perfilTelefonoSimulado +
+                                    "\nDirección Perfil: " + perfilDireccionSimulada
+                    );
+                    // Por ahora, no pasamos datos explícitamente, el FormularioUsuarioController deberá tener su propia simulación
+                    // si necesita mostrar datos para editar.
+                } else {
+                    UtilidadesVentana.mostrarAlertaError("Error Edición", "ID de usuario no válido para edición.");
+                    return;
+                }
+                // ----- FIN BLOQUE MODIFICADO -----
+
             } else {
-                UtilidadesVentana.mostrarAlertaError("Error Edición", "No se pudo identificar el usuario para editar.");
+                System.err.println("Error: No se pudo obtener el controlador para " + formularioUsuarioFxml);
+                UtilidadesVentana.mostrarAlertaError("Error de Navegación", "Fallo al preparar el formulario de edición.");
                 return;
             }
-
-            // Ahora que el controlador del formulario tiene los datos, cambia la escena.
-            // Usamos un nuevo método en UtilidadesVentana para pasar el root ya cargado.
-            UtilidadesVentana.cambiarEscenaConRoot(root, titulo, false); // 'false' para tamaño fijo
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -203,22 +261,43 @@ public class PerfilUsuarioController {
     }
 
     @FXML
-    void handleVolver(MouseEvent event) {
-        System.out.println("Icono Volver presionado en PerfilUsuario. Navegando a MainCliente...");
-        // Asume que la pantalla principal del cliente es MainCliente.fxml y es dinámica
-        String mainClienteFxml = "/com/proyectointegral2/Vista/MainCliente.fxml"; // VERIFICA ESTA RUTA
-        String titulo = "Panel Principal Cliente";
-
-        // true porque MainCliente es dinámica (pantalla completa/redimensionable)
-        UtilidadesVentana.cambiarEscena(mainClienteFxml, titulo, true);
+    void Volver(MouseEvent event) {
+        System.out.println("Icono Volver presionado en PerfilUsuario (simulación).");
+        String pantallaPrincipalFxml = "/com/proyectointegral2/Vista/Main.fxml";
+        String titulo = "Panel Principal";
+        System.out.println("Navegando a: " + pantallaPrincipalFxml);
+        UtilidadesVentana.cambiarEscena(pantallaPrincipalFxml, titulo, true);
     }
 
-    // Placeholder para un método que obtendría el ID del usuario logueado.
-    // En una aplicación real, esto vendría de un gestor de sesión o se pasaría al controlador.
-    // private int obtenerIdUsuarioLogueadoDesdeSesion() {
-    //     // Lógica para obtener el ID del usuario actual.
-    //     // Por ahora, devolvemos un ID de ejemplo.
-    //     System.out.println("ADVERTENCIA: Usando ID de usuario logueado de ejemplo (1). Implementar lógica real.");
-    //     return 1; // EJEMPLO
-    // }
+
+    // Este es el método que llamarías desde el controlador anterior
+    // para pasar el ID y el NombreUsuario (del login)
+    //
+    // Ejemplo en el controlador anterior (ej. MainClienteController):
+    /*
+    @FXML
+    void irAPerfilDeUsuario(MouseEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/proyectointegral2/Vista/PerfilUsuarioView.fxml"));
+            Parent root = loader.load();
+
+            PerfilUsuarioController perfilController = loader.getController();
+            if (perfilController != null) {
+                // Asume que tienes estos datos del usuario que ha iniciado sesión
+                int idDelUsuarioLogueado = obtenerIdActualDelUsuario(); // Implementa esto
+                String nombreUsuarioDelLogin = obtenerNombreUsuarioActualDelLogin(); // Implementa esto
+
+                if (idDelUsuarioLogueado > 0 && nombreUsuarioDelLogin != null) {
+                    perfilController.initData(idDelUsuarioLogueado, nombreUsuarioDelLogin); // <--- PASAR DATOS
+                    UtilidadesVentana.cambiarEscenaConRoot(root, "Mi Perfil", false); // false para tamaño fijo
+                } else {
+                     UtilidadesVentana.mostrarAlertaError("Error de Sesión", "No se pudo identificar el usuario actual.");
+                }
+            } // ... else manejo de error
+        } catch (IOException e) { // ... manejo de error }
+    }
+
+    private int obtenerIdActualDelUsuario() { return 1; // EJEMPLO }
+    private String obtenerNombreUsuarioActualDelLogin() { return "ana_g"; // EJEMPLO }
+    */
 }

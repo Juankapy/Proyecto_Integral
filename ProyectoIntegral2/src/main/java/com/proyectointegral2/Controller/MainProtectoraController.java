@@ -1,4 +1,5 @@
 package com.proyectointegral2.Controller;
+import com.proyectointegral2.utils.UtilidadesVentana;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -74,12 +75,16 @@ public class MainProtectoraController {
 
     @FXML
     void NuevoPerro(ActionEvent event) {
-
+        String formularioPerroFxmlFile = "/com/proyectointegral2/Vista/FormularioPerro.fxml";
+        String formularioPerroTitle = "Panel Cliente - Dogpuccino";
+        UtilidadesVentana.cambiarEscena(formularioPerroFxmlFile, formularioPerroTitle, true);
     }
 
     @FXML
     void Editar(ActionEvent event) {
-
+        String formularioPerroFxmlFile = "/com/proyectointegral2/Vista/FormularioPerro.fxml";
+        String formularioPerroTitle = "Panel Cliente - Dogpuccino";
+        UtilidadesVentana.cambiarEscena(formularioPerroFxmlFile, formularioPerroTitle, true);
     }
 
     @FXML

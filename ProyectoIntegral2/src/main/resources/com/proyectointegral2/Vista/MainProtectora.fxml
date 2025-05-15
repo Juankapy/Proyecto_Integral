@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane fx:id="mainBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1100.0" style="-fx-background-color: #FDF5E6;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyectointegral2.Controller.MainProtectoraController">
+<BorderPane fx:id="mainBorderPane" prefHeight="900.0" prefWidth="1080.0" style="-fx-background-color: #FDF5E6;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyectointegral2.Controller.MainProtectoraController">
     <top>
         <HBox alignment="CENTER_LEFT" prefHeight="70.0" spacing="10.0" BorderPane.alignment="CENTER">
             <padding>
@@ -20,7 +19,7 @@
                     </image>
                 </ImageView>
                 <Region HBox.hgrow="ALWAYS" />
-                <ImageView fx:id="cartIcon" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                <ImageView fx:id="ImgIconBandeja" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                     <image>
                         <Image url="@../../../assets/Imagenes/iconos/bandeja-de-entrada-blue.png" />
                     </image>
@@ -28,7 +27,7 @@
                         <Insets right="10.0" />
                     </HBox.margin>
                 </ImageView>
-                <ImageView fx:id="userIcon" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                <ImageView fx:id="ImgIconUsuario" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                     <image>
                         <Image url="@../../../assets/Imagenes/iconos/usuario-main-blue.png" />
                     </image>
@@ -48,7 +47,7 @@
                             <children>
                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
                                     <children>
-                                        <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-border-width: 0 0 3 0; -fx-padding: 0 0 5 0;" text="Mis perros en adopción">
+                                        <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-border-width: 0 0 3 0; -fx-padding: 0 0 5 0; -fx-text-fill:black" text="Mis perros en adopción">
                                             <font>
                                                 <Font name="System Bold" size="22.0" />
                                             </font>
@@ -86,8 +85,8 @@
                                                 <Label alignment="CENTER" prefHeight="40.0" prefWidth="220.0" style="-fx-background-color: #A9D18E; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;" text="Nombre, edad" />
                                                 <VBox spacing="4.0" style="-fx-padding: 10;">
                                                    <children>
-                                                       <Label text="Raza: Ejemplo" />
-                                                       <Label text="Descripción: Ejemplo." wrapText="true" />
+                                                       <Label style="-fx-text-fill:black" text="Raza: Ejemplo" />
+                                                       <Label style="-fx-text-fill:black" text="Descripción: Ejemplo." wrapText="true" />
                                                    </children>
                                                 </VBox>
                                                 <Region VBox.vgrow="ALWAYS" />

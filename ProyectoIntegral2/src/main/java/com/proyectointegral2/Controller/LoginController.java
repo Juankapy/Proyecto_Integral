@@ -39,9 +39,9 @@ public class LoginController {
 
     @FXML
     void ConfirmarInicio(MouseEvent event) {
-//        String mainClienteFxmlFile = "/com/proyectointegral2/Vista/Main.fxml";
-//        String mainClienteTitle = "Panel Cliente - Dogpuccino";
-//        UtilidadesVentana.cambiarEscena(mainClienteFxmlFile, mainClienteTitle, true);
+        String mainClienteFxmlFile = "/com/proyectointegral2/Vista/Main.fxml";
+        String mainClienteTitle = "Panel Cliente - Dogpuccino";
+        UtilidadesVentana.cambiarEscena(mainClienteFxmlFile, mainClienteTitle, true);
     }
 
     @FXML
@@ -49,5 +49,11 @@ public class LoginController {
         String choosingFxmlFile = "/com/proyectointegral2/Vista/InicioChoose.fxml";
         String choosingTitle = "Selección de Rol - Dogpuccino";
         UtilidadesVentana.cambiarEscena(choosingFxmlFile, choosingTitle, false);
+    }
+
+    public void ConfirmarRegistroProtectora(ActionEvent event) {
+        String mainProtectoraFxmlFile = "/com/proyectointegral2/Vista/MainProtectora.fxml";
+        String mainProtectoraTitle = "Panel Protectora - Dogpuccino";
+        UtilidadesVentana.cambiarEscena(mainProtectoraFxmlFile, mainProtectoraTitle, true);
     }
 }

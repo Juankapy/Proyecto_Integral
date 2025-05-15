@@ -1,4 +1,5 @@
 package com.proyectointegral2.Controller;
+import com.proyectointegral2.utils.UtilidadesVentana;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -6,17 +7,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 
 public class MainClienteController {
 
@@ -108,10 +102,11 @@ public class MainClienteController {
     private Label nameAgeLabel_r1_c1;
 
     @FXML
-    private ImageView userIcon;
+    private ImageView ImgIconUsuario;
 
     @FXML
     private Button BtnEventos;
+
 
     @FXML
     void Reservar(ActionEvent event) {
@@ -129,13 +124,17 @@ public class MainClienteController {
     }
 
     @FXML
-    void Bandeja(ActionEvent event) {
-
+    void Bandeja(MouseEvent event) {
+        String bandejaCitaFxmlFile = "/com/proyectointegral2/Vista/BandejasCitas.fxml";
+        String bandejaCitaTitle = "Panel Cliente - Dogpuccino";
+        UtilidadesVentana.cambiarEscena(bandejaCitaFxmlFile, bandejaCitaTitle, true);
     }
 
     @FXML
-    void DetallesUsuario(ActionEvent event) {
-
+    void DetallesUsuario(MouseEvent event) {
+        String perfilUsuarioFxmlFile = "/com/proyectointegral2/Vista/PerfilUsuario.fxml";
+        String perfilUsuarioTitle = "Panel Cliente - Dogpuccino";
+        UtilidadesVentana.cambiarEscena(perfilUsuarioFxmlFile, perfilUsuarioTitle, true);
     }
 
 }
