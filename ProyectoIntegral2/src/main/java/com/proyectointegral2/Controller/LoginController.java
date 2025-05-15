@@ -1,5 +1,7 @@
 package com.proyectointegral2.Controller;
 
+import com.proyectointegral2.Model.Usuario;
+import com.proyectointegral2.dao.UsuarioDao;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,6 +29,20 @@ public class LoginController {
 
     @FXML
     private Hyperlink HlnkRegistrarse;
+
+    @FXML
+    private void onLogin(ActionEvent event) {
+        String correo = TxtCorreo.getText();
+        String contrasena = TxtContra.getText();
+
+        Usuario usuario = UsuarioDao.buscarPorCorreoYContrasena(correo, contrasena);
+        if (usuario != null) {
+            // Login exitoso
+        } else {
+            mostrarAlerta("Error", "Correo o contraseña incorrectos.");
+        }
+    }
+
 
     @FXML
     public void PulsarRegistrarse(ActionEvent actionEvent) {

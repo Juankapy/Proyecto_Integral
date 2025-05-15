@@ -12,7 +12,7 @@ public class MainApp extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("/com/proyectointegral2/Vista/login.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-        stage.setTitle("Hello!");
+        stage.setTitle("Inicio de Sesión");
         stage.setScene(scene);
         stage.show();
     }
