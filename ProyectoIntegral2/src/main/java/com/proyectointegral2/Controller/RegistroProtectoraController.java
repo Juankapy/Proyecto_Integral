@@ -67,7 +67,9 @@ public class RegistroProtectoraController {
 
     @FXML
     void ConfirmarRegistroProtectora(ActionEvent event) {
-
+        String mainProtectoraFxmlFile = "/com/proyectointegral2/Vista/MainProtectora.fxml";
+        String mainProtectoraTitle = "Panel Protectora - Dogpuccino";
+        UtilidadesVentana.cambiarEscena(mainProtectoraFxmlFile, mainProtectoraTitle, true);
     }
 
     @FXML

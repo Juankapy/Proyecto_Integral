@@ -20,9 +20,6 @@ public class FormularioPerroController {
     private ImageView ImgPreviewPerro;
 
     @FXML
-    private ComboBox<?> CmbUnidadEdad;
-
-    @FXML
     private TextField TxtNumeroEdad;
 
     @FXML

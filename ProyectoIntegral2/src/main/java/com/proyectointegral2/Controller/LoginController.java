@@ -39,9 +39,9 @@ public class LoginController {
 
     @FXML
     void ConfirmarInicio(MouseEvent event) {
-        String mainClienteFxmlFile = "/com/proyectointegral2/Vista/Main.fxml";
-        String mainClienteTitle = "Panel Cliente - Dogpuccino";
-        UtilidadesVentana.cambiarEscena(mainClienteFxmlFile, mainClienteTitle, true);
+//        String mainClienteFxmlFile = "/com/proyectointegral2/Vista/Main.fxml";
+//        String mainClienteTitle = "Panel Cliente - Dogpuccino";
+//        UtilidadesVentana.cambiarEscena(mainClienteFxmlFile, mainClienteTitle, true);
     }
 
     @FXML

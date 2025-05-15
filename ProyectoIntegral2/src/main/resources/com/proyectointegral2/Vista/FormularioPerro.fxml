@@ -24,7 +24,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.control.ScrollPane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="650.0" style="-fx-background-color: #F5F1EA;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.com.Controller.FormularioPerroController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="650.0" style="-fx-background-color: #F5F1EA;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyectointegral2.Controller.FormularioPerroController">
     <top>
         <HBox alignment="CENTER_LEFT" prefHeight="60.0" BorderPane.alignment="CENTER">
             <padding>
@@ -75,13 +75,13 @@
                                 </Label>
                                 <TextField fx:id="TxtNombrePerro" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" GridPane.columnIndex="1" />
 
-                                <Label text="Edad:" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                                <Label text="Fecha Nacimiento" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
                                     <font><Font size="14.0" /></font>
                                 </Label>
                                 <HBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                    <children><TextField fx:id="TxtNumeroEdad" prefWidth="80.0" promptText="Número" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" />
-                                        <ComboBox fx:id="CmbUnidadEdad" prefWidth="120.0" promptText="Unidad" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" />
-                                    </children>
+                           <children>
+                              <DatePicker fx:id="DateFechaNacimiento" />
+                           </children>
                                 </HBox>
 
                                 <Label text="Raza:" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
