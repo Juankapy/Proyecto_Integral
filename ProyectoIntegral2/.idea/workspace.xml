@@ -65,13 +65,27 @@
       <recent name="C:\Users\damda\OneDrive\Escritorio\Proyecto_Integral\ProyectoIntegral2\libs" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.MainApp">
+    <configuration name="MainApp" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.proyectointegral2.MainApp" />
+      <module name="ProyectoIntegral2" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.proyectointegral2.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="ojdbc8-23.8.0.25.04.jar" type="JarApplication" temporary="true">
       <option name="JAR_PATH" value="$PROJECT_DIR$/libs/ojdbc8-23.8.0.25.04.jar" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.MainApp" />
         <item itemvalue="JAR Application.ojdbc8-23.8.0.25.04.jar" />
       </list>
     </recent_temporary>

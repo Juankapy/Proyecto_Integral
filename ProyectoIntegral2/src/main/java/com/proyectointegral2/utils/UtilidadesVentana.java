@@ -22,6 +22,46 @@ public class UtilidadesVentana {
     private static final double MIN_DYNAMIC_WIDTH = 900;
     private static final double MIN_DYNAMIC_HEIGHT = 700;
 
+    public static void mostrarVentanaComoDialogo(Parent rootNode, String title, Stage ownerStage) {
+        if (rootNode == null) {
+            System.err.println("Error: Nodo raíz nulo para mostrar como diálogo.");
+            mostrarAlertaError("Error de Ventana", "No se pudo mostrar la ventana de diálogo.");
+            return;
+        }
+        try {
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle(title);
+            dialogStage.initModality(Modality.WINDOW_MODAL); // Bloquea la ventana dueña
+            if (ownerStage != null) {
+                dialogStage.initOwner(ownerStage);
+            } else if (primaryStageRef != null) { // Fallback al primary stage si no hay owner específico
+                dialogStage.initOwner(primaryStageRef);
+            }
+
+            Scene scene = new Scene(rootNode);
+            dialogStage.setScene(scene);
+
+            // Configurar para que no sea redimensionable y tenga un tamaño ajustado
+            dialogStage.setResizable(false);
+            // dialogStage.sizeToScene(); // Ajusta el tamaño al contenido
+            // O puedes definir un tamaño fijo para los pop-ups
+            // dialogStage.setWidth(400);
+            // dialogStage.setHeight(300);
+
+
+            // Añadir listeners si estas ventanas también necesitan el manejo de maximizado/fijo
+            // Por ahora, la dejaremos simple, no redimensionable por defecto.
+            // Si es una ventana de detalles y podría tener mucho contenido, considera hacerla redimensionable
+            // y aplicar una lógica similar a configurarStageVentanaDinamica pero sin maximizarla.
+
+            dialogStage.showAndWait(); // Muestra y espera a que se cierre
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarAlertaError("Error de Diálogo", "Ocurrió un error al mostrar la ventana de diálogo.");
+        }
+    }
+
     // --- Pila para el Historial de Navegación ---
     private static class VistaAnterior {
         String fxmlFile;

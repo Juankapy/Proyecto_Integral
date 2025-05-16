@@ -1,56 +1,56 @@
 package com.proyectointegral2.dao;
 
 import com.proyectointegral2.Model.Patologia;
-import java.io.FileInputStream;
+import com.proyectointegral2.utils.ConexionDB; // Usar la clase de conexión centralizada
+
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.util.Properties;
+import java.sql.SQLException;
 
 public class PatologiaDao {
-    private String url;
-    private String user;
-    private String pass;
 
-    public PatologiaDao() throws Exception {
-        Properties props = new Properties();
-        props.load(new FileInputStream("config.properties"));
-        url = props.getProperty("db.url");
-        user = props.getProperty("db.user");
-        pass = props.getProperty("db.pass");
+    public PatologiaDao() {
+        // Constructor vacío
     }
 
-    public void insertarPatologia(Patologia patologia) throws Exception {
-        Connection conn = DriverManager.getConnection(url, user, pass);
-        String sql = "INSERT INTO patologias (id, nombre, descripcion) VALUES (?, ?, ?)";
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setInt(1, patologia.getId());
-        stmt.setString(2, patologia.getNombre());
-        stmt.setString(3, patologia.getDescripcion());
-        stmt.executeUpdate();
-        stmt.close();
-        conn.close();
+    public void insertarPatologia(Patologia patologia) throws SQLException {
+        String sql = "INSERT INTO Patologia (ID_Patologia, Nombre) VALUES (?, ?)";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, patologia.getId());
+            stmt.setString(2, patologia.getNombre());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error al insertar patología: " + e.getMessage());
+            throw e;
+        }
     }
 
-    public void actualizarPatologia(Patologia patologia) throws Exception {
-        Connection conn = DriverManager.getConnection(url, user, pass);
-        String sql = "UPDATE patologias SET nombre=?, descripcion=? WHERE id=?";
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setString(1, patologia.getNombre());
-        stmt.setString(2, patologia.getDescripcion());
-        stmt.setInt(3, patologia.getId());
-        stmt.executeUpdate();
-        stmt.close();
-        conn.close();
+    public void actualizarPatologia(Patologia patologia) throws SQLException {
+        // Asumiendo que solo se actualiza el nombre
+        String sql = "UPDATE Patologia SET Nombre=? WHERE ID_Patologia=?";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, patologia.getNombre());
+            stmt.setInt(2, patologia.getId());
+            // Si añades descripción a la tabla: stmt.setString(2, patologia.getDescripcion()); y ajusta el SQL
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar patología: " + e.getMessage());
+            throw e;
+        }
     }
 
-    public void eliminarPatologia(int id) throws Exception {
-        Connection conn = DriverManager.getConnection(url, user, pass);
-        String sql = "DELETE FROM patologias WHERE id=?";
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setInt(1, id);
-        stmt.executeUpdate();
-        stmt.close();
-        conn.close();
+    public void eliminarPatologia(int idPatologia) throws SQLException {
+        String sql = "DELETE FROM Patologia WHERE ID_Patologia=?";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            // Tu PreparedStatement original tenía una 'A' al final de la línea SQL, la he quitado.
+            stmt.setInt(1, idPatologia);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error al eliminar patología: " + e.getMessage());
+            throw e;
+        }
     }
 }
