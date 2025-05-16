@@ -43,6 +43,7 @@ public class MainApp extends Application {
             UtilidadesVentana.mostrarAlertaError("Error Crítico", "No se pudo iniciar la aplicación.");
             throw e;
         }
+
     }
 
 
