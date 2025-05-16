@@ -10,7 +10,7 @@ VALUES (101, 'Buddy', 'Macho', TO_DATE('2022-03-15', 'YYYY-MM-DD'), 'N', '/asset
 
 -- Perro 2
 INSERT INTO Perros (ID_Perro, Nombre, Sexo, FechaNacimiento, Adoptado, Foto, ID_Protectora, ID_Raza)
-VALUES (102, 'Kira', 'Hembra', TO_DATE('2021-11-01', 'YYYY-MM-DD'), 'N', '/assets/Imagenes/perros/kira_husky.jpg', 1, 2);
+VALUES (102, 'Kira', 'Hembra', TO_DATE('2021-11-01', 'YYYY-MM-DD'), 'N', '/assets/Imagenes/perros/kira_husky.png', 1, 2);
 
 -- Perro 3
 INSERT INTO Perros (ID_Perro, Nombre, Sexo, FechaNacimiento, Adoptado, Foto, ID_Protectora, ID_Raza)
