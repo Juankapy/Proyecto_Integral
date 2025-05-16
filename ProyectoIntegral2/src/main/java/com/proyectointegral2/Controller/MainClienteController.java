@@ -2,7 +2,7 @@ package com.proyectointegral2.Controller;
 
 import com.proyectointegral2.Model.Perro;
 import com.proyectointegral2.Model.Raza;
-// import com.proyectointegral2.dao.PerroDao; // Descomenta para usar el DAO
+import com.proyectointegral2.dao.PerroDao;
 import com.proyectointegral2.utils.UtilidadesVentana;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
