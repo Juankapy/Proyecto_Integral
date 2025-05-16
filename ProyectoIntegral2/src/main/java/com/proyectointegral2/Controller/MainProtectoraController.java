@@ -110,7 +110,7 @@ public class MainProtectoraController {
         if (mouseEvent.getSource() instanceof Node) {
             ownerStage = (Stage) ((Node) mouseEvent.getSource()).getScene().getWindow();
         } else {
-            ownerStage = UtilidadesVentana.getPrimaryStage(); // Necesitarías un getPrimaryStage() en UtilidadesVentana o pasar MainApp.getPrimaryStage()
+            ownerStage = UtilidadesVentana.getPrimaryStage();
         }
         BandejaCitasController bandejaController = UtilidadesVentana.mostrarVentanaPopup(bandejaFxml, titulo, true, ownerStage);
 

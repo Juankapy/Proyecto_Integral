@@ -20,9 +20,7 @@ import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList; // Si ClienteDao.obtenerHistorialUsuario devuelve List
-import java.util.List;      // Si ClienteDao.obtenerHistorialUsuario devuelve List
-import java.util.Objects;
+
 
 public class PerfilUsuarioController {
 
@@ -54,9 +52,11 @@ public class PerfilUsuarioController {
     /**
      * Método para ser llamado desde el controlador anterior para pasar el ID del usuario.
      * Este método cargará los datos del perfil.
-     * @param idUsuario El ID del usuario (cliente) cuyos detalles se van a mostrar.
+     *
+     * @param idUsuario          El ID del usuario (cliente) cuyos detalles se van a mostrar.
+     * @param nombreUsuarioLogin
      */
-    public void initData(int idUsuario) {
+    public void initData(int idUsuario, String nombreUsuarioLogin) {
         this.idUsuarioLogueado = idUsuario;
         // Si clienteDAO no se inicializa en initialize() o es específico por usuario, hazlo aquí.
         // this.clienteDAO = new ClienteDao();
