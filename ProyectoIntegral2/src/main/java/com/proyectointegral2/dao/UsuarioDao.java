@@ -25,4 +25,18 @@ public class UsuarioDao {
         }
         return null;
     }
+
+    public static boolean insertarUsuario(String nombreUsu, String contrasena) {
+        String sql = "INSERT INTO usuario (nombre_usu, contrasena) VALUES (?, ?)";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, nombreUsu);
+            stmt.setString(2, contrasena);
+            int filasAfectadas = stmt.executeUpdate();
+            return filasAfectadas > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
