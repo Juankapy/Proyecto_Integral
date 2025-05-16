@@ -11,9 +11,10 @@ public class Cliente {
     private String telefono;
     private String email;
     private String nif;
+    private int idUsuario;
 
     // Constructor con todos los atributos
-    public Cliente(String nombre, String apellido1, String apellido2, LocalDate fechaNacimiento, Direccion direccion, String telefono, String email, String nif) {
+    public Cliente(String nombre, String apellido1, String apellido2, LocalDate fechaNacimiento, Direccion direccion, String telefono, String email, String nif, int idUsuario) {
         this.nombre = nombre;
         this.apellido1 = apellido1;
         this.apellido2 = apellido2;
@@ -22,6 +23,7 @@ public class Cliente {
         this.telefono = telefono;
         this.email = email;
         this.nif = nif;
+        this.idUsuario = idUsuario;
     }
 
     // Getters y Setters
@@ -87,6 +89,13 @@ public class Cliente {
 
     public void setNif(String nif) {
         this.nif = nif;
+    }
+
+    public int getIdUsuario() {
+        return idUsuario;
+    }
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
     @Override
