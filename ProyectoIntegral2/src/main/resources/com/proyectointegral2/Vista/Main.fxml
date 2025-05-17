@@ -59,7 +59,7 @@
                      </padding>
                   </Button>
                   <Region HBox.hgrow="SOMETIMES" />
-                  <ImageView fx:id="ImgIconBuscar" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="ImgIconBuscar" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#onSearchIconClicked" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../../assets/Imagenes/iconos/buscar.png" />
                      </image>
@@ -67,18 +67,13 @@
                         <Insets right="5.0" />
                      </HBox.margin>
                   </ImageView>
-                  <TextField fx:id="searchTextField" prefHeight="31.0" prefWidth="220.0" promptText="Buscar..." style="-fx-background-color: #fdf5e6; -fx-background-radius: 15; -fx-border-radius: 15; -fx-border-color: #B0B0B0; -fx-padding: 5 10 5 10; -fx-border-color: #6495ed;" />
+                  <TextField fx:id="searchTextField" onAction="#onSearchTextFieldAction" prefHeight="31.0" prefWidth="220.0" promptText="Buscar..." style="-fx-background-color: #fdf5e6; -fx-background-radius: 15; -fx-border-radius: 15; -fx-border-color: #B0B0B0; -fx-padding: 5 10 5 10; -fx-border-color: #6495ed;" />
                </children>
             </HBox>
             <ScrollPane fx:id="dogScrollPane" fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent; -fx-background: transparent;" VBox.vgrow="ALWAYS">
                <content>
-                  <!-- ... dentro del ScrollPane ... -->
                   <GridPane fx:id="dogGrid" hgap="20.0" vgap="20.0">
                      <columnConstraints>
-                        <!-- Las columnConstraints se pueden definir aquí o dinámicamente en el controlador. -->
-                        <!-- Si las defines aquí, el controlador las limpiará y redefinirá al adaptar. -->
-                        <!-- Es más limpio dejarlas que el controlador las maneje completamente si el número varía mucho. -->
-                        <!-- Por ejemplo, podrías tener una por defecto: -->
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" />
@@ -86,10 +81,8 @@
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" />
                      </columnConstraints>
                      <rowConstraints>
-                        <!-- Las rowConstraints también son opcionales aquí si el grid crece dinámicamente -->
                         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                      </rowConstraints>
-                     <!-- LOS HIJOS (TARJETAS DE PERRO) SE AÑADIRÁN DESDE EL CONTROLADOR -->
                      <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
