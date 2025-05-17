@@ -12,8 +12,19 @@ public class Cliente {
     private String nif;
     private int idUsuario;
 
+    // Constructor sin atributos
+    public Cliente() {
+        this.nombre = "";
+        this.apellidos = "";
+        this.fechaNacimiento = LocalDate.now();
+        this.direccion = new Direccion("", "", "", "");
+        this.telefono = "";
+        this.email = "";
+        this.nif = "";
+        this.idUsuario = -1;
+    }
     // Constructor con todos los atributos
-    public Cliente(String nombre, String apellido, LocalDate fechaNacimiento, Direccion direccion, String telefono, String email, String nif, int idUsuario) {
+    public Cliente(String nombre, String apellidos, LocalDate fechaNacimiento, Direccion direccion, String telefono, String email, String nif, int idUsuario) {
         this.nombre = nombre;
         this.apellidos = apellidos;
         this.fechaNacimiento = fechaNacimiento;

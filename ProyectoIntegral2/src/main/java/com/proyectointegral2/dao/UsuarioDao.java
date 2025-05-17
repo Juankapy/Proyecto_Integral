@@ -39,4 +39,19 @@ public class UsuarioDao {
             return false;
         }
     }
+
+    public static int obtenerIdUsuario(String nombreUsu) {
+        String sql = "SELECT ID_USUARIO FROM usuario WHERE NOMBRE_USU = ?";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, nombreUsu);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("ID_USUARIO");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Retorna -1 si no se encuentra el usuario
+    }
 }

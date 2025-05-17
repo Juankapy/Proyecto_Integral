@@ -12,23 +12,22 @@ import java.sql.Date; // Usar java.sql.Date
 public class ClienteDao {
 
     public static boolean insertarCliente(Cliente cliente) {
-        String sql = "INSERT INTO Cliente (NOMBRE, APELLIDOs, FECHA_NACIMIENTO, PROVINCIA, CIUDAD, CALLE, CP, TELEFONO, EMAIL, NIF, ID_USUARIO) " +
+        String sql = "INSERT INTO Cliente (NOMBRE, APELLIDOs, FECHANACIMIENTO, PROVINCIA, CIUDAD, CALLE, CP, TELEFONO, EMAIL, NIF, ID_USUARIO) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, cliente.getNombre());
-            stmt.setString(2, apellido1);
-            stmt.setString(3, apellido2);
-            stmt.setDate(4, java.sql.Date.valueOf(cliente.getFechaNacimiento()));
-            stmt.setString(5, cliente.getDireccion().getProvincia());
-            stmt.setString(6, cliente.getDireccion().getCiudad());
-            stmt.setString(7, cliente.getDireccion().getCalle());
-            stmt.setString(8, cliente.getDireccion().getCodigoPostal());
-            stmt.setString(9, cliente.getTelefono());
-            stmt.setString(10, cliente.getEmail());
-            stmt.setString(11, cliente.getNif());
-            stmt.setInt(12, cliente.getIdUsuario());
+            stmt.setString(2, cliente.getApellidos());
+            stmt.setDate(3, java.sql.Date.valueOf(cliente.getFechaNacimiento()));
+            stmt.setString(4, cliente.getDireccion().getProvincia());
+            stmt.setString(5, cliente.getDireccion().getCiudad());
+            stmt.setString(6, cliente.getDireccion().getCalle());
+            stmt.setString(7, cliente.getDireccion().getCodigoPostal());
+            stmt.setString(8, cliente.getTelefono());
+            stmt.setString(9, cliente.getEmail());
+            stmt.setString(10, cliente.getNif());
+            stmt.setInt(11, cliente.getIdUsuario());
 
             int filasAfectadas = stmt.executeUpdate();
             return filasAfectadas > 0;

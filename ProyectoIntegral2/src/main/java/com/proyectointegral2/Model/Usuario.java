@@ -6,6 +6,14 @@ public class Usuario {
     private String NombreUsuario;
     private String Contrasena;
 
+    // Constructor sin atributos
+    public Usuario() {
+        this.NombreUsuario = "";
+        this.Contrasena = "";
+        this.id = -1;
+    }
+
+    // Constructor con todos los atributos
     public Usuario(int id, String NombreUsuario, String Contrasena) {
         this.NombreUsuario = NombreUsuario;
         this.Contrasena = Contrasena;
