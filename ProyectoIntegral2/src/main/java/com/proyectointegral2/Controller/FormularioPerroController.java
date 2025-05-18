@@ -47,58 +47,48 @@ public class FormularioPerroController {
     @FXML
     private TextArea TxtAreaDescripcion;
 
-@FXML
-void Cancelar(ActionEvent event) {
-    // Vuelve a la pantalla principal de la protectora
+    @FXML
+    void Cancelar(ActionEvent event) {
+
     String mainProtectoraFxml = "/com/proyectointegral2/Vista/MainProtectora.fxml";
     String mainProtectoraTitle = "Inicio de Sesión - Dogpuccino";
     UtilidadesVentana.cambiarEscena(mainProtectoraFxml, mainProtectoraTitle, false);
-}
-
-@FXML
-void AnadirPerro(ActionEvent event) {
-    String nombre = TxtNombrePerro.getText();
-    String razaNombre = TxtRazaPerro.getText();
-    String sexo = (CmbSexo.getValue() != null) ? CmbSexo.getValue().toString() : "";
-    String estado = (CmbEstado.getValue() != null) ? CmbEstado.getValue().toString() : "";
-    String descripcion = TxtAreaDescripcion.getText();
-    String patologia = TxtAreaPatologia.getText();
-    LocalDate fechaNacimiento = DateFechaNacimiento.getValue();
-
-    // Validación básica
-    if (nombre.isEmpty() || razaNombre.isEmpty() || sexo.isEmpty() || estado.isEmpty() || fechaNacimiento == null) {
-        UtilidadesVentana.mostrarAlertaError("Campos obligatorios", "Por favor, completa todos los campos obligatorios.");
-        return;
     }
 
-    try {
-        // Buscar o crear la raza
-        //com.proyectointegral2.Model.Raza raza = new com.proyectointegral2.Model.Raza();
-        //raza.setNombre(razaNombre);
-        // Si tienes un RazaDao, aquí podrías buscar la raza por nombre y obtener el ID
+    @FXML
+    void AnadirPerro(ActionEvent event) {
+        String nombre = TxtNombrePerro.getText();
+        String razaNombre = TxtRazaPerro.getText();
+        String sexo = (CmbSexo.getValue() != null) ? CmbSexo.getValue().toString() : "";
+        String estado = (CmbEstado.getValue() != null) ? CmbEstado.getValue().toString() : "";
+        String descripcion = TxtAreaDescripcion.getText();
+        String patologia = TxtAreaPatologia.getText();
+        LocalDate fechaNacimiento = DateFechaNacimiento.getValue();
 
-        // Crear el objeto Perro
-        com.proyectointegral2.Model.Perro perro = new com.proyectointegral2.Model.Perro();
-        perro.setNombre(nombre);
-        perro.setSexo(sexo);
-        perro.setFechaNacimiento(fechaNacimiento);
-        perro.setAdoptadoChar(estado.equalsIgnoreCase("Adoptado") ? "S" : "N");
-        perro.setFoto(""); // Implementa la lógica para la foto si aplica
-        //perro.setRaza(raza);
-        //perro.setDescripcion(descripcion);
-       // perro.setPatologia(patologia);
-        // Si tienes el idProtectora, asígnalo aquí
+        if (nombre.isEmpty() || razaNombre.isEmpty() || sexo.isEmpty() || estado.isEmpty() || fechaNacimiento == null) {
+            UtilidadesVentana.mostrarAlertaError("Campos obligatorios", "Por favor, completa todos los campos obligatorios.");
+            return;
+        }
 
-        // Guardar en la base de datos
-        com.proyectointegral2.dao.PerroDao perroDao = new com.proyectointegral2.dao.PerroDao();
-        perroDao.insertarPerro(perro);
+        try {
+            com.proyectointegral2.Model.Perro perro = new com.proyectointegral2.Model.Perro();
+            perro.setNombre(nombre);
+            perro.setSexo(sexo);
+            perro.setFechaNacimiento(fechaNacimiento);
+            perro.setAdoptado(estado.equalsIgnoreCase("Adoptado") ? "S" : "N");
+            perro.setFoto(null); // Si tienes lógica para la foto, reemplaza esto
 
-        UtilidadesVentana.mostrarAlertaInformacion("Perro añadido", "El perro ha sido añadido correctamente.");
-        Cancelar(event);
-    } catch (Exception e) {
-        UtilidadesVentana.mostrarAlertaError("Error", "No se pudo añadir el perro: " + e.getMessage());
+            // Aquí puedes asignar raza, descripción, patología, idProtectora si corresponde
+
+            com.proyectointegral2.dao.PerroDao perroDao = new com.proyectointegral2.dao.PerroDao();
+            perroDao.crearPerro(perro);
+
+            UtilidadesVentana.mostrarAlertaInformacion("Perro añadido", "El perro ha sido añadido correctamente.");
+            Cancelar(event);
+        } catch (Exception e) {
+            UtilidadesVentana.mostrarAlertaError("Error", "No se pudo añadir el perro: " + e.getMessage());
+        }
     }
-}
 
 
     @FXML

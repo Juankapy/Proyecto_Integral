@@ -59,4 +59,8 @@ public class Notificacion {
     public void setMensaje(String mensaje) {
         this.mensaje = mensaje;
     }
+
+    public void setEstado(String estado) {
+
+    }
 }

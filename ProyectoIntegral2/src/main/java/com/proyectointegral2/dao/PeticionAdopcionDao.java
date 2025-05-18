@@ -88,7 +88,6 @@ public class PeticionAdopcionDao{
         return peticiones;
     }
 
-    @Override
     public List<PeticionAdopcion> obtenerPeticionesPorProtectora(int idProtectora) throws SQLException {
         List<PeticionAdopcion> peticiones = new ArrayList<>();
         String sql = "SELECT pa.* FROM Peticiones_Adopcion pa " +

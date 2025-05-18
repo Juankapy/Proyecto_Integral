@@ -1,81 +1,41 @@
 package com.proyectointegral2.Model;
 
+import java.sql.Date;
+
 public class PeticionAdopcion {
-    private int id;
-    private String nombre;
-    private String apellidos;
-    private String telefono;
-    private String email;
-    private String mensaje;
-    private int idMascota;
+    private int idPeticion;
+    private Date fecha;
+    private String estado;
+    private int idCliente;
+    private int idPerro;
 
-    public PeticionAdopcion(int id, String nombre, String apellidos, String telefono, String email, String mensaje, int idMascota) {
-        this.id = id;
-        this.nombre = nombre;
-        this.apellidos = apellidos;
-        this.telefono = telefono;
-        this.email = email;
-        this.mensaje = mensaje;
-        this.idMascota = idMascota;
+    public PeticionAdopcion(int idPeticion, Date fecha, String estado, int idCliente, int idPerro) {
+        this.idPeticion = idPeticion;
+        this.fecha = fecha;
+        this.estado = estado;
+        this.idCliente = idCliente;
+        this.idPerro = idPerro;
     }
-
     public PeticionAdopcion() {
+        this.idPeticion = 0;
+        this.fecha = null;
+        this.estado = "";
+        this.idCliente = 0;
+        this.idPerro = 0;
     }
 
-    // Getters y Setters
-    public int getId() {
-        return id;
-    }
+    public int getIdPeticion() { return idPeticion; }
+    public void setIdPeticion(int idPeticion) { this.idPeticion = idPeticion; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public Date getFecha() { return fecha; }
+    public void setFecha(Date fecha) { this.fecha = fecha; }
 
-    public String getNombre() {
-        return nombre;
-    }
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+    public int getIdCliente() { return idCliente; }
+    public void setIdCliente(int idCliente) { this.idCliente = idCliente; }
 
-    public String getApellidos() {
-        return apellidos;
-    }
-
-    public void setApellidos(String apellidos) {
-        this.apellidos = apellidos;
-    }
-
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getMensaje() {
-        return mensaje;
-    }
-
-    public void setMensaje(String mensaje) {
-        this.mensaje = mensaje;
-    }
-
-    public int getIdMascota() {
-        return idMascota;
-    }
-
-    public void setIdMascota(int idMascota) {
-        this.idMascota = idMascota;
-    }
+    public int getIdPerro() { return idPerro; }
+    public void setIdPerro(int idPerro) { this.idPerro = idPerro; }
 }

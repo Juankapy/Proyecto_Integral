@@ -40,8 +40,10 @@ public class MainApp extends Application {
             Parent sceneRoot = scene.getRoot();
             double prefW = sceneRoot.prefWidth(-1);
             double prefH = sceneRoot.prefHeight(-1);
-            double targetWidth = (prefW > 0 && prefW != javafx.scene.layout.Region.USE_COMPUTED_SIZE) ? prefW : UtilidadesVentana.DEFAULT_FIXED_WIDTH;
-            double targetHeight = (prefH > 0 && prefH != javafx.scene.layout.Region.USE_COMPUTED_SIZE) ? prefH : UtilidadesVentana.DEFAULT_FIXED_HEIGHT;
+            double targetWidth = (prefW > 0 && prefW != javafx.scene.layout.Region.USE_COMPUTED_SIZE)
+                ? prefW : UtilidadesVentana.getDefaultFixedWidth();
+            double targetHeight = (prefH > 0 && prefH != javafx.scene.layout.Region.USE_COMPUTED_SIZE)
+                ? prefH : UtilidadesVentana.getDefaultFixedHeight();
             stage.setWidth(targetWidth);
             stage.setHeight(targetHeight);
             stage.centerOnScreen();

@@ -11,6 +11,20 @@ import java.util.List;
 
 public class ProtectoraDao{
 
+    public Protectora obtenerProtectoraPorCIF(String cif) throws SQLException {
+        String sql = "SELECT * FROM Protectora WHERE CIF = ?";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, cif);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToProtectora(rs);
+                }
+            }
+        }
+        return null;
+    }
+
     public int crearProtectora(Protectora protectora) throws SQLException {
         String sqlInsert = "INSERT INTO Protectora (Nombre, Telefono, Email, Provincia, Ciudad, Calle, CP, ID_Usuario) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = ConexionDB.getConnection();
@@ -18,10 +32,10 @@ public class ProtectoraDao{
             pstmt.setString(1, protectora.getNombre());
             pstmt.setString(2, protectora.getTelefono());
             pstmt.setString(3, protectora.getEmail());
-            pstmt.setString(4, protectora.getProvincia());
-            pstmt.setString(5, protectora.getCiudad());
-            pstmt.setString(6, protectora.getCalle());
-            pstmt.setString(7, protectora.getCp());
+            pstmt.setString(4, protectora.getDireccion().getProvincia());
+            pstmt.setString(5, protectora.getDireccion().getCiudad());
+            pstmt.setString(6, protectora.getDireccion().getCalle());
+            pstmt.setString(7, protectora.getDireccion().getCodigoPostal());
             pstmt.setInt(8, protectora.getIdUsuario());
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) throw new SQLException("No se pudo crear la protectora.");
@@ -63,7 +77,6 @@ public class ProtectoraDao{
         return null;
     }
 
-    @Override
     public List<Protectora> obtenerTodasLasProtectoras() throws SQLException {
         List<Protectora> protectoras = new ArrayList<>();
         String sql = "SELECT * FROM Protectora ORDER BY Nombre";
@@ -170,15 +183,24 @@ public class ProtectoraDao{
 
     private Protectora mapResultSetToProtectora(ResultSet rs) throws SQLException {
         Protectora protectora = new Protectora();
-        protectora.setIdProtectora(rs.getInt("ID_Protectora"));
         protectora.setNombre(rs.getString("Nombre"));
         protectora.setTelefono(rs.getString("Telefono"));
         protectora.setEmail(rs.getString("Email"));
-        protectora.setProvincia(rs.getString("Provincia"));
-        protectora.setCiudad(rs.getString("Ciudad"));
-        protectora.setCalle(rs.getString("Calle"));
-        protectora.setCp(rs.getString("CP"));
         protectora.setIdUsuario(rs.getInt("ID_Usuario"));
+
+        // Si tienes un campo idProtectora, usa el setter correcto
+        if (protectora.getClass().getDeclaredMethods().toString().contains("setIdProtectora")) {
+            protectora.setIdProtectora(rs.getInt("ID_Protectora"));
+        }
+
+        // Asumiendo que existe un objeto Direccion en Protectora
+        if (protectora.getDireccion() != null) {
+            protectora.getDireccion().setProvincia(rs.getString("Provincia"));
+            protectora.getDireccion().setCiudad(rs.getString("Ciudad"));
+            protectora.getDireccion().setCalle(rs.getString("Calle"));
+            protectora.getDireccion().setCodigoPostal(rs.getString("CP"));
+        }
+
         return protectora;
     }
 }

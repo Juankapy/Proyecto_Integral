@@ -11,8 +11,9 @@ import java.util.List;
 public class ClienteDao {
 
     public int crearCliente(Cliente cliente) throws SQLException {
+
         String sqlSelectId = "SELECT SEQ_CLIENTE_ID.NEXTVAL FROM DUAL";
-        String sqlInsert = "INSERT INTO Cliente (ID_Cliente, NIF, Nombre, Apellidos, FechaNacimiento, Provincia, Ciudad, Calle, CP, Telefono, Email, ID_Usuario) " +
+        String sqlInsert = "INSERT INTO Cliente (ID_Cliente, NIF, Nombre, Apellidos, Fecha_Nacimiento, Provincia, Ciudad, Calle, CP, Telefono, Email, ID_Usuario) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         int nuevoId = -1;
 
@@ -125,7 +126,7 @@ public class ClienteDao {
     }
 
     public boolean actualizarCliente(Cliente cliente) throws SQLException {
-        String sql = "UPDATE Cliente SET NIF = ?, Nombre = ?, Apellidos = ?, FechaNacimiento = ?, " +
+        String sql = "UPDATE Cliente SET NIF = ?, Nombre = ?, Apellidos = ?, Fecha_Nacimiento = ?, " +
                 "Provincia = ?, Ciudad = ?, Calle = ?, CP = ?, Telefono = ?, Email = ?, ID_Usuario = ? " +
                 "WHERE ID_Cliente = ?";
         try (Connection conn = ConexionDB.getConnection();

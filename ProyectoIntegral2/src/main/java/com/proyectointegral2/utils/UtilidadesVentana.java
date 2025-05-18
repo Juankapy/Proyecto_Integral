@@ -22,6 +22,15 @@ public class UtilidadesVentana {
     private static final double MIN_DYNAMIC_WIDTH = 900;
     private static final double MIN_DYNAMIC_HEIGHT = 700;
 
+    // En com.proyectointegral2.utils.UtilidadesVentana
+    public static double getDefaultFixedWidth() {
+        return DEFAULT_FIXED_WIDTH;
+    }
+
+    public static double getDefaultFixedHeight() {
+        return DEFAULT_FIXED_HEIGHT;
+    }
+
     public static void mostrarVentanaComoDialogo(Parent rootNode, String title, Stage ownerStage) {
         if (rootNode == null) {
             System.err.println("Error: Nodo raíz nulo para mostrar como diálogo.");

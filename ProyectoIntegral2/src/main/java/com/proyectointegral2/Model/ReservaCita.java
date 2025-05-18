@@ -9,16 +9,18 @@ public class ReservaCita {
     private LocalTime hora;
     private String motivo;
     private int idCliente;
+    private int idPerro;
     private int idProtectora;
 
     public ReservaCita() {}
 
-    public ReservaCita(int idReserva, LocalDate fecha, LocalTime hora, String motivo, int idCliente, int idProtectora) {
+    public ReservaCita(int idReserva, LocalDate fecha, LocalTime hora, String motivo, int idCliente,int idPerro, int idProtectora) {
         this.idReserva = idReserva;
         this.fecha = fecha;
         this.hora = hora;
         this.motivo = motivo;
         this.idCliente = idCliente;
+        this.idPerro = idPerro;
         this.idProtectora = idProtectora;
     }
 
@@ -60,6 +62,14 @@ public class ReservaCita {
 
     public void setIdCliente(int idCliente) {
         this.idCliente = idCliente;
+    }
+
+    public int getIdPerro() {
+        return idPerro;
+    }
+
+    public void setIdPerro(int idPerro) {
+        this.idPerro = idPerro;
     }
 
     public int getIdProtectora() {

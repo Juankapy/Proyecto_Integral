@@ -2,191 +2,163 @@ package com.proyectointegral2.Controller;
 
 import com.proyectointegral2.Model.Perro;
 import com.proyectointegral2.Model.Raza;
+import com.proyectointegral2.Model.Patologia;
+import com.proyectointegral2.Model.IdentificacionPatologia;
+import com.proyectointegral2.dao.IdentificacionPatologiaDao;
+import com.proyectointegral2.dao.PerroDao;
+import com.proyectointegral2.dao.RazaDao;
 
-import com.proyectointegral2.utils.UtilidadesVentana;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 
-import java.io.InputStream;
+import java.io.ByteArrayInputStream;
+import java.net.URL;
 import java.sql.SQLException;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.ResourceBundle;
 
-
-public class DetallesPerroController {
-
-    @FXML private ImageView imgLogoPequeno;
-    @FXML private Text TxtSexo;
-    @FXML private Text TxtNombre;
-    @FXML private Text TxtEdad;
-    @FXML private Text TxtProtectora;
-    @FXML private Button BtnReservarCita;
-    @FXML private ImageView imgPerro; // ImageView principal para la foto del perro
-    @FXML private Text TxtRaza;
-    @FXML private Text TxtPatologia;
-
-    private Perro perroActual;
-    // Descomenta y usa cuando tengas los DAOs
-    // private ProtectoraDao protectoraDao;
-    // private IdentificacionPatologiasDao identificacionPatologiasDao;
-    // private PatologiaDao patologiaDao;
-
-    private final String RUTA_IMAGEN_PLACEHOLDER_DETALLES = "/assets/Imagenes/iconos/placeholder_dog_grande.png";
+public class DetallesPerroController implements Initializable {
 
     @FXML
-    public void initialize() {
-        // try {
-        //     protectoraDao = new ProtectoraDao();
-        //     // Inicializa otros DAOs aquí
-        // } catch (Exception e) {
-        //     e.printStackTrace(); // Manejar error
-        // }
-        System.out.println("DetallesPerroController inicializado.");
+    private ImageView imgPerro;
+    @FXML
+    private Text TxtNombre;
+    @FXML
+    private Text TxtEdad;
+    @FXML
+    private Text TxtRaza;
+    @FXML
+    private Text TxtSexo;
+    @FXML
+    private Text TxtProtectora;
+    @FXML
+    private Text TxtPatologia;
+    @FXML
+    private ImageView imgLogoPequeno;
+    @FXML
+    private Button BtnReservarCita;
+
+    private Perro perroActual;
+    private int idPerroSeleccionado;
+
+    private PerroDao perroDao;
+    private RazaDao razaDao;
+    private IdentificacionPatologiaDao identificacionPatologiaDao;
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        perroDao = new PerroDao();
+        razaDao = new RazaDao();
+        identificacionPatologiaDao = new IdentificacionPatologiaDao();
     }
 
-    public void initData(Perro perro) {
-        this.perroActual = perro;
-        if (perroActual == null) {
-            TxtNombre.setText("Error: Perro no encontrado");
-            // Ocultar otros campos o mostrar mensaje de error
+    public void initData(int idPerro) {
+        this.idPerroSeleccionado = idPerro;
+        cargarDetallesPerro();
+    }
+
+    private void cargarDetallesPerro() {
+        if (idPerroSeleccionado <= 0) {
+            System.out.println("Error: ID de perro no válido para mostrar detalles.");
             return;
         }
 
-        TxtNombre.setText(Objects.requireNonNullElse(perroActual.getNombre(), "Nombre no disponible"));
-        TxtSexo.setText(Objects.requireNonNullElse(perroActual.getSexo(), "No especificado"));
-
-        if (perroActual.getFechaNacimiento() != null) {
-            Period periodo = Period.between(perroActual.getFechaNacimiento(), LocalDate.now());
-            String edadStr;
-            if (periodo.getYears() > 0) {
-                edadStr = periodo.getYears() + (periodo.getYears() == 1 ? " año" : " años");
-                if (periodo.getMonths() > 0 && periodo.getYears() < 2) { // Añadir meses si es menos de 2 años
-                    edadStr += " y " + periodo.getMonths() + (periodo.getMonths() == 1 ? " mes" : " meses");
-                }
-            } else {
-                edadStr = periodo.getMonths() + (periodo.getMonths() == 1 ? " mes" : " meses");
-            }
-            TxtEdad.setText(edadStr);
-        } else {
-            TxtEdad.setText("Desconocida");
-        }
-
-        if (perroActual.getRaza() != null && perroActual.getRaza().getNombre() != null) {
-            TxtRaza.setText(perroActual.getRaza().getNombre());
-        } else {
-            TxtRaza.setText("Raza no especificada");
-        }
-
-        // Cargar imagen principal del perro
-        String imagePath = perroActual.getFoto();
         try {
-            Image loadedImage = null;
-            if (imagePath != null && !imagePath.trim().isEmpty()) {
-                if (!imagePath.startsWith("/")) { imagePath = "/" + imagePath; }
-                InputStream stream = getClass().getResourceAsStream(imagePath);
-                if (stream != null) {
-                    loadedImage = new Image(stream);
-                    stream.close();
+            perroActual = perroDao.obtenerPerroPorId(idPerroSeleccionado);
+
+            if (perroActual != null) {
+                TxtNombre.setText(perroActual.getNombre());
+
+                LocalDate fechaNac = perroActual.getFechaNacimiento();
+                if (fechaNac != null) {
+                    Period periodo = Period.between(fechaNac, LocalDate.now());
+                    if (periodo.getYears() > 0) {
+                        TxtEdad.setText(periodo.getYears() + (periodo.getYears() == 1 ? " año" : " años"));
+                    } else if (periodo.getMonths() > 0) {
+                        TxtEdad.setText(periodo.getMonths() + (periodo.getMonths() == 1 ? " mes" : " meses"));
+                    } else {
+                        TxtEdad.setText(periodo.getDays() + (periodo.getDays() == 1 ? " día" : " días"));
+                    }
+                } else {
+                    TxtEdad.setText("Desconocida");
                 }
-            }
-            if (loadedImage == null || loadedImage.isError()) {
-                try(InputStream placeholderStream = getClass().getResourceAsStream(RUTA_IMAGEN_PLACEHOLDER_DETALLES)){
-                    if(placeholderStream != null) loadedImage = new Image(placeholderStream);
+
+                if (perroActual.getIdRaza() > 0) {
+                    Raza raza = razaDao.obtenerRazaPorId(perroActual.getIdRaza());
+                    TxtRaza.setText(raza != null ? raza.getNombreRaza() : "Desconocida");
+                } else {
+                    TxtRaza.setText("Mestizo/Desconocida");
                 }
+
+                TxtSexo.setText(perroActual.getSexo());
+
+                // Si no tienes ProtectoraDao, puedes mostrar solo el ID o dejarlo como "Desconocida"
+                if (perroActual.getIdProtectora() > 0) {
+                    TxtProtectora.setText(String.valueOf(perroActual.getIdProtectora()));
+                } else {
+                    TxtProtectora.setText("Desconocida");
+                }
+
+                List<IdentificacionPatologia> identificaciones = identificacionPatologiaDao.obtenerPatologiasPorPerro(perroActual.getIdPerro());
+                if (identificaciones != null && !identificaciones.isEmpty()) {
+                    StringBuilder patologiasStr = new StringBuilder();
+                    for(IdentificacionPatologia ip : identificaciones) {
+                        Patologia pat = perroDao.obtenerPatologiaPorId(ip.getIdPatologia());
+                        if (pat != null) {
+                            patologiasStr.append(pat.getNombre());
+                            if (ip.getDescripcion() != null && !ip.getDescripcion().isEmpty()) {
+                                patologiasStr.append(" (").append(ip.getDescripcion()).append(")");
+                            }
+                            patologiasStr.append("; ");
+                        }
+                    }
+                    if (patologiasStr.length() > 2) {
+                        TxtPatologia.setText(patologiasStr.substring(0, patologiasStr.length() - 2));
+                    } else {
+                        TxtPatologia.setText("Ninguna conocida.");
+                    }
+                } else {
+                    TxtPatologia.setText("Ninguna conocida.");
+                }
+
+                if (perroActual.getFoto() != null && perroActual.getFoto().length > 0) {
+                    Image image = new Image(new ByteArrayInputStream(perroActual.getFoto()));
+                    imgPerro.setImage(image);
+                } else {
+                    System.out.println("Perro sin foto.");
+                }
+
+                if ("S".equals(perroActual.getAdoptado())) {
+                    BtnReservarCita.setDisable(true);
+                    BtnReservarCita.setText("Adoptado");
+                } else {
+                    BtnReservarCita.setDisable(false);
+                    BtnReservarCita.setText("Reservar cita");
+                }
+
+            } else {
+                System.out.println("Error: Perro no encontrado en la BD.");
             }
-            imgPerro.setImage(loadedImage);
-        } catch (Exception e) {
-            System.err.println("Error cargando imagen de detalle para " + perroActual.getNombre() + ": " + e.getMessage());
-            try (InputStream placeholderStream = getClass().getResourceAsStream(RUTA_IMAGEN_PLACEHOLDER_DETALLES)){
-                if(placeholderStream != null) imgPerro.setImage(new Image(placeholderStream));
-            } catch (Exception ex){}
-        }
-
-
-        // --- SIMULACIÓN NOMBRE PROTECTORA ---
-        // Cuando tengas el DAO, reemplazarás esto
-        if (perroActual.getIdProtectora() == 1) {
-            TxtProtectora.setText("Amigos Peludos");
-        } else if (perroActual.getIdProtectora() == 2) {
-            TxtProtectora.setText("Huellas Felices");
-        } else if (perroActual.getIdProtectora() > 0) {
-            TxtProtectora.setText("Protectora ID: " + perroActual.getIdProtectora());
-        } else {
-            TxtProtectora.setText("No especificada");
-        }
-        // --- FIN SIMULACIÓN ---
-
-        /* // DAO para Nombre Protectora:
-        if (protectoraDao != null && perroActual.getIdProtectora() > 0) {
-            try {
-                Protectora p = protectoraDao.obtenerProtectoraPorId(perroActual.getIdProtectora());
-                TxtProtectora.setText(p != null ? p.getNombre() : "Desconocida");
-            } catch (SQLException e) { TxtProtectora.setText("Error DB"); }
-        } else { TxtProtectora.setText("No especificada"); }
-        */
-
-
-        // --- SIMULACIÓN PATOLOGÍAS ---
-        String patologiasTexto = "Ninguna conocida (Simulado)";
-        if (perroActual.getId() == 101) { // Buddy
-            patologiasTexto = "Alergia al Pollo (Simulado)";
-        } else if (perroActual.getId() == 102) { // Kira
-            patologiasTexto = "Leve displasia (Simulado)";
-        }
-        TxtPatologia.setText(patologiasTexto);
-        // --- FIN SIMULACIÓN ---
-
-        /* // DAO para Patologías:
-        if (identificacionPatologiasDao != null && patologiaDao != null) {
-            try {
-                List<Patologia> patologiasDelPerro = identificacionPatologiasDao.obtenerPatologiasPorPerroId(perroActual.getId());
-                if (patologiasDelPerro != null && !patologiasDelPerro.isEmpty()) {
-                    TxtPatologia.setText(
-                        patologiasDelPerro.stream().map(Patologia::getNombre).collect(Collectors.joining(", "))
-                    );
-                } else { TxtPatologia.setText("Ninguna conocida"); }
-            } catch (SQLException e) { TxtPatologia.setText("Error DB Patol.");}
-        } else { TxtPatologia.setText("Servicio Patol. no disp."); }
-        */
-
-
-        if (perroActual.isAdoptado()) {
-            BtnReservarCita.setText("Adoptado");
-            BtnReservarCita.setDisable(true);
-            BtnReservarCita.setStyle("-fx-background-color: #bdc3c7; -fx-text-fill: #7f8c8d; -fx-font-weight: normal;");
-        } else {
-            BtnReservarCita.setText("Reservar cita");
-            BtnReservarCita.setDisable(false);
-            BtnReservarCita.setStyle("-fx-background-color: #D2691E; -fx-text-fill: white; -fx-background-radius: 20; -fx-font-size: 16px; -fx-font-weight: bold;");
+        } catch (SQLException e) {
+            System.err.println("Error SQL al cargar detalles del perro: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
     @FXML
     void ReservarCita(ActionEvent event) {
-        if (perroActual == null || perroActual.isAdoptado()) {
-            UtilidadesVentana.mostrarAlertaInformacion("No Disponible", "Este perrito no está disponible para reservar citas.");
-            return;
+        if (perroActual != null && !"S".equals(perroActual.getAdoptado())) {
+            System.out.println("Navegando a reservar cita para perro ID: " + perroActual.getIdPerro());
+        } else {
+            System.out.println("Error: El perro no está disponible para citas.");
         }
-        System.out.println("Botón Reservar Cita presionado para: " + perroActual.getNombre());
-        UtilidadesVentana.mostrarAlertaInformacion("Próximamente", "La funcionalidad de reservar cita aún no está implementada.");
-        // Aquí navegarías al formulario de reserva de cita, pasando el ID del perro.
-    }
-
-    // Opcional: Si tienes un botón "Volver" o "Cerrar" en DetallesPerro.fxml
-    @FXML
-    void cerrarDetalles(ActionEvent event) {
-        Node source = (Node) event.getSource();
-        Stage stage = (Stage) source.getScene().getWindow();
-        stage.close();
     }
 }

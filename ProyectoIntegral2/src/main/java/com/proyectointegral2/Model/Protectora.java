@@ -1,19 +1,19 @@
 package com.proyectointegral2.Model;
 
 public class Protectora {
-    private int id;
+    private int idProtectora;
     private String cif;
     private String nombre;
     private Direccion direccion;
     private String telefono;
     private String email;
     private String redesSociales;
-    private int idUsuario; // CAMBIO: Añadir campo para el ID del Usuario asociado
+    private int idUsuario;
 
     // Constructor con todos los atributos, incluyendo idUsuario
-    public Protectora(int id, String cif, String nombre, Direccion direccion,
+    public Protectora(int idProtectora, String cif, String nombre, Direccion direccion,
                       String telefono, String email, String redesSociales, int idUsuario) {
-        this.id = id;
+        this.idProtectora = idProtectora;
         this.cif = cif;
         this.nombre = nombre;
         this.direccion = direccion;
@@ -28,12 +28,6 @@ public class Protectora {
     }
 
     // Getters y Setters
-    public int getId() {
-        return id;
-    }
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getCif() {
         return cif;
@@ -77,12 +71,18 @@ public class Protectora {
         this.redesSociales = redesSociales;
     }
 
-    // *** GETTER Y SETTER AÑADIDOS PARA idUsuario ***
     public int getIdUsuario() {
         return idUsuario;
     }
     public void setIdUsuario(int idUsuario) {
         this.idUsuario = idUsuario;
     }
-    // *** FIN GETTER Y SETTER AÑADIDOS ***
+
+    public void setIdProtectora(int idProtectora) {
+        this.idProtectora = idProtectora;
+    }
+
+    public int getIdProtectora() {
+        return idProtectora;
+    }
 }

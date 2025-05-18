@@ -8,10 +8,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PerroDao{
+public class PerroDao {
 
     public int crearPerro(Perro perro) throws SQLException {
-        String sqlInsert = "INSERT INTO Perros (Nombre, Sexo, FechaNacimiento, Adoptado, Foto, ID_Protectora, ID_Raza) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sqlInsert = "INSERT INTO Perros (Nombre, Sexo, FECHA_NACIMIENTO, Adoptado, Foto, ID_Protectora, ID_Raza) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, perro.getNombre());
@@ -65,7 +65,7 @@ public class PerroDao{
     }
 
     public boolean actualizarPerro(Perro perro) throws SQLException {
-        String sql = "UPDATE Perros SET Nombre = ?, Sexo = ?, FechaNacimiento = ?, Adoptado = ?, Foto = ?, ID_Protectora = ?, ID_Raza = ? WHERE ID_Perro = ?";
+        String sql = "UPDATE Perros SET Nombre = ?, Sexo = ?, FECHA_NACIMIENTO = ?, Adoptado = ?, Foto = ?, ID_Protectora = ?, ID_Raza = ? WHERE ID_Perro = ?";
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, perro.getNombre());
@@ -98,11 +98,30 @@ public class PerroDao{
         perro.setIdPerro(rs.getInt("ID_Perro"));
         perro.setNombre(rs.getString("Nombre"));
         perro.setSexo(rs.getString("Sexo"));
-        perro.setFechaNacimiento(rs.getDate("FechaNacimiento").toLocalDate());
+        perro.setFechaNacimiento(rs.getDate("FECHA_NACIMIENTO").toLocalDate());
         perro.setAdoptado(rs.getString("Adoptado"));
         perro.setFoto(rs.getBytes("Foto"));
         perro.setIdProtectora(rs.getInt("ID_Protectora"));
         perro.setIdRaza(rs.getInt("ID_Raza"));
         return perro;
+    }
+
+    public Patologia obtenerPatologiaPorId(int idPatologia) {
+        String sql = "SELECT * FROM Patologia WHERE ID_Patologia = ?";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, idPatologia);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    Patologia patologia = new Patologia();
+                    patologia.setIdPatologia(rs.getInt("ID_Patologia"));
+                    patologia.setNombre(rs.getString("Nombre"));
+                    return patologia;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
