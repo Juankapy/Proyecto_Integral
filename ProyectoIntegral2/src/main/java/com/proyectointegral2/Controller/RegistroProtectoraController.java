@@ -17,66 +17,41 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.control.PasswordField;
 
 import java.io.IOException;
 
 public class RegistroProtectoraController {
 
     @FXML
-    private ImageView ImgLateralLogin;
-
-    @FXML
-    private TextField TxtTel;
-
-    @FXML
-    private TextField TxtNombre;
-
-    @FXML
-    private TextField TxtProvincia;
-
-    @FXML
-    private ImageView ImgIconoDog;
-
-    @FXML
-    private TextField TxtContra;
-
-    @FXML
-    private TextField TxtCP;
-
-    @FXML
-    private HBox HboxImg;
-
-    @FXML
-    private TextField TxtDireccion;
-
-    @FXML
-    private TextField TxtCiudad;
-
-    @FXML
-    private ImageView ImgUsuario;
-
-    @FXML
-    private TextField TxtApellido;
-
-    @FXML
-    private Button BtnConfirmar;
-
-    @FXML
-    private ImageView ImgIconoSalida;
-
+    private TextField TxtNombreProtectora;
     @FXML
     private TextField TxtCIF;
-
     @FXML
-    private TextField TxtCorreo;
+    private TextField TxtDireccionProtectora;
+    @FXML
+    private TextField TxtProvinciaProtectora;
+    @FXML
+    private TextField TxtCPProtectora;
+    @FXML
+    private TextField TxtCiudadProtectora;
+    @FXML
+    private TextField TxtTelProtectora;
+    @FXML
+    private TextField TxtNombreUsuarioCuenta;
+    @FXML
+    private TextField TxtCorreoCuenta;
+    @FXML
+    private PasswordField TxtContraCuenta;
+    @FXML
+    private PasswordField TxtConfirmarContraCuenta;
 
     @FXML
     void ConfirmarRegistroProtectora(ActionEvent event) {
         try {
-            String nombreUsu = TxtCorreo.getText();
-            String contrasena = TxtContra.getText();
+            String nombreUsu = TxtCorreoCuenta.getText();
+            String contrasena = TxtContraCuenta.getText();
 
-            // 1. Insertar usuario
             boolean usuarioInsertado = UsuarioDao.insertarUsuario(nombreUsu, contrasena);
 
             if (!usuarioInsertado) {
@@ -88,27 +63,22 @@ public class RegistroProtectoraController {
                 return;
             }
 
-            // 2. Recuperar el ID del usuario
             int idUsuario = UsuarioDao.obtenerIdUsuario(nombreUsu);
 
-            // 3. Crear la dirección
             Direccion direccion = new Direccion();
-            direccion.setCalle(TxtDireccion.getText());
-            direccion.setProvincia(TxtProvincia.getText());
-            direccion.setCiudad(TxtCiudad.getText());
-            direccion.setCodigoPostal(TxtCP.getText());
+            direccion.setCalle(TxtDireccionProtectora.getText());
+            direccion.setProvincia(TxtProvinciaProtectora.getText());
+            direccion.setCiudad(TxtCiudadProtectora.getText());
+            direccion.setCodigoPostal(TxtCPProtectora.getText());
 
-            // 4. Crear la protectora
             Protectora protectora = new Protectora();
-            protectora.setNombre(TxtNombre.getText());
+            protectora.setNombre(TxtNombreProtectora.getText());
             protectora.setCif(TxtCIF.getText());
-            protectora.setTelefono(TxtTel.getText());
-            protectora.setEmail(TxtCorreo.getText());
+            protectora.setTelefono(TxtTelProtectora.getText());
+            protectora.setEmail(TxtCorreoCuenta.getText());
             protectora.setDireccion(direccion);
             protectora.setIdUsuario(idUsuario);
-            // protectora.setRedesSociales(...); // Si tienes el campo
 
-            // 5. Insertar protectora
             ProtectoraDao protectoraDao = new ProtectoraDao();
             try {
                 protectoraDao.insertarProtectora(protectora);

@@ -29,9 +29,13 @@
       </MavenGeneralSettings>
     </option>
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectColorInfo">{
     &quot;associatedIndex&quot;: 6 }</component>
   <component name="ProjectId" id="2x1wRszBZoUNuo6nkgR5sh5N9SW" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -123,12 +127,9 @@
       <workItem from="1747323790932" duration="1105000" />
       <workItem from="1747324907590" duration="5068000" />
       <workItem from="1747330415656" duration="5193000" />
-<<<<<<< HEAD
       <workItem from="1747562777903" duration="7518000" />
-=======
       <workItem from="1747417100921" duration="2505000" />
       <workItem from="1747571129049" duration="2204000" />
->>>>>>> f8a27048f7bf2f1a2c0f24b670e5966714aaaff4
     </task>
     <servers />
   </component>

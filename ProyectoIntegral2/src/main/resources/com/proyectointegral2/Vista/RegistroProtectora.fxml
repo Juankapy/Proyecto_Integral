@@ -73,11 +73,11 @@
 
             <HBox spacing="10.0">
                <children>
-                  <VBox prefHeight="48.0" prefWidth="47.0" HBox.hgrow="ALWAYS">
+                  <VBox prefHeight="48.0" prefWidth="435.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label text="Nombre de Usuario ">
                            <font><Font name="Modern No. 20" size="15.0" /></font></Label>
-                        <TextField fx:id="TxtNombreUsuarioCuenta" prefHeight="27.0" prefWidth="430.0" style="-fx-border-color: #d2691e; -fx-border-radius: 8px;" />
+                        <TextField fx:id="TxtNombreUsuarioCuenta" prefHeight="27.0" prefWidth="465.0" style="-fx-border-color: #d2691e; -fx-border-radius: 8px;" />
                      </children>
                   </VBox>
                   <VBox HBox.hgrow="SOMETIMES" />
