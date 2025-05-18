@@ -1,4 +1,3 @@
--- ========= LIMPIEZA OPCIONAL (DESCOMENTAR CON CUIDADO SI QUIERES RECREAR TODO) =========
 /*
 DROP TABLE NOTIFICACIONES_RECIBIDAS CASCADE CONSTRAINTS;
 DROP TABLE IDENTIFICACION_PATOLOGIAS CASCADE CONSTRAINTS;
@@ -164,4 +163,138 @@ CREATE TABLE REDES_SOCIALES (
     CONSTRAINT FK_REDSOCIAL_PROTECTORA FOREIGN KEY (ID_PROTECTORA) REFERENCES PROTECTORA(ID_PROTECTORA) ON DELETE CASCADE
 );
 
-COMMIT;
+-- ========= FUNCIÓN: Obtener ID de usuario desde ID de protectora asociada a un perro =========
+
+CREATE OR REPLACE FUNCTION usuario_por_perro(id_perro_in NUMBER)
+RETURN NUMBER
+IS
+    resultado NUMBER;
+BEGIN
+    SELECT u.id_usuario
+    INTO resultado
+    FROM perros p
+    JOIN protectora pr ON p.id_protectora = pr.id_protectora
+    JOIN usuario u ON pr.id_usuario = u.id_usuario
+    WHERE p.id_perro = id_perro_in;
+
+    RETURN resultado;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN NULL;
+END;
+/
+
+-- ========= PROCEDIMIENTO: Crear notificación y asignarla a un usuario =========
+
+CREATE OR REPLACE PROCEDURE crear_notificacion(
+    mensaje_in VARCHAR2,
+    tipo_in VARCHAR2,
+    id_entidad NUMBER,
+    tipo_entidad VARCHAR2,
+    id_usuario NUMBER
+)
+IS
+    id_notif NUMBER;
+BEGIN
+    INSERT INTO notificacion (
+        mensaje,
+        tipo_notificacion,
+        id_entidad_relacionada,
+        entidad_tipo
+    ) VALUES (
+        mensaje_in,
+        tipo_in,
+        id_entidad,
+        tipo_entidad
+    )
+    RETURNING id_notificacion INTO id_notif;
+
+    INSERT INTO notificaciones_recibidas (
+        id_usuario,
+        id_notificacion
+    ) VALUES (
+        id_usuario,
+        id_notif
+    );
+END;
+/
+
+-- ========= DISPARADOR: Nueva petición de adopción =========
+
+CREATE OR REPLACE TRIGGER nueva_peticion
+AFTER INSERT ON peticiones_adopcion
+FOR EACH ROW
+DECLARE
+    usuario_destino NUMBER;
+BEGIN
+    usuario_destino := usuario_por_perro(:NEW.id_perro);
+
+    IF usuario_destino IS NOT NULL THEN
+        crear_notificacion(
+            'Se ha creado una nueva petición de adopción.',
+            'Petición',
+            :NEW.id_peticion,
+            'peticiones_adopcion',
+            usuario_destino
+        );
+    END IF;
+END;
+/
+
+-- ========= DISPARADOR: Nueva reserva de cita =========
+
+CREATE OR REPLACE TRIGGER nueva_reserva
+AFTER INSERT ON reservas_citas
+FOR EACH ROW
+DECLARE
+    usuario_destino NUMBER;
+BEGIN
+    SELECT u.id_usuario
+    INTO usuario_destino
+    FROM protectora p
+    JOIN usuario u ON p.id_usuario = u.id_usuario
+    WHERE p.id_protectora = :NEW.id_protectora;
+
+    IF usuario_destino IS NOT NULL THEN
+        crear_notificacion(
+            'Se ha registrado una nueva reserva de cita.',
+            'Reserva',
+            :NEW.id_reserva_cita,
+            'reservas_citas',
+            usuario_destino
+        );
+    END IF;
+END;
+/
+
+-- ========= DISPARADOR: Cambio de estado en una petición de adopción =========
+
+CREATE OR REPLACE TRIGGER estado_peticion
+AFTER UPDATE OF estado ON peticiones_adopcion
+FOR EACH ROW
+WHEN (OLD.estado != NEW.estado)
+DECLARE
+    usuario_destino NUMBER;
+    mensaje_estado VARCHAR2(100);
+BEGIN
+    -- Obtener el id_usuario del cliente asociado
+    SELECT c.id_usuario
+    INTO usuario_destino
+    FROM cliente c
+    WHERE c.id_cliente = :NEW.id_cliente;
+
+    -- Componer mensaje según nuevo estado
+    mensaje_estado := 'El estado de tu petición de adopción ha cambiado a "' || :NEW.estado || '".';
+
+    IF usuario_destino IS NOT NULL THEN
+        crear_notificacion(
+            mensaje_estado,
+            'Estado Petición',
+            :NEW.id_peticion,
+            'peticiones_adopcion',
+            usuario_destino
+        );
+    END IF;
+END;
+/
+
