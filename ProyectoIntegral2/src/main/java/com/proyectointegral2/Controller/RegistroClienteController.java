@@ -76,8 +76,8 @@ public class RegistroClienteController implements Initializable {
         clienteDAO = new ClienteDao();
     }
 
-    @FXML
     void ConfirmarRegistro(ActionEvent event) {
+<<<<<<< Updated upstream
         String nombre = TxtNombre.getText().trim();
         String apellidos = TxtApellido.getText().trim();
         String nombreUsuario = TxtNombreUsuario.getText().trim();
@@ -148,6 +148,25 @@ public class RegistroClienteController implements Initializable {
                 // alertas.mostrarError("Registro Fallido", "El nombre de usuario ya está en uso.");
                 System.out.println("Error: Nombre de usuario ya existe."); // Placeholder
                 TxtNombreUsuario.requestFocus();
+=======
+        // Cuando implementes esto, necesitarás obtener los valores de los nuevos campos:
+        String nombreUsuario = TxtNombreUsuario.getText();
+        String nif = TxtNIF.getText();
+        java.time.LocalDate fechaNacimiento = DpFechaNacimiento.getValue();
+        String confirmarContra = TxtConfirmarContra.getText();
+
+        // ... tu lógica de validación y guardado ...
+        if (fechaNacimiento != null) {
+            System.out.println("Fecha de Nacimiento seleccionada: " + fechaNacimiento.toString());
+        }
+    }
+
+            // 1. Insertar usuario
+            boolean usuarioInsertado = UsuarioDao.insertarUsuario(nombreUsu, contrasena);
+
+            if (!usuarioInsertado) {
+                UtilidadesExcepciones.mostrarAdvertencia("No se pudo registrar el usuario.", "Error de registro", "El usuario ya existe o hubo un problema con la base de datos.");
+>>>>>>> Stashed changes
                 return;
             }
 
