@@ -28,13 +28,16 @@ public class RazaDao{
     }
 
     public Raza obtenerRazaPorId(int idRaza) throws SQLException {
-        String sql = "SELECT * FROM Raza WHERE ID_Raza = ?";
+        String sql = "SELECT * FROM RAZA WHERE ID_RAZA = ?";
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, idRaza);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    return mapResultSetToRaza(rs);
+                    Raza raza = new Raza();
+                    raza.setIdRaza(rs.getInt("ID_RAZA"));
+                    raza.setNombreRaza(rs.getString("NOMBRE_RAZA"));
+                    return raza;
                 }
             }
         }

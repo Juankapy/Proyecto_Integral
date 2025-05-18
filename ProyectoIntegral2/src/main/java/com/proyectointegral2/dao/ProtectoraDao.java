@@ -26,24 +26,30 @@ public class ProtectoraDao{
     }
 
     public int crearProtectora(Protectora protectora) throws SQLException {
-        String sqlInsert = "INSERT INTO Protectora (Nombre, Telefono, Email, Provincia, Ciudad, Calle, CP, ID_Usuario) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sqlInsert = "INSERT INTO PROTECTORA (CIF, NOMBRE, TELEFONO, EMAIL, PROVINCIA, CIUDAD, CALLE, CP, ID_USUARIO) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(1, protectora.getNombre());
-            pstmt.setString(2, protectora.getTelefono());
-            pstmt.setString(3, protectora.getEmail());
-            pstmt.setString(4, protectora.getDireccion().getProvincia());
-            pstmt.setString(5, protectora.getDireccion().getCiudad());
-            pstmt.setString(6, protectora.getDireccion().getCalle());
-            pstmt.setString(7, protectora.getDireccion().getCodigoPostal());
-            pstmt.setInt(8, protectora.getIdUsuario());
+             PreparedStatement pstmt = conn.prepareStatement(sqlInsert, new String[]{"ID_PROTECTORA"})) {
+
+            pstmt.setString(1, protectora.getCif());
+            pstmt.setString(2, protectora.getNombre());
+            pstmt.setString(3, protectora.getTelefono());
+            pstmt.setString(4, protectora.getEmail());
+            pstmt.setString(5, protectora.getProvincia());
+            pstmt.setString(6, protectora.getCiudad());
+            pstmt.setString(7, protectora.getCalle());
+            pstmt.setString(8, protectora.getCodigoPostal()); // Asume getCodigoPostal() en Protectora.java
+            pstmt.setInt(9, protectora.getIdUsuario());
+
             int affectedRows = pstmt.executeUpdate();
-            if (affectedRows == 0) throw new SQLException("No se pudo crear la protectora.");
+            if (affectedRows == 0) {
+                throw new SQLException("No se pudo crear la protectora.");
+            }
             try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     return generatedKeys.getInt(1);
                 } else {
-                    throw new SQLException("No se pudo obtener el ID generado.");
+                    System.out.println("Advertencia: Protectora insertada, pero ID no recuperado por getGeneratedKeys.");
+                    return -1;
                 }
             }
         }
@@ -97,10 +103,10 @@ public class ProtectoraDao{
             pstmt.setString(1, protectora.getNombre());
             pstmt.setString(2, protectora.getTelefono());
             pstmt.setString(3, protectora.getEmail());
-            pstmt.setString(4, protectora.getDireccion().getProvincia());
-            pstmt.setString(5, protectora.getDireccion().getCiudad());
-            pstmt.setString(6, protectora.getDireccion().getCalle());
-            pstmt.setString(7, protectora.getDireccion().getCodigoPostal());
+            pstmt.setString(4, protectora.getProvincia());
+            pstmt.setString(5, protectora.getCiudad());
+            pstmt.setString(6, protectora.getCalle());
+            pstmt.setString(7, protectora.getCodigoPostal());
             pstmt.setInt(8, protectora.getIdUsuario());
             pstmt.setInt(9, protectora.getIdProtectora());
             return pstmt.executeUpdate() > 0;
@@ -183,24 +189,17 @@ public class ProtectoraDao{
 
     private Protectora mapResultSetToProtectora(ResultSet rs) throws SQLException {
         Protectora protectora = new Protectora();
-        protectora.setNombre(rs.getString("Nombre"));
-        protectora.setTelefono(rs.getString("Telefono"));
-        protectora.setEmail(rs.getString("Email"));
-        protectora.setIdUsuario(rs.getInt("ID_Usuario"));
-
-        // Si tienes un campo idProtectora, usa el setter correcto
-        if (protectora.getClass().getDeclaredMethods().toString().contains("setIdProtectora")) {
-            protectora.setIdProtectora(rs.getInt("ID_Protectora"));
-        }
-
-        // Asumiendo que existe un objeto Direccion en Protectora
-        if (protectora.getDireccion() != null) {
-            protectora.getDireccion().setProvincia(rs.getString("Provincia"));
-            protectora.getDireccion().setCiudad(rs.getString("Ciudad"));
-            protectora.getDireccion().setCalle(rs.getString("Calle"));
-            protectora.getDireccion().setCodigoPostal(rs.getString("CP"));
-        }
-
+        protectora.setIdProtectora(rs.getInt("ID_PROTECTORA"));
+        protectora.setCif(rs.getString("CIF"));
+        protectora.setNombre(rs.getString("NOMBRE"));
+        protectora.setTelefono(rs.getString("TELEFONO"));
+        protectora.setEmail(rs.getString("EMAIL"));
+        // Mapeo directo de los campos de dirección
+        protectora.setProvincia(rs.getString("PROVINCIA"));
+        protectora.setCiudad(rs.getString("CIUDAD"));
+        protectora.setCalle(rs.getString("CALLE"));
+        protectora.setCodigoPostal(rs.getString("CP")); // Asume setCodigoPostal() en Protectora.java
+        protectora.setIdUsuario(rs.getInt("ID_USUARIO"));
         return protectora;
     }
 }

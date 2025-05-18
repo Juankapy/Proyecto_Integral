@@ -14,22 +14,25 @@ public class Usuario {
         this.contrasena = contrasena;
         this.rol = rol;
     }
-    // Constructor que usabas en LoginController
+
     public Usuario(int idUsuario, String nombreUsu, String contrasena) {
         this.idUsuario = idUsuario;
         this.nombreUsu = nombreUsu;
         this.contrasena = contrasena;
-        //this.rol = determinarRol(idUsuario);
+        // this.rol = "DESCONOCIDO"; // O determinarlo después
     }
 
 
     // Getters y Setters
     public int getIdUsuario() { return idUsuario; }
     public void setIdUsuario(int idUsuario) { this.idUsuario = idUsuario; }
+
     public String getNombreUsu() { return nombreUsu; }
     public void setNombreUsu(String nombreUsu) { this.nombreUsu = nombreUsu; }
+
     public String getContrasena() { return contrasena; }
     public void setContrasena(String contrasena) { this.contrasena = contrasena; }
+
     public String getRol() { return rol; }
     public void setRol(String rol) { this.rol = rol; }
 }

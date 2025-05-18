@@ -26,7 +26,6 @@ public class MainApp extends Application {
             }
             FXMLLoader fxmlLoader = new FXMLLoader(resourceUrl);
             Parent root = fxmlLoader.load();
-            // Guardar la ruta FXML en las propiedades del root para el historial
             root.getProperties().put("fxmlLocation", initialFxmlPath);
 
             Scene scene = new Scene(root);

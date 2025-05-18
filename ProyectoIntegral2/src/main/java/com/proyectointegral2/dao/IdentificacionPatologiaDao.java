@@ -10,7 +10,7 @@ import java.util.List;
 public class IdentificacionPatologiaDao  {
 
     public boolean asignarPatologiaAPerro(int idPerro, int idPatologia, String descripcion) throws SQLException {
-        String sql = "INSERT INTO Identificacion_Patologias (ID_Perro, ID_Patologia, Descripcion) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO Identificacion_Patologias (ID_Perro, ID_Patologia, NOTAS_ESPECIFICAS) VALUES (?, ?, ?)";
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, idPerro);
@@ -31,7 +31,7 @@ public class IdentificacionPatologiaDao  {
     }
 
     public boolean actualizarDescripcionPatologiaPerro(int idPerro, int idPatologia, String nuevaDescripcion) throws SQLException {
-        String sql = "UPDATE Identificacion_Patologias SET Descripcion = ? WHERE ID_Perro = ? AND ID_Patologia = ?";
+        String sql = "UPDATE Identificacion_Patologias SET NOTAS_ESPECIFICAS = ? WHERE ID_Perro = ? AND ID_Patologia = ?";
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, nuevaDescripcion);

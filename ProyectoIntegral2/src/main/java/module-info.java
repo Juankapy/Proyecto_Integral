@@ -3,9 +3,11 @@ module com.proyectointegral2 {
     requires javafx.fxml;
     requires javafx.graphics;
     requires java.sql;
+    requires javafx.base;
     requires java.desktop;
     requires jdk.compiler;
 
     opens com.proyectointegral2.Controller to javafx.fxml;
-    exports com.proyectointegral2 to javafx.graphics;
+    opens com.proyectointegral2.Model to javafx.base, javafx.fxml;
+    exports com.proyectointegral2 ;
 }

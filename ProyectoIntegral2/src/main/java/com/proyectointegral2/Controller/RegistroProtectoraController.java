@@ -1,21 +1,24 @@
 package com.proyectointegral2.Controller;
 
-import com.proyectointegral2.Model.Direccion;
 import com.proyectointegral2.Model.Protectora;
 import com.proyectointegral2.Model.Usuario;
 import com.proyectointegral2.dao.ProtectoraDao;
 import com.proyectointegral2.dao.UsuarioDao;
+import com.proyectointegral2.utils.UtilidadesExcepciones;
 import com.proyectointegral2.utils.UtilidadesVentana;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.event.ActionEvent;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.ResourceBundle;
 
-public class RegistroProtectoraController {
-
-    private final UsuarioDao usuarioDao = new UsuarioDao();
-    private final ProtectoraDao protectoraDao = new ProtectoraDao();
+public class RegistroProtectoraController implements Initializable {
 
     @FXML private TextField TxtNombreProtectora;
     @FXML private TextField TxtCIF;
@@ -28,101 +31,85 @@ public class RegistroProtectoraController {
     @FXML private TextField TxtCorreoCuenta;
     @FXML private PasswordField TxtContraCuenta;
     @FXML private PasswordField TxtConfirmarContraCuenta;
+    @FXML private ImageView ImgIconoSalida;
+    @FXML private Button BtnConfirmar;
+
+
+    private UsuarioDao usuarioDAO;
+    private ProtectoraDao protectoraDAO;
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        usuarioDAO = new UsuarioDao();
+        protectoraDAO = new ProtectoraDao();
+    }
 
     @FXML
     public void ConfirmarRegistroProtectora(ActionEvent event) {
-        String nombre = TxtNombreProtectora.getText().trim();
+        String nombreProtectora = TxtNombreProtectora.getText().trim();
         String cif = TxtCIF.getText().trim();
-        String nombreUsuario = TxtNombreUsuarioCuenta.getText().trim();
-        String calle = TxtDireccionProtectora.getText().trim();
-        String provincia = TxtProvinciaProtectora.getText().trim();
-        String cp = TxtCPProtectora.getText().trim();
-        String ciudad = TxtCiudadProtectora.getText().trim();
-        String telefono = TxtTelProtectora.getText().trim();
-        String email = TxtCorreoCuenta.getText().trim();
-        String contrasena = TxtContraCuenta.getText();
+        String calleProtectora = TxtDireccionProtectora.getText().trim();
+        String provinciaProtectora = TxtProvinciaProtectora.getText().trim();
+        String cpProtectora = TxtCPProtectora.getText().trim();
+        String ciudadProtectora = TxtCiudadProtectora.getText().trim();
+        String telefonoProtectora = TxtTelProtectora.getText().trim();
+        String nombreUsuarioLogin = TxtNombreUsuarioCuenta.getText().trim();
+        String emailCuenta = TxtCorreoCuenta.getText().trim();
+        String contrasenaLogin = TxtContraCuenta.getText();
         String confirmarContrasena = TxtConfirmarContraCuenta.getText();
 
-        // Validaciones (igual que antes)
-        if (nombre.isEmpty() || cif.isEmpty() || nombreUsuario.isEmpty() ||
-                calle.isEmpty() || provincia.isEmpty() || cp.isEmpty() || ciudad.isEmpty() ||
-                telefono.isEmpty() || email.isEmpty() ||
-                contrasena.isEmpty() || confirmarContrasena.isEmpty()) {
-            System.out.println("Error: Campos incompletos");
+        if (nombreProtectora.isEmpty() || cif.isEmpty() || nombreUsuarioLogin.isEmpty() || emailCuenta.isEmpty() || contrasenaLogin.isEmpty()) {
+            UtilidadesVentana.mostrarAlertaError("Campos Incompletos", "Rellena los campos obligatorios.");
             return;
         }
-        if (!contrasena.equals(confirmarContrasena)) {
-            System.out.println("Error: Contraseñas no coinciden");
-            TxtContraCuenta.clear();
-            TxtConfirmarContraCuenta.clear();
-            TxtContraCuenta.requestFocus();
-            return;
-        }
-        if (!cif.matches("^[A-Z]\\d{8}$")) {
-            System.out.println("Error: CIF inválido.");
-            return;
-        }
-        if (!email.contains("@") || !email.contains(".")) {
-            System.out.println("Error: Email inválido");
-            return;
-        }
-        if (!telefono.matches("\\d{9}")) {
-            System.out.println("Error: Teléfono inválido, debe tener 9 dígitos.");
-            return;
-        }
-        if (!cp.matches("\\d{5}")) {
-            System.out.println("Error: Código Postal inválido, debe tener 5 dígitos.");
+        if (!contrasenaLogin.equals(confirmarContrasena)) {
+            UtilidadesVentana.mostrarAlertaError("Error de Contraseña", "Las contraseñas no coinciden.");
             return;
         }
 
         try {
-            if (usuarioDao.obtenerUsuarioPorNombreUsuario(nombreUsuario) != null) {
-                System.out.println("Error: Nombre de usuario ya existe.");
+            if (usuarioDAO.obtenerUsuarioPorNombreUsuario(nombreUsuarioLogin) != null) {
+                UtilidadesVentana.mostrarAlertaError("Usuario Existente", "El nombre de usuario '" + nombreUsuarioLogin + "' ya está en uso.");
                 TxtNombreUsuarioCuenta.requestFocus();
                 return;
             }
 
-            Protectora protectoraExistentePorCIF = protectoraDao.obtenerProtectoraPorCIF(cif);
-            if (protectoraExistentePorCIF != null) {
-                System.out.println("Error: CIF ya registrado.");
-                TxtCIF.requestFocus();
-                return;
-            }
+            Usuario nuevaCuentaUsuario = new Usuario();
+            nuevaCuentaUsuario.setNombreUsu(nombreUsuarioLogin);
+            nuevaCuentaUsuario.setContrasena(contrasenaLogin);
+            nuevaCuentaUsuario.setRol("PROTECTORA");
 
-            Usuario nuevoUsuario = new Usuario();
-            nuevoUsuario.setNombreUsuario(nombreUsuario);
-            nuevoUsuario.setContrasena(contrasena);
-
-            int idUsuarioCreado = usuarioDao.crearUsuario(nuevoUsuario);
+            int idUsuarioCreado = usuarioDAO.crearUsuario(nuevaCuentaUsuario);
 
             if (idUsuarioCreado != -1) {
-                Direccion direccion = new Direccion();
-                direccion.setProvincia(provincia);
-                direccion.setCiudad(ciudad);
-                direccion.setCalle(calle);
-                direccion.setCodigoPostal(cp);
-
                 Protectora nuevaProtectora = new Protectora();
-                nuevaProtectora.setNombre(nombre);
+                nuevaProtectora.setNombre(nombreProtectora);
                 nuevaProtectora.setCif(cif);
-                nuevaProtectora.setDireccion(direccion);
-                nuevaProtectora.setTelefono(telefono);
-                nuevaProtectora.setEmail(email);
+                nuevaProtectora.setEmail(emailCuenta);
+                nuevaProtectora.setTelefono(telefonoProtectora);
+                nuevaProtectora.setProvincia(provinciaProtectora);
+                nuevaProtectora.setCiudad(ciudadProtectora);
+                nuevaProtectora.setCalle(calleProtectora);
+                nuevaProtectora.setCodigoPostal(cpProtectora);
                 nuevaProtectora.setIdUsuario(idUsuarioCreado);
 
-                int idProtectoraCreada = protectoraDao.crearProtectora(nuevaProtectora);
+                int idProtectoraCreada = protectoraDAO.crearProtectora(nuevaProtectora);
+
                 if (idProtectoraCreada != -1) {
-                    System.out.println("Protectora registrada correctamente. ID Protectora: " + idProtectoraCreada);
+                    UtilidadesVentana.mostrarAlertaInformacion("Registro Exitoso", "¡Protectora registrada correctamente!");
                     Volver(null);
                 } else {
-                    System.out.println("Error: No se pudo crear el perfil de la protectora.");
+                    UtilidadesVentana.mostrarAlertaError("Error de Registro", "No se pudo crear el perfil de la protectora.");
                 }
             } else {
-                System.out.println("Error: No se pudo crear el usuario base.");
+                UtilidadesVentana.mostrarAlertaError("Error de Registro", "No se pudo crear la cuenta de usuario.");
             }
 
-        } catch (java.sql.SQLException e) {
-            System.err.println("Error SQL al registrar protectora: " + e.getMessage());
+        } catch (SQLException e) {
+            UtilidadesExcepciones.mostrarError(e, "Error de Base de Datos", "Ocurrió un error al registrar la protectora.");
+            e.printStackTrace();
+        } catch (Exception e) {
+            UtilidadesExcepciones.mostrarError(e, "Error Inesperado", "Ocurrió un error general durante el registro.");
             e.printStackTrace();
         }
     }

@@ -10,7 +10,7 @@ package com.proyectointegral2.dao;
     public class NotificacionesRecibidasDao {
 
         public boolean asignarNotificacionAUsuario(int idUsuario, int idNotificacion) throws SQLException {
-            String sql = "INSERT INTO Notificaciones_Recibidas (ID_Usuario, ID_Notificacion) VALUES (?, ?)";
+            String sql = "INSERT INTO NOTIFICACIONES_RECIBIDAS (ID_USUARIO, ID_NOTIFICACION, LEIDA) VALUES (?, ?, 'N')";
             try (Connection conn = ConexionDB.getConnection();
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, idUsuario);
@@ -20,7 +20,7 @@ package com.proyectointegral2.dao;
         }
 
         public boolean desasignarNotificacionDeUsuario(int idUsuario, int idNotificacion) throws SQLException {
-            String sql = "DELETE FROM Notificaciones_Recibidas WHERE ID_Usuario = ? AND ID_Notificacion = ?";
+            String sql = "DELETE FROM NOTIFICACIONES_RECIBIDAS WHERE ID_USUARIO = ? AND ID_NOTIFICACION = ?";
             try (Connection conn = ConexionDB.getConnection();
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, idUsuario);
@@ -31,33 +31,45 @@ package com.proyectointegral2.dao;
 
         public List<Notificacion> obtenerNotificacionesPorUsuario(int idUsuario) throws SQLException {
             List<Notificacion> notificaciones = new ArrayList<>();
-            String sql = "SELECT n.* FROM Notificacion n " +
-                    "JOIN Notificaciones_Recibidas nr ON n.ID_Notificacion = nr.ID_Notificacion " +
-                    "WHERE nr.ID_Usuario = ? ORDER BY n.FECHA_GENERACION DESC, n.ID_Notificacion DESC";
+            String sql = "SELECT n.ID_NOTIFICACION, n.FECHA_GENERACION, n.MENSAJE, n.TIPO_NOTIFICACION, " +
+                    "n.ID_ENTIDAD_RELACIONADA, n.ENTIDAD_TIPO, " +
+                    "nr.ID_USUARIO, nr.LEIDA, nr.FECHA_LEIDA " +
+                    "FROM NOTIFICACION n " +
+                    "JOIN NOTIFICACIONES_RECIBIDAS nr ON n.ID_NOTIFICACION = nr.ID_NOTIFICACION " +
+                    "WHERE nr.ID_USUARIO = ? " +
+                    "ORDER BY n.FECHA_GENERACION DESC, n.ID_NOTIFICACION DESC";
+
             try (Connection conn = ConexionDB.getConnection();
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
                 pstmt.setInt(1, idUsuario);
                 try (ResultSet rs = pstmt.executeQuery()) {
                     while (rs.next()) {
-                        notificaciones.add(mapResultSetToNotificacion(rs));
+                        notificaciones.add(mapResultSetToNotificacionConInfoRecibida(rs));
                     }
                 }
+            } catch (SQLException e) {
+                System.err.println("Error al obtener notificaciones por usuario: " + e.getMessage());
+                throw e;
             }
             return notificaciones;
         }
 
         public List<Notificacion> obtenerNotificacionesNoLeidasPorUsuario(int idUsuario) throws SQLException {
             List<Notificacion> notificaciones = new ArrayList<>();
-            String sql = "SELECT n.* FROM Notificacion n " +
-                    "JOIN Notificaciones_Recibidas nr ON n.ID_Notificacion = nr.ID_Notificacion " +
-                    "WHERE nr.ID_Usuario = ? AND nr.LEIDA = 'No Leída' " +
-                    "ORDER BY n.FECHA_GENERACION DESC, n.ID_Notificacion DESC";
+            String sql = "SELECT n.ID_NOTIFICACION, n.FECHA_GENERACION, n.MENSAJE, n.TIPO_NOTIFICACION, " +
+                    "n.ID_ENTIDAD_RELACIONADA, n.ENTIDAD_TIPO, " +
+                    "nr.ID_USUARIO, nr.LEIDA, nr.FECHA_LEIDA " +
+                    "FROM NOTIFICACION n " +
+                    "JOIN NOTIFICACIONES_RECIBIDAS nr ON n.ID_NOTIFICACION = nr.ID_NOTIFICACION " +
+                    "WHERE nr.ID_USUARIO = ? AND nr.LEIDA = 'N' " +
+                    "ORDER BY n.FECHA_GENERACION DESC, n.ID_NOTIFICACION DESC";
             try (Connection conn = ConexionDB.getConnection();
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, idUsuario);
                 try (ResultSet rs = pstmt.executeQuery()) {
                     while (rs.next()) {
-                        notificaciones.add(mapResultSetToNotificacion(rs));
+                        notificaciones.add(mapResultSetToNotificacionConInfoRecibida(rs));
                     }
                 }
             }
@@ -65,34 +77,19 @@ package com.proyectointegral2.dao;
         }
 
         public boolean marcarComoLeida(int idUsuario, int idNotificacion) throws SQLException {
-            String sqlCheck = "SELECT 1 FROM Notificaciones_Recibidas WHERE ID_Usuario = ? AND ID_Notificacion = ?";
-            String sqlUpdate = "UPDATE NOTIFICACIONES_RECIBIDAS SET LEIDA  = 'Leída' WHERE ID_Notificacion = ?";
-            try (Connection conn = ConexionDB.getConnection()) {
-                boolean recibida = false;
-                try (PreparedStatement pstmtCheck = conn.prepareStatement(sqlCheck)) {
-                    pstmtCheck.setInt(1, idUsuario);
-                    pstmtCheck.setInt(2, idNotificacion);
-                    try (ResultSet rs = pstmtCheck.executeQuery()) {
-                        if (rs.next()) {
-                            recibida = true;
-                        }
-                    }
-                }
-                if (recibida) {
-                    try (PreparedStatement pstmtUpdate = conn.prepareStatement(sqlUpdate)) {
-                        pstmtUpdate.setInt(1, idNotificacion);
-                        return pstmtUpdate.executeUpdate() > 0;
-                    }
-                } else {
-                    return false;
-                }
+            String sqlUpdate = "UPDATE NOTIFICACIONES_RECIBIDAS SET LEIDA = 'S', FECHA_LEIDA = SYSTIMESTAMP " +
+                    "WHERE ID_USUARIO = ? AND ID_NOTIFICACION = ?";
+            try (Connection conn = ConexionDB.getConnection();
+                 PreparedStatement pstmtUpdate = conn.prepareStatement(sqlUpdate)) {
+                pstmtUpdate.setInt(1, idUsuario);
+                pstmtUpdate.setInt(2, idNotificacion);
+                return pstmtUpdate.executeUpdate() > 0;
             }
         }
 
         public boolean marcarTodasComoLeidasUsuario(int idUsuario) throws SQLException {
-            String sql = "UPDATE NOTIFICACIONES_RECIBIDAS SET LEIDA = 'Leída' " +
-                    "WHERE ID_Notificacion IN (SELECT ID_Notificacion FROM Notificaciones_Recibidas WHERE ID_Usuario = ?) " +
-                    "AND LEIDA = 'No Leída'";
+            String sql = "UPDATE NOTIFICACIONES_RECIBIDAS SET LEIDA = 'S', FECHA_LEIDA = SYSTIMESTAMP " +
+                    "WHERE ID_USUARIO = ? AND LEIDA = 'N'";
             try (Connection conn = ConexionDB.getConnection();
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, idUsuario);
@@ -101,12 +98,37 @@ package com.proyectointegral2.dao;
             }
         }
 
-        private Notificacion mapResultSetToNotificacion(ResultSet rs) throws SQLException {
+        private Notificacion mapResultSetToNotificacionConInfoRecibida(ResultSet rs) throws SQLException {
             Notificacion notificacion = new Notificacion();
-            notificacion.setIdNotificacion(rs.getInt("ID_Notificacion"));
-            notificacion.setFecha(rs.getTimestamp("fecha").toLocalDateTime());
-            notificacion.setDescripcion(rs.getString("Descripcion"));
-            notificacion.setEstado(rs.getString("estado"));
+
+            notificacion.setIdNotificacion(rs.getInt("ID_NOTIFICACION"));
+            Timestamp fechaGeneracionTS = rs.getTimestamp("FECHA_GENERACION");
+            if (fechaGeneracionTS != null) {
+                notificacion.setFechaGeneracion(fechaGeneracionTS.toLocalDateTime());
+            }
+            notificacion.setMensaje(rs.getString("MENSAJE"));
+            notificacion.setTipoNotificacion(rs.getString("TIPO_NOTIFICACION"));
+            int idEntidad = rs.getInt("ID_ENTIDAD_RELACIONADA");
+            if (!rs.wasNull()) {
+                notificacion.setIdEntidadRelacionada(idEntidad);
+            } else {
+                notificacion.setIdEntidadRelacionada(null);
+            }
+            notificacion.setEntidadTipo(rs.getString("ENTIDAD_TIPO"));
+
+            notificacion.setIdUsuarioDestino(rs.getInt("ID_USUARIO"));
+            String leidaChar = rs.getString("LEIDA");
+            notificacion.setLeida(leidaChar != null && leidaChar.equals("S"));
+
+            Timestamp fechaLeidaTS = rs.getTimestamp("FECHA_LEIDA");
+            if (fechaLeidaTS != null) {
+                notificacion.setFechaLeida(fechaLeidaTS.toLocalDateTime());
+            } else {
+                notificacion.setFechaLeida(null);
+            }
             return notificacion;
         }
+
+
+
     }
