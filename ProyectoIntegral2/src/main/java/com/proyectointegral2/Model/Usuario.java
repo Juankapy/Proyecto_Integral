@@ -1,41 +1,35 @@
 package com.proyectointegral2.Model;
 
 public class Usuario {
+    private int idUsuario;
+    private String nombreUsu;
+    private String contrasena;
+    private String rol;
 
-    private int IdUsuario;
-    private String NombreUsuario;
-    private String Contrasena;
+    public Usuario() {}
 
-    // Constructor sin atributos
-    public Usuario() {
-        this.NombreUsuario = "";
-        this.Contrasena = "";
-        this.IdUsuario = -1;
+    public Usuario(int idUsuario, String nombreUsu, String contrasena, String rol) {
+        this.idUsuario = idUsuario;
+        this.nombreUsu = nombreUsu;
+        this.contrasena = contrasena;
+        this.rol = rol;
     }
-
-    // Constructor con todos los atributos
-    public Usuario(int IdUsuario, String NombreUsuario, String Contrasena) {
-        this.NombreUsuario = NombreUsuario;
-        this.Contrasena = Contrasena;
-        this.IdUsuario = IdUsuario;
+    // Constructor que usabas en LoginController
+    public Usuario(int idUsuario, String nombreUsu, String contrasena) {
+        this.idUsuario = idUsuario;
+        this.nombreUsu = nombreUsu;
+        this.contrasena = contrasena;
+        //this.rol = determinarRol(idUsuario);
     }
 
-    public int getIdUsuario() {
-        return IdUsuario;
-    }
-    public void setIdUsuario(int IdUsuario) {
-        this.IdUsuario = IdUsuario;
-    }
-    public String getNombreUsuario() {
-        return NombreUsuario;
-    }
-    public void setNombreUsuario(String NombreUsuario) {
-        this.NombreUsuario = NombreUsuario;
-    }
-    public String getContrasena() {
-        return Contrasena;
-    }
-    public void setContrasena(String Contrasena) {
-        this.Contrasena = Contrasena;
-    }
+
+    // Getters y Setters
+    public int getIdUsuario() { return idUsuario; }
+    public void setIdUsuario(int idUsuario) { this.idUsuario = idUsuario; }
+    public String getNombreUsu() { return nombreUsu; }
+    public void setNombreUsu(String nombreUsu) { this.nombreUsu = nombreUsu; }
+    public String getContrasena() { return contrasena; }
+    public void setContrasena(String contrasena) { this.contrasena = contrasena; }
+    public String getRol() { return rol; }
+    public void setRol(String rol) { this.rol = rol; }
 }
