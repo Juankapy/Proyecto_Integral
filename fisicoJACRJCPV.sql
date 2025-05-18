@@ -65,7 +65,7 @@ CREATE TABLE Perros (
     Sexo VARCHAR2(6) NOT NULL,
     FechaNacimiento DATE not null,
     Adoptado CHAR(1) DEFAULT 'N' CHECK (Adoptado IN ('S','N')),
-    Foto BLOB,
+    Foto VARCHAR2,
     ID_Protectora NUMBER,
     ID_Raza NUMBER,
     FOREIGN KEY (ID_Protectora) REFERENCES Protectora(ID_Protectora),
@@ -84,6 +84,7 @@ CREATE TABLE Patologia (
 CREATE TABLE Identificacion_Patologias (
     ID_Perro NUMBER,
     ID_Patologia NUMBER,
+    Descripcion VARCHAR2(255),
     PRIMARY KEY (ID_Perro, ID_Patologia),
     FOREIGN KEY (ID_Perro) REFERENCES Perros(ID_Perro),
     FOREIGN KEY (ID_Patologia) REFERENCES Patologia(ID_Patologia)
@@ -131,8 +132,8 @@ CREATE TABLE Notificaciones_Recibidas (
 
 -- Tabla Redes Sociales de Protectoras
 CREATE TABLE Redes_Sociales (
-    Plataforma VARCHAR2(30) NOT NULL,
-    URL VARCHAR2(255) NOT NULL,
+    Plataforma VARCHAR2(30) ,
+    URL VARCHAR2(255) ,
     ID_Protectora NUMBER NOT NULL,
     CONSTRAINT pk_red_social PRIMARY KEY (ID_Protectora, Plataforma),
     FOREIGN KEY (ID_Protectora) REFERENCES Protectora(ID_Protectora)

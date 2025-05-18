@@ -91,7 +91,7 @@ public class RegistroClienteController {
             cliente.setApellidos(TxtApellido.getText());
             cliente.setTelefono(TxtTel.getText());
             cliente.setEmail(TxtCorreo.getText());
-            cliente.setNif(""); // Añade campo si tienes NIF en el formulario
+            cliente.setNif("");
             cliente.setIdUsuario(idUsuario);
             cliente.setDireccion(direccion);
             // cliente.setFechaNacimiento(...); // Si tienes el campo
