@@ -12,58 +12,34 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.control.PasswordField;
 
 import java.io.IOException;
 
 public class RegistroProtectoraController {
 
     @FXML
-    private ImageView ImgLateralLogin;
-
-    @FXML
-    private TextField TxtTel;
-
-    @FXML
-    private TextField TxtNombre;
-
-    @FXML
-    private TextField TxtProvincia;
-
-    @FXML
-    private ImageView ImgIconoDog;
-
-    @FXML
-    private TextField TxtContra;
-
-    @FXML
-    private TextField TxtCP;
-
-    @FXML
-    private HBox HboxImg;
-
-    @FXML
-    private TextField TxtDireccion;
-
-    @FXML
-    private TextField TxtCiudad;
-
-    @FXML
-    private ImageView ImgUsuario;
-
-    @FXML
-    private TextField TxtApellido;
-
-    @FXML
-    private Button BtnConfirmar;
-
-    @FXML
-    private ImageView ImgIconoSalida;
-
+    private TextField TxtNombreProtectora;
     @FXML
     private TextField TxtCIF;
-
     @FXML
-    private TextField TxtCorreo;
+    private TextField TxtDireccionProtectora;
+    @FXML
+    private TextField TxtProvinciaProtectora;
+    @FXML
+    private TextField TxtCPProtectora;
+    @FXML
+    private TextField TxtCiudadProtectora;
+    @FXML
+    private TextField TxtTelProtectora;
+    @FXML
+    private TextField TxtNombreUsuarioCuenta;
+    @FXML
+    private TextField TxtCorreoCuenta;
+    @FXML
+    private PasswordField TxtContraCuenta;
+    @FXML
+    private PasswordField TxtConfirmarContraCuenta;
 
     @FXML
     void ConfirmarRegistroProtectora(ActionEvent event) {
