@@ -3,120 +3,155 @@ package com.proyectointegral2.dao;
 import com.proyectointegral2.Model.Usuario;
 import com.proyectointegral2.utils.ConexionDB;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-public class UsuarioDao  {
+public class UsuarioDao {
 
-    public int crearUsuario(Usuario usuario) throws SQLException {
-        String sqlSelectId = "SELECT SEQ_USUARIO.NEXTVAL FROM DUAL";
-        String sqlInsert = "INSERT INTO Usuario (ID_Usuario, Nombre_Usu, Contrasena) VALUES (?, ?, ?)";
-        int nuevoId = -1;
-        Connection conn = null;
+    public Usuario verificacionUsuario(String nombreUsu, String contrasena) {
+        String sql = "SELECT ID_USUARIO, NOMBRE_USU, CONTRASENA, ROL FROM USUARIO WHERE NOMBRE_USU = ? AND CONTRASENA = ?"; // Asumiendo que añades ROL
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-        try {
-            conn = ConexionDB.getConnection();
-            conn.setAutoCommit(false);
-
-            // 1. Obtener el próximo ID de la secuencia
-            try (PreparedStatement pstmtId = conn.prepareStatement(sqlSelectId);
-                 ResultSet rsId = pstmtId.executeQuery()) {
-                if (rsId.next()) {
-                    nuevoId = rsId.getInt(1);
-                } else {
-                    throw new SQLException("No se pudo obtener el ID de la secuencia SEQ_USUARIO.");
-                }
-            }
-
-            // 2. Insertar el usuario con el ID obtenido
-            try (PreparedStatement pstmt = conn.prepareStatement(sqlInsert)) {
-                pstmt.setInt(1, nuevoId);
-                pstmt.setString(2, usuario.getNombreUsuario());
-                pstmt.setString(3, usuario.getContrasena()); // ¡Hashear antes en producción!
-                int affectedRows = pstmt.executeUpdate();
-                if (affectedRows > 0) {
-                    conn.commit();
-                    return nuevoId;
-                } else {
-                    conn.rollback();
-                    return -1;
+            stmt.setString(1, nombreUsu);
+            stmt.setString(2, contrasena);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Usuario(
+                            rs.getInt("ID_USUARIO"),
+                            rs.getString("NOMBRE_USU"),
+                            rs.getString("CONTRASENA"),
+                            rs.getString("ROL") // Obtener ROL si existe en la tabla
+                    );
                 }
             }
         } catch (SQLException e) {
-            if (conn != null) conn.rollback();
-            throw e;
-        } finally {
-            if (conn != null) conn.setAutoCommit(true);
-            if (conn != null) conn.close();
+            System.err.println("Error al verificar usuario: " + e.getMessage());
+            e.printStackTrace();
         }
+        return null;
     }
 
-    public Usuario obtenerUsuarioPorId(int idUsuario) throws SQLException {
-        String sql = "SELECT ID_Usuario, Nombre_Usu, Contrasena FROM Usuario WHERE ID_Usuario = ?";
+    public int insertarUsuario(String nombreUsu, String contrasena, String rol) { // Añadido rol
+        String sql = "INSERT INTO USUARIO (NOMBRE_USU, CONTRASENA, ROL) VALUES (?, ?, ?)"; // Añadido ROL
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql, new String[]{"ID_USUARIO"})) {
+
+            stmt.setString(1, nombreUsu);
+            stmt.setString(2, contrasena); // Debería ser un hash
+            stmt.setString(3, rol);         // Establecer rol
+
+            int filasAfectadas = stmt.executeUpdate();
+            if (filasAfectadas > 0) {
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        return generatedKeys.getInt(1);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al insertar usuario: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    // Sobrecarga por si no se especifica rol al insertar (se podría poner un default en BD o aquí)
+    public int insertarUsuario(String nombreUsu, String contrasena) {
+        return insertarUsuario(nombreUsu, contrasena, "CLIENTE"); // O un rol por defecto
+    }
+
+
+    public int obtenerIdUsuario(String nombreUsu) {
+        String sql = "SELECT ID_USUARIO FROM USUARIO WHERE NOMBRE_USU = ?";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, nombreUsu);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("ID_USUARIO");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al obtener ID de usuario: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    /**
+     * Obtiene un usuario por su ID.
+     * @param idUsuario El ID del usuario a buscar.
+     * @return El objeto Usuario si se encuentra, null en caso contrario.
+     */
+    public Usuario obtenerUsuarioPorId(int idUsuario) {
+        String sql = "SELECT ID_USUARIO, NOMBRE_USU, CONTRASENA, ROL FROM USUARIO WHERE ID_USUARIO = ?"; // Asumiendo ROL
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, idUsuario);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    return mapResultSetToUsuario(rs);
+                    return new Usuario(
+                            rs.getInt("ID_USUARIO"),
+                            rs.getString("NOMBRE_USU"),
+                            rs.getString("CONTRASENA"),
+                            rs.getString("ROL") // Obtener ROL
+                    );
                 }
             }
+        } catch (SQLException e) {
+            System.err.println("Error al obtener usuario por ID: " + e.getMessage());
+            e.printStackTrace();
         }
         return null;
     }
 
-    public Usuario obtenerUsuarioPorNombreUsuario(String nombreUsu) throws SQLException {
-        String sql = "SELECT ID_Usuario, Nombre_Usu, Contrasena FROM Usuario WHERE Nombre_Usu = ?";
+    /**
+     * Actualiza los datos de un usuario existente (excepto su ID).
+     * @param usuario El objeto Usuario con los datos actualizados.
+     * @return true si la actualización fue exitosa, false en caso contrario.
+     */
+    public boolean actualizarUsuario(Usuario usuario) {
+        String sql = "UPDATE USUARIO SET NOMBRE_USU = ?, CONTRASENA = ?, ROL = ? WHERE ID_USUARIO = ?"; // Asumiendo ROL
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, nombreUsu);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return mapResultSetToUsuario(rs);
-                }
-            }
+
+            pstmt.setString(1, usuario.getNombreUsu());
+            pstmt.setString(2, usuario.getContrasena()); // Si se cambia, debería ser el nuevo hash
+            pstmt.setString(3, usuario.getRol());        // Actualizar ROL
+            pstmt.setInt(4, usuario.getIdUsuario());
+
+            int filasAfectadas = pstmt.executeUpdate();
+            return filasAfectadas > 0;
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar usuario: " + e.getMessage());
+            e.printStackTrace();
         }
-        return null;
+        return false;
     }
 
-    public Usuario verificarCredenciales(String nombreUsu, String contrasena) throws SQLException {
-        String sql = "SELECT ID_Usuario, Nombre_Usu, Contrasena FROM Usuario WHERE Nombre_Usu = ? AND Contrasena = ?";
-        try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, nombreUsu);
-            pstmt.setString(2, contrasena); // ¡Comparar hash en producción!
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return mapResultSetToUsuario(rs);
-                }
-            }
-        }
-        return null;
-    }
-
-    public boolean actualizarContrasena(int idUsuario, String nuevaContrasena) throws SQLException {
-        String sql = "UPDATE Usuario SET Contrasena = ? WHERE ID_Usuario = ?";
-        try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, nuevaContrasena); // ¡Hashear antes en producción!
-            pstmt.setInt(2, idUsuario);
-            return pstmt.executeUpdate() > 0;
-        }
-    }
-
-    public boolean eliminarUsuario(int idUsuario) throws SQLException {
-        String sql = "DELETE FROM Usuario WHERE ID_Usuario = ?";
+    /**
+     * Elimina un usuario de la base de datos por su ID.
+     * @param idUsuario El ID del usuario a eliminar.
+     * @return true si la eliminación fue exitosa, false en caso contrario.
+     */
+    public boolean eliminarUsuario(int idUsuario) {
+        // Considerar las restricciones de clave foránea (ON DELETE CASCADE en Cliente y Protectora
+        // se encargarían de eliminar los registros dependientes).
+        String sql = "DELETE FROM USUARIO WHERE ID_USUARIO = ?";
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, idUsuario);
-            return pstmt.executeUpdate() > 0;
+            int filasAfectadas = pstmt.executeUpdate();
+            return filasAfectadas > 0;
+        } catch (SQLException e) {
+            System.err.println("Error al eliminar usuario: " + e.getMessage());
+            e.printStackTrace();
         }
-    }
-
-    private Usuario mapResultSetToUsuario(ResultSet rs) throws SQLException {
-        Usuario usuario = new Usuario();
-        usuario.setIdUsuario(rs.getInt("ID_Usuario"));
-        usuario.setNombreUsuario(rs.getString("Nombre_Usu"));
-        usuario.setContrasena(rs.getString("Contrasena"));
-        return usuario;
+        return false;
     }
 }

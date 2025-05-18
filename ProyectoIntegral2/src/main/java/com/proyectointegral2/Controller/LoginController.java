@@ -59,9 +59,9 @@ public class LoginController {
 
         try {
             UsuarioDao usuarioDao = new UsuarioDao();
-            Usuario usuario = usuarioDao.verificarCredenciales(nombreUsu, contrasena);
+            Usuario usuario = usuarioDao.verificacionUsuario(nombreUsu, contrasena);
             if (usuario != null) {
-                println("Usuario verificado: " + usuario.getNombreUsuario());
+                println("Usuario verificado: " + usuario.getNombreUsu());
                 UtilidadesVentana.cambiarEscena(mainClienteFxmlFile, mainClienteTitle, true);
             } else {
                 UtilidadesExcepciones.mostrarAdvertencia("El nombre de usuario o contraseña no son correctos.", "Error de inicio de sesión", "Fallo de credenciales");
