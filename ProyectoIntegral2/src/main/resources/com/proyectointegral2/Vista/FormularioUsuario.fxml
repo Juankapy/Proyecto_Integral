@@ -16,7 +16,6 @@
             <children>
                 <ImageView fx:id="imgIconoVolver" fitHeight="50.0" fitWidth="26.0" onMouseClicked="#Volver" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
                     <image>
-                        <!-- Reemplaza con tu icono de volver/salir -->
                         <Image url="@../../../assets/Imagenes/iconos/salir.png" />
                     </image>
                 </ImageView>
@@ -36,7 +35,6 @@
                         <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
                     </padding>
                     <children>
-                        <!-- Sección Foto de Perfil -->
                         <VBox alignment="CENTER" spacing="10.0">
                             <children>
                                 <ImageView fx:id="imgFotoPerfilEditable" fitHeight="130.0" fitWidth="130.0" pickOnBounds="true" preserveRatio="true" style="-fx-background-color: #E0E0E0; -fx-border-color: #A1887F; -fx-border-radius: 65; -fx-background-radius: 65;"> <!-- Circular -->
@@ -63,7 +61,7 @@
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" /> <!-- Para Confirmar Contraseña -->
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             </rowConstraints>
                             <children>
                                 <Label text="Nombre:" GridPane.halignment="RIGHT">
