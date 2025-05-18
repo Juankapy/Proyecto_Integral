@@ -20,11 +20,15 @@ public class MainApp extends Application {
 
         try {
             URL resourceUrl = MainApp.class.getResource(initialFxmlPath);
-            if (resourceUrl == null) { /* ... error ... */
-                throw new IOException(/*...*/);
+            if (resourceUrl == null) {
+                UtilidadesVentana.mostrarAlertaError("Error Crítico", "FXML inicial no encontrado: " + initialFxmlPath);
+                throw new IOException("FXML inicial no encontrado: " + initialFxmlPath);
             }
             FXMLLoader fxmlLoader = new FXMLLoader(resourceUrl);
             Parent root = fxmlLoader.load();
+            // Guardar la ruta FXML en las propiedades del root para el historial
+            root.getProperties().put("fxmlLocation", initialFxmlPath);
+
             Scene scene = new Scene(root);
             stage.setScene(scene);
 
@@ -32,18 +36,22 @@ public class MainApp extends Application {
             stage.setResizable(false);
             stage.setFullScreen(false);
             stage.setMaximized(false);
-            stage.sizeToScene();
-            stage.centerOnScreen();
 
-            UtilidadesVentana.setFxmlActual(initialFxmlPath);
+            Parent sceneRoot = scene.getRoot();
+            double prefW = sceneRoot.prefWidth(-1);
+            double prefH = sceneRoot.prefHeight(-1);
+            double targetWidth = (prefW > 0 && prefW != javafx.scene.layout.Region.USE_COMPUTED_SIZE) ? prefW : UtilidadesVentana.DEFAULT_FIXED_WIDTH;
+            double targetHeight = (prefH > 0 && prefH != javafx.scene.layout.Region.USE_COMPUTED_SIZE) ? prefH : UtilidadesVentana.DEFAULT_FIXED_HEIGHT;
+            stage.setWidth(targetWidth);
+            stage.setHeight(targetHeight);
+            stage.centerOnScreen();
 
             stage.show();
         } catch (IOException e) {
-            System.err.println("¡ERROR CRÍTICO! No se pudo encontrar o cargar el FXML inicial en: " + initialFxmlPath);
+            System.err.println("¡ERROR CRÍTICO! No se pudo cargar el FXML inicial en: " + initialFxmlPath);
             UtilidadesVentana.mostrarAlertaError("Error Crítico", "No se pudo iniciar la aplicación.");
             throw e;
         }
-
     }
 
 

@@ -79,34 +79,12 @@ public class RegistroClienteController {
 
     @FXML
     void ConfirmarRegistro(ActionEvent event) {
-<<<<<<< HEAD
         try {
             String nombreUsu = TxtCorreo.getText();
             String contrasena = TxtContra.getText();
-=======
-        String mainClienteFxmlFile = "/com/proyectointegral2/Vista/Main.fxml";
-        String mainClienteTitle = "Panel Cliente - Dogpuccino";
-        UtilidadesVentana.cambiarEscena(mainClienteFxmlFile, mainClienteTitle, true);
-    }
-//    @FXML
-//    void ConfirmarRegistro(ActionEvent event) {
-//        // Cuando implementes esto, necesitarás obtener los valores de los nuevos campos:
-//        String nombreUsuario = TxtNombreUsuario.getText();
-//        String nif = TxtNIF.getText();
-//        java.time.LocalDate fechaNacimiento = DpFechaNacimiento.getValue();
-//        String confirmarContra = TxtConfirmarContra.getText();
-//
-//        // ... tu lógica de validación y guardado ...
-//        if (fechaNacimiento != null) {
-//            System.out.println("Fecha de Nacimiento seleccionada: " + fechaNacimiento.toString());
-//        }
-//    }
-
-
-    @Deprecated
-    void fafafa(ActionEvent event) {
->>>>>>> f8a27048f7bf2f1a2c0f24b670e5966714aaaff4
-
+            String mainClienteFxmlFile = "/com/proyectointegral2/Vista/Main.fxml";
+            String mainClienteTitle = "Panel Cliente - Dogpuccino";
+            UtilidadesVentana.cambiarEscena(mainClienteFxmlFile, mainClienteTitle, true);
             // 1. Insertar usuario
             boolean usuarioInsertado = UsuarioDao.insertarUsuario(nombreUsu, contrasena);
 
@@ -133,7 +111,7 @@ public class RegistroClienteController {
             cliente.setNif("");
             cliente.setIdUsuario(idUsuario);
             cliente.setDireccion(direccion);
-            // cliente.setFechaNacimiento(...); // Si tienes el campo
+
 
             // 4. Insertar cliente
             boolean clienteInsertado = ClienteDao.insertarCliente(cliente);
@@ -146,10 +124,10 @@ public class RegistroClienteController {
                 UtilidadesExcepciones.mostrarAdvertencia("No se pudo registrar el cliente.", "Error de registro", "Hubo un problema al guardar los datos del cliente."
                 );
             }
-        } catch (Exception e) {
-            UtilidadesExcepciones.mostrarError(e,"Error de registro","Excepción no controlada");
-            e.printStackTrace();
-        }
+            } catch (Exception e) {
+                UtilidadesExcepciones.mostrarError(e,"Error de registro","Excepción no controlada");
+                e.printStackTrace();
+            }
     }
 
     @FXML

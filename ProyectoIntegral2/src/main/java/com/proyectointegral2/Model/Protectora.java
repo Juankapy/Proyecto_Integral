@@ -4,7 +4,7 @@ public class Protectora {
     private int id;
     private String cif;
     private String nombre;
-    private Direccion direccion; // Reutilizando la clase Direccion
+    private Direccion direccion;
     private String telefono;
     private String email;
     private String redesSociales;

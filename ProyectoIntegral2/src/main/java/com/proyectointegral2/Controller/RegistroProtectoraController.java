@@ -49,10 +49,9 @@ public class RegistroProtectoraController {
     @FXML
     void ConfirmarRegistroProtectora(ActionEvent event) {
         try {
-            String nombreUsu = TxtCorreo.getText();
-            String contrasena = TxtContra.getText();
+            String nombreUsu = TxtCorreoCuenta.getText();
+            String contrasena = TxtContraCuenta.getText();
 
-            // 1. Insertar usuario
             boolean usuarioInsertado = UsuarioDao.insertarUsuario(nombreUsu, contrasena);
 
             if (!usuarioInsertado) {
@@ -64,27 +63,22 @@ public class RegistroProtectoraController {
                 return;
             }
 
-            // 2. Recuperar el ID del usuario
             int idUsuario = UsuarioDao.obtenerIdUsuario(nombreUsu);
 
-            // 3. Crear la dirección
             Direccion direccion = new Direccion();
-            direccion.setCalle(TxtDireccion.getText());
-            direccion.setProvincia(TxtProvincia.getText());
-            direccion.setCiudad(TxtCiudad.getText());
-            direccion.setCodigoPostal(TxtCP.getText());
+            direccion.setCalle(TxtDireccionProtectora.getText());
+            direccion.setProvincia(TxtProvinciaProtectora.getText());
+            direccion.setCiudad(TxtCiudadProtectora.getText());
+            direccion.setCodigoPostal(TxtCPProtectora.getText());
 
-            // 4. Crear la protectora
             Protectora protectora = new Protectora();
-            protectora.setNombre(TxtNombre.getText());
+            protectora.setNombre(TxtNombreProtectora.getText());
             protectora.setCif(TxtCIF.getText());
-            protectora.setTelefono(TxtTel.getText());
-            protectora.setEmail(TxtCorreo.getText());
+            protectora.setTelefono(TxtTelProtectora.getText());
+            protectora.setEmail(TxtCorreoCuenta.getText());
             protectora.setDireccion(direccion);
             protectora.setIdUsuario(idUsuario);
-            // protectora.setRedesSociales(...); // Si tienes el campo
 
-            // 5. Insertar protectora
             ProtectoraDao protectoraDao = new ProtectoraDao();
             try {
                 protectoraDao.insertarProtectora(protectora);

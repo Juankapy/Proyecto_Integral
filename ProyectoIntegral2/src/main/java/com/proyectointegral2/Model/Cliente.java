@@ -3,6 +3,7 @@ package com.proyectointegral2.Model;
 import java.time.LocalDate;
 
 public class Cliente {
+    private int idCliente;
     private String nombre;
     private String apellidos;
     private LocalDate fechaNacimiento;
@@ -12,19 +13,19 @@ public class Cliente {
     private String nif;
     private int idUsuario;
 
-    // Constructor sin atributos
     public Cliente() {
         this.nombre = "";
         this.apellidos = "";
-        this.fechaNacimiento = LocalDate.now();
-        this.direccion = new Direccion("", "", "", "");
+        this.fechaNacimiento = null;
+        this.direccion = new Direccion();
         this.telefono = "";
         this.email = "";
         this.nif = "";
         this.idUsuario = -1;
     }
-    // Constructor con todos los atributos
-    public Cliente(String nombre, String apellidos, LocalDate fechaNacimiento, Direccion direccion, String telefono, String email, String nif, int idUsuario) {
+
+    public Cliente(int idCliente, String nombre, String apellidos, LocalDate fechaNacimiento, Direccion direccion, String telefono, String email, String nif, int idUsuario) {
+        this.idCliente = idCliente; //
         this.nombre = nombre;
         this.apellidos = apellidos;
         this.fechaNacimiento = fechaNacimiento;
@@ -35,7 +36,15 @@ public class Cliente {
         this.idUsuario = idUsuario;
     }
 
-    // Getters y Setters
+
+    public int getIdCliente() {
+        return idCliente;
+    }
+
+    public void setIdCliente(int idCliente) {
+        this.idCliente = idCliente;
+    }
+
     public String getNombre() {
         return nombre;
     }
@@ -95,8 +104,8 @@ public class Cliente {
     public int getIdUsuario() {
         return idUsuario;
     }
+
     public void setIdUsuario(int idUsuario) {
         this.idUsuario = idUsuario;
     }
-
 }

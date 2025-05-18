@@ -1,64 +1,138 @@
--- Asegúrate de que la protectora y las razas existan
 
--- INSERT INTO Raza (ID_Raza, Nombre_Raza) VALUES (1, 'Labrador Retriever');
- INSERT INTO Raza (ID_Raza, Nombre_Raza) VALUES (2, 'Siberian Husky');
- INSERT INTO Raza (ID_Raza, Nombre_Raza) VALUES (3, 'Golden Retriever');
 
--- Perro 1
-INSERT INTO Perros (ID_Perro, Nombre, Sexo, FechaNacimiento, Adoptado, Foto, ID_Protectora, ID_Raza)
-VALUES (101, 'Buddy', 'Macho', TO_DATE('2022-03-15', 'YYYY-MM-DD'), 'N', '/assets/Imagenes/perros/buddy_labrador.jpg', 1, 1);
-
--- Perro 2
-INSERT INTO Perros (ID_Perro, Nombre, Sexo, FechaNacimiento, Adoptado, Foto, ID_Protectora, ID_Raza)
-VALUES (102, 'Kira', 'Hembra', TO_DATE('2021-11-01', 'YYYY-MM-DD'), 'N', '/assets/Imagenes/perros/kira_husky.png', 1, 2);
-
--- Perro 3
-INSERT INTO Perros (ID_Perro, Nombre, Sexo, FechaNacimiento, Adoptado, Foto, ID_Protectora, ID_Raza)
-VALUES (103, 'Goldie', 'Macho', TO_DATE('2023-01-20', 'YYYY-MM-DD'), 'N', '/assets/Imagenes/perros/goldie_golden.jpg', 1, 3);
-
+-- USUARIO
+INSERT INTO USUARIO (NOMBRE_USU, CONTRASENA) VALUES ('clienteana', 'ana123');
+INSERT INTO USUARIO (NOMBRE_USU, CONTRASENA) VALUES ('clientejuan', 'juan456');
+INSERT INTO USUARIO (NOMBRE_USU, CONTRASENA) VALUES ('huellasadmin', 'huellas123');
+INSERT INTO USUARIO (NOMBRE_USU, CONTRASENA) VALUES ('patitasadmin', 'patitas123');
 COMMIT;
 
-DESC Perros;
-ALTER TABLE Perros MODIFY (Foto VARCHAR2(255));
-ALTER TABLE Perros ADD (Foto_Ruta VARCHAR2(255));
--- Paso 3: Eliminar la columna BLOB original
-ALTER TABLE Perros DROP COLUMN Foto;
+-- CLIENTE
+INSERT INTO CLIENTE (NIF, NOMBRE, APELLIDOS, FECHA_NACIMIENTO, PROVINCIA, CIUDAD, CALLE, CP, TELEFONO, EMAIL, ID_USUARIO)
+VALUES ('12345678A', 'Ana', 'García López', TO_DATE('1990-07-15', 'YYYY-MM-DD'), 'Madrid', 'Madrid', 'Calle Sol 8', '28001', '600112233', 'ana.garcia@example.com', 
+        (SELECT ID_USUARIO FROM USUARIO WHERE NOMBRE_USU = 'clienteana'));
 
--- Paso 4: Renombrar la nueva columna a 'Foto'
-ALTER TABLE Perros RENAME COLUMN Foto_Ruta TO Foto;
+INSERT INTO CLIENTE (NIF, NOMBRE, APELLIDOS, FECHA_NACIMIENTO, PROVINCIA, CIUDAD, CALLE, CP, TELEFONO, EMAIL, ID_USUARIO)
+VALUES ('87654321B', 'Juan', 'Martínez Sanz', TO_DATE('1985-03-22', 'YYYY-MM-DD'), 'Valencia', 'Valencia', 'Avenida del Puerto 50', '46022', '600998877', 'juan.martinez@example.com', 
+        (SELECT ID_USUARIO FROM USUARIO WHERE NOMBRE_USU = 'clientejuan'));
+COMMIT;
 
--- Asumir que ya tienes insertados:
--- Protectora con ID_Protectora = 1 (ej. 'Amigos Peludos')
--- Raza con ID_Raza = 1 (ej. 'Labrador Retriever')
--- Patologia con ID_Patologia = 1 (ej. 'Alergia al Pollo')
--- Perro con ID_Perro = 101 (Buddy, el Labrador)
+-- PROTECTORA
+INSERT INTO PROTECTORA (CIF, NOMBRE, TELEFONO, EMAIL, PROVINCIA, CIUDAD, CALLE, CP, ID_USUARIO)
+VALUES ('G12345678', 'Huellas Felices', '912345678', 'info@huellasfelices.org', 'Barcelona', 'Barcelona', 'Avenida de los Gatos 20', '08001',
+        (SELECT ID_USUARIO FROM USUARIO WHERE NOMBRE_USU = 'huellasadmin'));
 
--- (1) Inserta una protectora si no existe una con ID=1
--- Comprueba primero si existe: SELECT * FROM Protectora WHERE ID_Protectora = 1;
--- Si no existe:
-INSERT INTO Protectora (ID_Protectora, Nombre, Telefono, Email, Provincia, Ciudad, Calle, CP, ID_Usuario)
-VALUES (1, 'Amigos Peludos', '911223344', 'info@amigospeludos.org', 'Madrid', 'Madrid', 'Calle de los Animales 10', '28010', NULL); -- Asume que no está ligada a un usuario específico de login
-
--- (2) Inserta una raza si no existe una con ID=1
--- Comprueba primero: SELECT * FROM Raza WHERE ID_Raza = 1;
--- Si no existe:
-INSERT INTO Raza (ID_Raza, Nombre_Raza) VALUES (1, 'Labrador Retriever');
-
--- (3) Inserta una patología si no existe una con ID=1
--- Comprueba primero: SELECT * FROM Patologia WHERE ID_Patologia = 1;
--- Si no existe:
-INSERT INTO Patologia (ID_Patologia, Nombre) VALUES (1, 'Alergia al Pollo');
-
--- (4) Inserta el perro Buddy (ID=101) si no lo has hecho con la Foto correcta
--- Si ya lo insertaste con la ruta, está bien. Si no:
-DELETE FROM Perros WHERE ID_Perro = 101; -- Borrar si ya existe para reinsertar
-INSERT INTO Perros (ID_Perro, Nombre, Sexo, FechaNacimiento, Adoptado, Foto, ID_Protectora, ID_Raza)
-VALUES (101, 'Buddy', 'Macho', TO_DATE('2022-03-15', 'YYYY-MM-DD'), 'N', '/assets/Imagenes/perros/buddy_labrador.jpg', 1, 1);
-
--- (5) Asocia la patología 'Alergia al Pollo' (ID 1) al perro 'Buddy' (ID 101)
-INSERT INTO Identificacion_Patologias (ID_Perro, ID_Patologia)
-VALUES (101, 1);
+INSERT INTO PROTECTORA (CIF, NOMBRE, TELEFONO, EMAIL, PROVINCIA, CIUDAD, CALLE, CP, ID_USUARIO)
+VALUES ('G87654321', 'Patitas Contentas', '933445566', 'contacto@patitascontentas.es', 'Sevilla', 'Sevilla', 'Plaza Nueva 1', '41001',
+        (SELECT ID_USUARIO FROM USUARIO WHERE NOMBRE_USU = 'patitasadmin'));
 
 COMMIT;
 
 
+-- RAZA
+INSERT INTO RAZA (NOMBRE_RAZA) VALUES ('Labrador Retriever');
+INSERT INTO RAZA (NOMBRE_RAZA) VALUES ('Siberian Husky');
+INSERT INTO RAZA (NOMBRE_RAZA) VALUES ('Golden Retriever');
+INSERT INTO RAZA (NOMBRE_RAZA) VALUES ('Mestizo');
+INSERT INTO RAZA (NOMBRE_RAZA) VALUES ('Bulldog Francés');
+COMMIT;
+
+-- PERROS
+INSERT INTO PERROS (NOMBRE, SEXO, FECHA_NACIMIENTO, ADOPTADO, FOTO, ID_PROTECTORA, ID_RAZA, DESCRIPCION_PERRO)
+VALUES ('Max', 'Macho', TO_DATE('2022-01-10', 'YYYY-MM-DD'), 'N', '/assets/Imagenes/perros/max_labrador.jpg', 
+        (SELECT ID_PROTECTORA FROM PROTECTORA WHERE NOMBRE = 'Huellas Felices'), 
+        (SELECT ID_RAZA FROM RAZA WHERE NOMBRE_RAZA = 'Labrador Retriever'), 
+        'Muy juguetón, amigable y le encanta el agua.');
+
+INSERT INTO PERROS (NOMBRE, SEXO, FECHA_NACIMIENTO, ADOPTADO, FOTO, ID_PROTECTORA, ID_RAZA, DESCRIPCION_PERRO)
+VALUES ('Luna', 'Hembra', TO_DATE('2021-08-20', 'YYYY-MM-DD'), 'N', '/assets/Imagenes/perros/luna_husky.jpg', 
+        (SELECT ID_PROTECTORA FROM PROTECTORA WHERE NOMBRE = 'Huellas Felices'), 
+        (SELECT ID_RAZA FROM RAZA WHERE NOMBRE_RAZA = 'Siberian Husky'), 
+        'Cariñosa, un poco tímida al principio, activa.');
+
+INSERT INTO PERROS (NOMBRE, SEXO, FECHA_NACIMIENTO, ADOPTADO, FOTO, ID_PROTECTORA, ID_RAZA, DESCRIPCION_PERRO)
+VALUES ('Rocky', 'Macho', TO_DATE('2023-05-01', 'YYYY-MM-DD'), 'N', '/assets/Imagenes/perros/rocky_mestizo.jpg', 
+        (SELECT ID_PROTECTORA FROM PROTECTORA WHERE NOMBRE = 'Patitas Contentas'), 
+        (SELECT ID_RAZA FROM RAZA WHERE NOMBRE_RAZA = 'Mestizo'), 
+        'Un terremoto lleno de amor, tamaño mediano.');
+COMMIT;
+
+-- PATOLOGIA
+INSERT INTO PATOLOGIA (NOMBRE, DESCRIPCION_PATOLOGIA) VALUES ('Alergia Alimentaria', 'Reacción alérgica a ciertos componentes de la comida.');
+INSERT INTO PATOLOGIA (NOMBRE, DESCRIPCION_PATOLOGIA) VALUES ('Displasia de Cadera Leve', 'Malformación leve de la articulación de la cadera.');
+INSERT INTO PATOLOGIA (NOMBRE, DESCRIPCION_PATOLOGIA) VALUES ('Ansiedad por Separación', 'Estrés cuando se queda solo.');
+COMMIT;
+
+-- IDENTIFICACION_PATOLOGIAS
+INSERT INTO IDENTIFICACION_PATOLOGIAS (ID_PERRO, ID_PATOLOGIA, NOTAS_ESPECIFICAS)
+VALUES ((SELECT ID_PERRO FROM PERROS WHERE NOMBRE = 'Max'), 
+        (SELECT ID_PATOLOGIA FROM PATOLOGIA WHERE NOMBRE = 'Alergia Alimentaria'), 
+        'Reacciona al pollo y al grano. Dieta especial requerida.');
+
+INSERT INTO IDENTIFICACION_PATOLOGIAS (ID_PERRO, ID_PATOLOGIA, NOTAS_ESPECIFICAS)
+VALUES ((SELECT ID_PERRO FROM PERROS WHERE NOMBRE = 'Luna'), 
+        (SELECT ID_PATOLOGIA FROM PATOLOGIA WHERE NOMBRE = 'Ansiedad por Separación'), 
+        'Mejora con compañía y rutinas estables.');
+COMMIT;
+
+-- RESERVAS_CITAS
+INSERT INTO RESERVAS_CITAS (FECHA, HORA, MOTIVO, ID_CLIENTE, ID_PERRO, ID_PROTECTORA, ESTADO_CITA)
+VALUES (TO_DATE('2025-08-15', 'YYYY-MM-DD'), '10:30', 'Conocer a Max para posible adopción', 
+        (SELECT ID_CLIENTE FROM CLIENTE WHERE EMAIL = 'ana.garcia@example.com'), 
+        (SELECT ID_PERRO FROM PERROS WHERE NOMBRE = 'Max'),
+        (SELECT ID_PROTECTORA FROM PROTECTORA WHERE NOMBRE = 'Huellas Felices'),
+        'Confirmada');
+
+INSERT INTO RESERVAS_CITAS (FECHA, HORA, MOTIVO, ID_CLIENTE, ID_PERRO, ID_PROTECTORA, ESTADO_CITA)
+VALUES (TO_DATE('2025-08-20', 'YYYY-MM-DD'), '16:00', 'Paseo de prueba con Luna', 
+        (SELECT ID_CLIENTE FROM CLIENTE WHERE EMAIL = 'juan.martinez@example.com'), 
+        (SELECT ID_PERRO FROM PERROS WHERE NOMBRE = 'Luna'),
+        (SELECT ID_PROTECTORA FROM PROTECTORA WHERE NOMBRE = 'Huellas Felices'),
+        'Pendiente');
+COMMIT;
+
+-- PETICIONES_ADOPCION
+INSERT INTO PETICIONES_ADOPCION (FECHA, ESTADO, ID_CLIENTE, ID_PERRO, MENSAJE_PETICION)
+VALUES (TO_DATE('2025-08-01', 'YYYY-MM-DD'), 'Pendiente', 
+        (SELECT ID_CLIENTE FROM CLIENTE WHERE EMAIL = 'ana.garcia@example.com'), 
+        (SELECT ID_PERRO FROM PERROS WHERE NOMBRE = 'Luna'),
+        'Me encantaría conocer a Luna, parece la perrita ideal para mi familia. Ya tengo experiencia con huskies.');
+COMMIT;
+
+-- NOTIFICACION
+INSERT INTO NOTIFICACION (MENSAJE, TIPO_NOTIFICACION, ID_ENTIDAD_RELACIONADA, ENTIDAD_TIPO)
+VALUES ('Nueva petición de adopción para Luna recibida de Ana García.', 'NUEVA_PETICION', 
+        (SELECT ID_PETICION FROM PETICIONES_ADOPCION 
+         WHERE ID_PERRO = (SELECT ID_PERRO FROM PERROS WHERE NOMBRE = 'Luna') 
+           AND ID_CLIENTE = (SELECT ID_CLIENTE FROM CLIENTE WHERE EMAIL = 'ana.garcia@example.com')
+           AND ROWNUM = 1), -- Asume una sola petición para el ejemplo
+        'PETICION_ADOPCION');
+
+INSERT INTO NOTIFICACION (MENSAJE, TIPO_NOTIFICACION, ID_ENTIDAD_RELACIONADA, ENTIDAD_TIPO)
+VALUES ('Tu cita con Max para el 15/08/2025 ha sido confirmada.', 'CITA_CONFIRMADA', 
+        (SELECT ID_RESERVA_CITA FROM RESERVAS_CITAS 
+         WHERE ID_PERRO = (SELECT ID_PERRO FROM PERROS WHERE NOMBRE = 'Max') 
+           AND ID_CLIENTE = (SELECT ID_CLIENTE FROM CLIENTE WHERE EMAIL = 'ana.garcia@example.com')
+           AND ROWNUM = 1),
+        'RESERVA_CITA');
+COMMIT;
+
+-- NOTIFICACIONES_RECIBIDAS
+INSERT INTO NOTIFICACIONES_RECIBIDAS (ID_USUARIO, ID_NOTIFICACION, LEIDA)
+VALUES ((SELECT ID_USUARIO FROM USUARIO WHERE NOMBRE_USU = 'huellasadmin'),
+        (SELECT ID_NOTIFICACION FROM NOTIFICACION WHERE MENSAJE LIKE 'Nueva petición de adopción para Luna%'),
+        'N');
+
+-- Notificación para el cliente sobre la cita confirmada de Max
+INSERT INTO NOTIFICACIONES_RECIBIDAS (ID_USUARIO, ID_NOTIFICACION, LEIDA)
+VALUES ((SELECT ID_USUARIO FROM USUARIO WHERE NOMBRE_USU = 'clienteana'),
+        (SELECT ID_NOTIFICACION FROM NOTIFICACION WHERE MENSAJE LIKE 'Tu cita con Max para el 15/08/2025%'),
+        'N');
+COMMIT;
+
+-- REDES_SOCIALES
+INSERT INTO REDES_SOCIALES (PLATAFORMA, URL, ID_PROTECTORA)
+VALUES ('Instagram', 'https://instagram.com/huellasfelices', (SELECT ID_PROTECTORA FROM PROTECTORA WHERE NOMBRE = 'Huellas Felices'));
+INSERT INTO REDES_SOCIALES (PLATAFORMA, URL, ID_PROTECTORA)
+VALUES ('Facebook', 'https://facebook.com/patitascontentas', (SELECT ID_PROTECTORA FROM PROTECTORA WHERE NOMBRE = 'Patitas Contentas'));
+COMMIT;

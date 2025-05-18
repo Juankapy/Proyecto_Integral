@@ -7,14 +7,12 @@ import javafx.scene.layout.Priority;
 
 public class UtilidadesExcepciones {
 
-    // 🔴 Mostrar error con excepción y stack trace
     public static void mostrarError(Exception ex, String titulo, String cabecera) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(titulo != null ? titulo : "Error");
         alert.setHeaderText(cabecera != null ? cabecera : "Ocurrió un error inesperado");
         alert.setContentText(ex.getMessage());
 
-        // Área de texto expandible con el stack trace
         String stackTrace = obtenerStackTraceComoTexto(ex);
         TextArea textArea = crearTextAreaExpandible(stackTrace);
 
