@@ -113,14 +113,12 @@
                             </children>
                         </GridPane>
 
-                        <!-- Sección de Imagen -->
                         <VBox alignment="CENTER" spacing="10.0" style="-fx-border-color: #A1887F; -fx-border-radius: 5; -fx-padding: 15; -fx-border-style: dashed;">
                             <children>
                                 <ImageView fx:id="ImgPreviewPerro" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-background-color: #E0E0E0; -fx-background-radius: 5;">
                                     <VBox.margin><Insets bottom="10.0" /></VBox.margin>
-                                    <!-- Placeholder visual si no hay imagen -->
                                     <image>
-                                        <Image url="@../../../assets/Imagenes/perros/perrodesconocido.jpg" />
+                                        <Image url="@../../../assets/Imagenes/iconos/placeholder_dog.jpg" />
                                     </image>
                                 </ImageView>
                                 <Button fx:id="btnSeleccionarImagen" mnemonicParsing="false" style="-fx-background-color: #6495ED; -fx-text-fill: white; -fx-background-radius: 5;" text="Seleccionar Imagen">

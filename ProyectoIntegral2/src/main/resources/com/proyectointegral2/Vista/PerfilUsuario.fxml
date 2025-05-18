@@ -20,16 +20,14 @@
 
 <BorderPane fx:id="perfilUsuarioPane" prefHeight="750.0" prefWidth="650.0" style="-fx-background-color: #F5F1EA;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyectointegral2.Controller.PerfilUsuarioController">
     <top>
-        <!-- Contenedor para el encabezado con icono de volver y título -->
         <BorderPane prefHeight="80.0">
             <left>
                 <ImageView fx:id="imgIconoVolver" fitHeight="30.0" fitWidth="30.0" onMouseClicked="#Volver" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;" BorderPane.alignment="CENTER_LEFT">
                     <image>
-                        <!-- Usa tu icono de salir o una flecha hacia la izquierda -->
                         <Image url="@../../../assets/Imagenes/iconos/salir.png" />
                     </image>
                     <BorderPane.margin>
-                        <Insets left="25.0" top="5.0" /> <!-- Ajusta el margen según necesites -->
+                        <Insets left="25.0" top="5.0" />
                     </BorderPane.margin>
                 </ImageView>
             </left>
@@ -60,7 +58,7 @@
                 <Insets left="50.0" right="50.0" />
             </BorderPane.margin>
             <children>
-                <!-- Sección Datos Personales -->
+
                 <VBox spacing="15.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 10; -fx-padding: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);">
                     <children>
                         <Label text="Datos personales" textFill="#3E2723">
@@ -131,7 +129,7 @@
                     </children>
                 </VBox>
 
-                <!-- Sección Historial de Citas o Eventos -->
+
                 <VBox spacing="10.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 10; -fx-padding: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);" VBox.vgrow="ALWAYS">
                     <children>
                         <Label text="Historial de citas o eventos" textFill="#3E2723">
