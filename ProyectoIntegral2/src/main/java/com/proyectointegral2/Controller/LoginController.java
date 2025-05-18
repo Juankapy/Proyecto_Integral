@@ -47,21 +47,28 @@ public class LoginController {
 
     @FXML
     void ConfirmarInicio(MouseEvent event) {
-         String mainClienteFxmlFile = "/com/proyectointegral2/Vista/Main.fxml";
-         String mainClienteTitle = "Panel Cliente - Dogpuccino";
-        try{
-            String nombreUsu = TxtNombreUsuario.getText();
-            String contrasena = TxtContra.getText();
-            Usuario usuario = UsuarioDao.verificacionUsuario(nombreUsu, contrasena);
+        String mainClienteFxmlFile = "/com/proyectointegral2/Vista/Main.fxml";
+        String mainClienteTitle = "Panel Cliente - Dogpuccino";
+        String nombreUsu = TxtNombreUsuario.getText();
+        String contrasena = TxtContra.getText();
+
+        if (nombreUsu.isEmpty() || contrasena.isEmpty()) {
+            UtilidadesExcepciones.mostrarAdvertencia("Por favor, complete todos los campos.", "Campos vacíos", "Faltan datos");
+            return;
+        }
+
+        try {
+            UsuarioDao usuarioDao = new UsuarioDao();
+            Usuario usuario = usuarioDao.verificarCredenciales(nombreUsu, contrasena);
             if (usuario != null) {
                 println("Usuario verificado: " + usuario.getNombreUsuario());
                 UtilidadesVentana.cambiarEscena(mainClienteFxmlFile, mainClienteTitle, true);
-            }else {
+            } else {
                 UtilidadesExcepciones.mostrarAdvertencia("El nombre de usuario o contraseña no son correctos.", "Error de inicio de sesión", "Fallo de credenciales");
                 println("Error al iniciar sesión: Usuario o contraseña incorrectos.");
             }
         } catch (Exception e) {
-            UtilidadesExcepciones.mostrarError(e,"Error de inicio de sesión", "Usuario o contraseña incorrectos.");
+            UtilidadesExcepciones.mostrarError(e, "Error de inicio de sesión", "Usuario o contraseña incorrectos.");
             println("Error al iniciar sesión: " + e.getMessage());
         }
     }

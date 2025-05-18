@@ -1,6 +1,6 @@
 package com.proyectointegral2.dao;
 
-import com.proyectointegral2.Model.Notificacion;
+import com.proyectointegral2.Model.*;
 import com.proyectointegral2.utils.ConexionDB;
 
 import java.sql.*;

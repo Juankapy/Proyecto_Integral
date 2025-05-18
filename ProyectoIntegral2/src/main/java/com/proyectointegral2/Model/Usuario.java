@@ -2,7 +2,7 @@ package com.proyectointegral2.Model;
 
 public class Usuario {
 
-    private int id;
+    private int IdUsuario;
     private String NombreUsuario;
     private String Contrasena;
 
@@ -10,21 +10,21 @@ public class Usuario {
     public Usuario() {
         this.NombreUsuario = "";
         this.Contrasena = "";
-        this.id = -1;
+        this.IdUsuario = -1;
     }
 
     // Constructor con todos los atributos
-    public Usuario(int id, String NombreUsuario, String Contrasena) {
+    public Usuario(int IdUsuario, String NombreUsuario, String Contrasena) {
         this.NombreUsuario = NombreUsuario;
         this.Contrasena = Contrasena;
-        this.id = id;
+        this.IdUsuario = IdUsuario;
     }
 
-    public int getId() {
-        return id;
+    public int getIdUsuario() {
+        return IdUsuario;
     }
-    public void setId(int id) {
-        this.id = id;
+    public void setIdUsuario(int IdUsuario) {
+        this.IdUsuario = IdUsuario;
     }
     public String getNombreUsuario() {
         return NombreUsuario;
