@@ -11,9 +11,9 @@ import java.util.List;
 public class ClienteDao {
 
     public int crearCliente(Cliente cliente) throws SQLException {
-        String sqlSelectId = "SELECT SEQ_CLIENTE_ID.NEXTVAL FROM DUAL";
-        String sqlInsert = "INSERT INTO Cliente (ID_Cliente, NIF, Nombre, Apellidos, FechaNacimiento, Provincia, Ciudad, Calle, CP, Telefono, Email, ID_Usuario) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        // ID_CLIENTE se genera por secuencia DEFAULT
+        String sqlInsert = "INSERT INTO CLIENTE (NIF, NOMBRE, APELLIDOS, FECHA_NACIMIENTO, PROVINCIA, CIUDAD, CALLE, CP, TELEFONO, EMAIL, ID_USUARIO) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         int nuevoId = -1;
 
         try (Connection conn = ConexionDB.getConnection()) {
