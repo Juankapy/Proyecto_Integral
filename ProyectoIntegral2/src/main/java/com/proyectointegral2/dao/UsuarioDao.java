@@ -3,6 +3,7 @@ package com.proyectointegral2.dao;
 import com.proyectointegral2.Model.Usuario;
 import com.proyectointegral2.utils.ConexionDB;
 
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,5 +25,34 @@ public class UsuarioDao {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static boolean insertarUsuario(String nombreUsu, String contrasena) {
+        String sql = "INSERT INTO usuario (nombre_usu, contrasena) VALUES (?, ?)";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, nombreUsu);
+            stmt.setString(2, contrasena);
+            int filasAfectadas = stmt.executeUpdate();
+            return filasAfectadas > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static int obtenerIdUsuario(String nombreUsu) {
+        String sql = "SELECT ID_USUARIO FROM usuario WHERE NOMBRE_USU = ?";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, nombreUsu);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("ID_USUARIO");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Retorna -1 si no se encuentra el usuario
     }
 }

@@ -13,6 +13,13 @@ public class Direccion {
         this.calle = calle;
         this.codigoPostal = codigoPostal;
     }
+    // Constructor vacío
+    public Direccion() {
+        this.provincia = "";
+        this.ciudad = "";
+        this.calle = "";
+        this.codigoPostal = "";
+    }
 
     // Getters y Setters
     public String getProvincia() {

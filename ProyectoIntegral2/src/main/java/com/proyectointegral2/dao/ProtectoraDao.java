@@ -1,66 +1,184 @@
 package com.proyectointegral2.dao;
 
 import com.proyectointegral2.Model.Protectora;
-import com.proyectointegral2.Model.Direccion;
-import com.proyectointegral2.utils.ConexionDB; // Usar la clase de conexión centralizada
+import com.proyectointegral2.Model.RedSocial;
+import com.proyectointegral2.utils.ConexionDB;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-// No necesitas Date aquí si no hay campo de fecha en la tabla Protectora,
-// pero si tu modelo Protectora tiene algún campo de fecha que no está en la tabla, revísalo.
 
-public class ProtectoraDao {
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
-    public ProtectoraDao() {
-        // Constructor vacío si ConexionDB es estática
-    }
+public class ProtectoraDao{
 
-    public void insertarProtectora(Protectora protectora) throws SQLException {
-        // Columnas según tu esquema: ID_Protectora, Nombre, Telefono, Email, Provincia, Ciudad, Calle, CP, ID_Usuario
-        // El campo CIF no está en tu tabla Protectora, pero sí NIF en Cliente. Revisa esto.
-        // La columna "FECHA_NACIMIENTO" que mencionaste en los comentarios NO está en tu CREATE TABLE de Protectora.
-        // La tabla Protectora tiene ID_USUARIO.
-        String sql = "INSERT INTO Protectora (ID_Protectora, Nombre, Telefono, Email, Provincia, Ciudad, Calle, CP, ID_Usuario) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
+    public int crearProtectora(Protectora protectora) throws SQLException {
+        String sqlInsert = "INSERT INTO Protectora (Nombre, Telefono, Email, Provincia, Ciudad, Calle, CP, ID_Usuario) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            Direccion dir = protectora.getDireccion();
-            if (dir == null) {
-                // Considera qué hacer si la dirección es nula. ¿Es permitida?
-                // Por ahora, lanzaremos una excepción o pondremos valores nulos si la BD lo permite.
-                // Esto dependerá de si los campos de dirección en la tabla Protectora son NOT NULL.
-                // Tu esquema dice que Provincia, Ciudad, Calle, CP en Cliente son NOT NULL.
-                // Para Protectora, tu esquema dice:
-                // Provincia VARCHAR2(20)NOT NULL, Ciudad VARCHAR2(150)NOT NULL, Calle VARCHAR2(150)NOT NULL, CP VARCHAR2(5)NOT NULL
-                // Así que la dirección NO PUEDE SER NULA. Deberías validar esto antes.
-                throw new IllegalArgumentException("La dirección de la protectora no puede ser nula.");
+             PreparedStatement pstmt = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setString(1, protectora.getNombre());
+            pstmt.setString(2, protectora.getTelefono());
+            pstmt.setString(3, protectora.getEmail());
+            pstmt.setString(4, protectora.getProvincia());
+            pstmt.setString(5, protectora.getCiudad());
+            pstmt.setString(6, protectora.getCalle());
+            pstmt.setString(7, protectora.getCp());
+            pstmt.setInt(8, protectora.getIdUsuario());
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows == 0) throw new SQLException("No se pudo crear la protectora.");
+            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                } else {
+                    throw new SQLException("No se pudo obtener el ID generado.");
+                }
             }
-
-            stmt.setInt(1, protectora.getId()); // Asumiendo que el ID se establece antes
-            stmt.setString(2, protectora.getNombre());
-            stmt.setString(3, protectora.getTelefono());
-            stmt.setString(4, protectora.getEmail());
-            stmt.setString(5, dir.getProvincia());
-            stmt.setString(6, dir.getCiudad());
-            stmt.setString(7, dir.getCalle());
-            stmt.setString(8, dir.getCodigoPostal());
-
-            // Manejo de ID_Usuario (puede ser nulo según tu esquema)
-            if (protectora.getIdUsuario() > 0) { // Asumiendo que Protectora tiene un getIdUsuario()
-                stmt.setInt(9, protectora.getIdUsuario());
-            } else {
-                stmt.setNull(9, java.sql.Types.NUMERIC);
-            }
-
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Error al insertar protectora: " + e.getMessage());
-            throw e;
         }
     }
 
-    // Aquí irían métodos para actualizar, eliminar, buscar protectoras, etc.
+    public Protectora obtenerProtectoraPorId(int idProtectora) throws SQLException {
+        String sql = "SELECT * FROM Protectora WHERE ID_Protectora = ?";
+        try (Connection conn = ConexionDB.getConnection() ;
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, idProtectora);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToProtectora(rs);
+                }
+            }
+        }
+        return null;
+    }
+
+    public Protectora obtenerProtectoraPorIdUsuario(int idUsuario) throws SQLException {
+        String sql = "SELECT * FROM Protectora WHERE ID_Usuario = ?";
+        try (Connection conn = ConexionDB.getConnection() ;
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, idUsuario);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToProtectora(rs);
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public List<Protectora> obtenerTodasLasProtectoras() throws SQLException {
+        List<Protectora> protectoras = new ArrayList<>();
+        String sql = "SELECT * FROM Protectora ORDER BY Nombre";
+        try (Connection conn = ConexionDB.getConnection() ;
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                protectoras.add(mapResultSetToProtectora(rs));
+            }
+        }
+        return protectoras;
+    }
+
+    public boolean actualizarProtectora(Protectora protectora) throws SQLException {
+        String sql = "UPDATE Protectora SET Nombre = ?, Telefono = ?, Email = ?, Provincia = ?, Ciudad = ?, Calle = ?, CP = ?, ID_Usuario = ? WHERE ID_Protectora = ?";
+        try (Connection conn = ConexionDB.getConnection() ;
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, protectora.getNombre());
+            pstmt.setString(2, protectora.getTelefono());
+            pstmt.setString(3, protectora.getEmail());
+            pstmt.setString(4, protectora.getDireccion().getProvincia());
+            pstmt.setString(5, protectora.getDireccion().getCiudad());
+            pstmt.setString(6, protectora.getDireccion().getCalle());
+            pstmt.setString(7, protectora.getDireccion().getCodigoPostal());
+            pstmt.setInt(8, protectora.getIdUsuario());
+            pstmt.setInt(9, protectora.getIdProtectora());
+            return pstmt.executeUpdate() > 0;
+        }
+    }
+
+    public boolean eliminarProtectora(int idProtectora) throws SQLException {
+        String sqlDeleteRedes = "DELETE FROM Redes_Sociales WHERE ID_Protectora = ?";
+        String sqlDeleteProtectora = "DELETE FROM Protectora WHERE ID_Protectora = ?";
+        try (Connection conn = ConexionDB.getConnection()) {
+            conn.setAutoCommit(false);
+            try (PreparedStatement pstmtRedes = conn.prepareStatement(sqlDeleteRedes)) {
+                pstmtRedes.setInt(1, idProtectora);
+                pstmtRedes.executeUpdate();
+            }
+            try (PreparedStatement pstmtProtectora = conn.prepareStatement(sqlDeleteProtectora)) {
+                pstmtProtectora.setInt(1, idProtectora);
+                boolean exito = pstmtProtectora.executeUpdate() > 0;
+                if (exito) {
+                    conn.commit();
+                    return true;
+                } else {
+                    conn.rollback();
+                    return false;
+                }
+            }
+        }
+    }
+
+    public boolean agregarRedSocial(int idProtectora, RedSocial redSocial) throws SQLException {
+        String sql = "INSERT INTO Redes_Sociales (Plataforma, URL, ID_Protectora) VALUES (?, ?, ?)";
+        try (Connection conn = ConexionDB.getConnection() ;
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, redSocial.getPlataforma());
+            pstmt.setString(2, redSocial.getUrl());
+            pstmt.setInt(3, idProtectora);
+            return pstmt.executeUpdate() > 0;
+        }
+    }
+
+    public boolean eliminarRedSocial(int idProtectora, String plataforma) throws SQLException {
+        String sql = "DELETE FROM Redes_Sociales WHERE ID_Protectora = ? AND Plataforma = ?";
+        try (Connection conn = ConexionDB.getConnection() ;
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, idProtectora);
+            pstmt.setString(2, plataforma);
+            return pstmt.executeUpdate() > 0;
+        }
+    }
+
+    public boolean actualizarRedSocial(RedSocial redSocial) throws SQLException {
+        String sql = "UPDATE Redes_Sociales SET URL = ? WHERE ID_Protectora = ? AND Plataforma = ?";
+        try (Connection conn = ConexionDB.getConnection() ;
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, redSocial.getUrl());
+            pstmt.setInt(2, redSocial.getIdProtectora());
+            pstmt.setString(3, redSocial.getPlataforma());
+            return pstmt.executeUpdate() > 0;
+        }
+    }
+
+    public List<RedSocial> obtenerRedesSocialesPorProtectora(int idProtectora) throws SQLException {
+        List<RedSocial> redes = new ArrayList<>();
+        String sql = "SELECT Plataforma, URL, ID_Protectora FROM Redes_Sociales WHERE ID_Protectora = ?";
+        try (Connection conn = ConexionDB.getConnection() ;
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, idProtectora);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    RedSocial red = new RedSocial();
+                    red.setPlataforma(rs.getString("Plataforma"));
+                    red.setUrl(rs.getString("URL"));
+                    red.setIdProtectora(rs.getInt("ID_Protectora"));
+                    redes.add(red);
+                }
+            }
+        }
+        return redes;
+    }
+
+    private Protectora mapResultSetToProtectora(ResultSet rs) throws SQLException {
+        Protectora protectora = new Protectora();
+        protectora.setIdProtectora(rs.getInt("ID_Protectora"));
+        protectora.setNombre(rs.getString("Nombre"));
+        protectora.setTelefono(rs.getString("Telefono"));
+        protectora.setEmail(rs.getString("Email"));
+        protectora.setProvincia(rs.getString("Provincia"));
+        protectora.setCiudad(rs.getString("Ciudad"));
+        protectora.setCalle(rs.getString("Calle"));
+        protectora.setCp(rs.getString("CP"));
+        protectora.setIdUsuario(rs.getInt("ID_Usuario"));
+        return protectora;
+    }
 }

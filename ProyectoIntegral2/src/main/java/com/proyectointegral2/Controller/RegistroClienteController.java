@@ -1,5 +1,10 @@
 package com.proyectointegral2.Controller;
 
+import com.proyectointegral2.Model.Cliente;
+import com.proyectointegral2.Model.Direccion;
+import com.proyectointegral2.dao.ClienteDao;
+import com.proyectointegral2.dao.UsuarioDao;
+import com.proyectointegral2.utils.UtilidadesExcepciones;
 import com.proyectointegral2.utils.UtilidadesVentana;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -74,6 +79,11 @@ public class RegistroClienteController {
 
     @FXML
     void ConfirmarRegistro(ActionEvent event) {
+<<<<<<< HEAD
+        try {
+            String nombreUsu = TxtCorreo.getText();
+            String contrasena = TxtContra.getText();
+=======
         String mainClienteFxmlFile = "/com/proyectointegral2/Vista/Main.fxml";
         String mainClienteTitle = "Panel Cliente - Dogpuccino";
         UtilidadesVentana.cambiarEscena(mainClienteFxmlFile, mainClienteTitle, true);
@@ -95,8 +105,53 @@ public class RegistroClienteController {
 
     @Deprecated
     void fafafa(ActionEvent event) {
+>>>>>>> f8a27048f7bf2f1a2c0f24b670e5966714aaaff4
 
+            // 1. Insertar usuario
+            boolean usuarioInsertado = UsuarioDao.insertarUsuario(nombreUsu, contrasena);
+
+            if (!usuarioInsertado) {
+                UtilidadesExcepciones.mostrarAdvertencia("No se pudo registrar el usuario.", "Error de registro", "El usuario ya existe o hubo un problema con la base de datos.");
+                return;
+            }
+
+            // 2. Recuperar el ID del usuario
+            int idUsuario = UsuarioDao.obtenerIdUsuario(nombreUsu);
+
+            // 3. Crear el objeto Cliente y Dirección
+            Direccion direccion = new Direccion();
+            direccion.setCalle(TxtDireccion.getText());
+            direccion.setProvincia(TxtProvincia.getText());
+            direccion.setCiudad(TxtCiudad.getText());
+            direccion.setCodigoPostal(TxtCP.getText());
+
+            Cliente cliente = new Cliente();
+            cliente.setNombre(TxtNombre.getText());
+            cliente.setApellidos(TxtApellido.getText());
+            cliente.setTelefono(TxtTel.getText());
+            cliente.setEmail(TxtCorreo.getText());
+            cliente.setNif("");
+            cliente.setIdUsuario(idUsuario);
+            cliente.setDireccion(direccion);
+            // cliente.setFechaNacimiento(...); // Si tienes el campo
+
+            // 4. Insertar cliente
+            boolean clienteInsertado = ClienteDao.insertarCliente(cliente);
+
+            if (clienteInsertado) {
+                String mainClienteFxmlFile = "/com/proyectointegral2/Vista/Main.fxml";
+                String mainClienteTitle = "Panel Cliente - Dogpuccino";
+                UtilidadesVentana.cambiarEscena(mainClienteFxmlFile, mainClienteTitle, true);
+            } else {
+                UtilidadesExcepciones.mostrarAdvertencia("No se pudo registrar el cliente.", "Error de registro", "Hubo un problema al guardar los datos del cliente."
+                );
+            }
+        } catch (Exception e) {
+            UtilidadesExcepciones.mostrarError(e,"Error de registro","Excepción no controlada");
+            e.printStackTrace();
+        }
     }
+
     @FXML
     private void Volver(MouseEvent event) {
         String loginFxml = "/com/proyectointegral2/Vista/Login.fxml";

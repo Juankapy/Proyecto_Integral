@@ -4,8 +4,7 @@ import java.time.LocalDate;
 
 public class Cliente {
     private String nombre;
-    private String apellido1;
-    private String apellido2;
+    private String apellidos;
     private LocalDate fechaNacimiento;
     private Direccion direccion;
     private String telefono;
@@ -13,11 +12,21 @@ public class Cliente {
     private String nif;
     private int idUsuario;
 
+    // Constructor sin atributos
+    public Cliente() {
+        this.nombre = "";
+        this.apellidos = "";
+        this.fechaNacimiento = LocalDate.now();
+        this.direccion = new Direccion("", "", "", "");
+        this.telefono = "";
+        this.email = "";
+        this.nif = "";
+        this.idUsuario = -1;
+    }
     // Constructor con todos los atributos
-    public Cliente(String nombre, String apellido1, String apellido2, LocalDate fechaNacimiento, Direccion direccion, String telefono, String email, String nif, int idUsuario) {
+    public Cliente(String nombre, String apellidos, LocalDate fechaNacimiento, Direccion direccion, String telefono, String email, String nif, int idUsuario) {
         this.nombre = nombre;
-        this.apellido1 = apellido1;
-        this.apellido2 = apellido2;
+        this.apellidos = apellidos;
         this.fechaNacimiento = fechaNacimiento;
         this.direccion = direccion;
         this.telefono = telefono;
@@ -35,20 +44,12 @@ public class Cliente {
         this.nombre = nombre;
     }
 
-    public String getApellido1() {
-        return apellido1;
+    public String getApellidos() {
+        return apellidos;
     }
 
-    public void setApellido1(String apellido1) {
-        this.apellido1 = apellido1;
-    }
-
-    public String getApellido2() {
-        return apellido2;
-    }
-
-    public void setApellido2(String apellido2) {
-        this.apellido2 = apellido2;
+    public void setApellidos(String apellidos) {
+        this.apellidos = apellidos;
     }
 
     public LocalDate getFechaNacimiento() {
@@ -98,17 +99,4 @@ public class Cliente {
         this.idUsuario = idUsuario;
     }
 
-    @Override
-    public String toString() {
-        return "Persona{" +
-                "nombre='" + nombre + '\'' +
-                ", apellido1='" + apellido1 + '\'' +
-                ", apellido2='" + apellido2 + '\'' +
-                ", fechaNacimiento='" + fechaNacimiento + '\'' +
-                ", direccion='" + direccion + '\'' +
-                ", telefono='" + telefono + '\'' +
-                ", email='" + email + '\'' +
-                ", nif='" + nif + '\'' +
-                '}';
-    }
 }

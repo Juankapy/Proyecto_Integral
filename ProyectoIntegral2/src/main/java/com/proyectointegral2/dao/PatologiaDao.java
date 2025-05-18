@@ -1,56 +1,97 @@
 package com.proyectointegral2.dao;
 
 import com.proyectointegral2.Model.Patologia;
-import com.proyectointegral2.utils.ConexionDB; // Usar la clase de conexión centralizada
+import com.proyectointegral2.utils.ConexionDB;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class PatologiaDao {
+public class PatologiaDao  {
 
-    public PatologiaDao() {
-        // Constructor vacío
-    }
-
-    public void insertarPatologia(Patologia patologia) throws SQLException {
-        String sql = "INSERT INTO Patologia (ID_Patologia, Nombre) VALUES (?, ?)";
-        try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, patologia.getId());
-            stmt.setString(2, patologia.getNombre());
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Error al insertar patología: " + e.getMessage());
-            throw e;
+    public int crearPatologia(Patologia patologia) throws SQLException {
+        String sqlInsert = "INSERT INTO Patologia (Nombre) VALUES (?)";
+        try (Connection conn = ConexionDB.getConnection() ;
+             PreparedStatement pstmt = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setString(1, patologia.getNombre());
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("No se pudo crear la patología.");
+            }
+            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                } else {
+                    throw new SQLException("No se pudo obtener el ID generado.");
+                }
+            }
         }
     }
 
-    public void actualizarPatologia(Patologia patologia) throws SQLException {
-        // Asumiendo que solo se actualiza el nombre
-        String sql = "UPDATE Patologia SET Nombre=? WHERE ID_Patologia=?";
-        try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, patologia.getNombre());
-            stmt.setInt(2, patologia.getId());
-            // Si añades descripción a la tabla: stmt.setString(2, patologia.getDescripcion()); y ajusta el SQL
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Error al actualizar patología: " + e.getMessage());
-            throw e;
+    public Patologia obtenerPatologiaPorId(int idPatologia) throws SQLException {
+        String sql = "SELECT * FROM Patologia WHERE ID_Patologia = ?";
+        try (Connection conn = ConexionDB.getConnection() ;
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, idPatologia);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToPatologia(rs);
+                }
+            }
+        }
+        return null;
+    }
+
+    public Patologia obtenerPatologiaPorNombre(String nombrePatologia) throws SQLException {
+        String sql = "SELECT * FROM Patologia WHERE Nombre = ?";
+        try (Connection conn = ConexionDB.getConnection() ;
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, nombrePatologia);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToPatologia(rs);
+                }
+            }
+        }
+        return null;
+    }
+
+    public List<Patologia> obtenerTodasLasPatologias() throws SQLException {
+        List<Patologia> patologias = new ArrayList<>();
+        String sql = "SELECT * FROM Patologia ORDER BY Nombre";
+        try (Connection conn = ConexionDB.getConnection() ;
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                patologias.add(mapResultSetToPatologia(rs));
+            }
+        }
+        return patologias;
+    }
+
+    public boolean actualizarPatologia(Patologia patologia) throws SQLException {
+        String sql = "UPDATE Patologia SET Nombre = ? WHERE ID_Patologia = ?";
+        try (Connection conn = ConexionDB.getConnection() ;
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, patologia.getNombre());
+            pstmt.setInt(2, patologia.getIdPatologia());
+            return pstmt.executeUpdate() > 0;
         }
     }
 
-    public void eliminarPatologia(int idPatologia) throws SQLException {
-        String sql = "DELETE FROM Patologia WHERE ID_Patologia=?";
-        try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            // Tu PreparedStatement original tenía una 'A' al final de la línea SQL, la he quitado.
-            stmt.setInt(1, idPatologia);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Error al eliminar patología: " + e.getMessage());
-            throw e;
+    public boolean eliminarPatologia(int idPatologia) throws SQLException {
+        String sql = "DELETE FROM Patologia WHERE ID_Patologia = ?";
+        try (Connection conn = ConexionDB.getConnection() ;
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, idPatologia);
+            return pstmt.executeUpdate() > 0;
         }
+    }
+
+    private Patologia mapResultSetToPatologia(ResultSet rs) throws SQLException {
+        Patologia patologia = new Patologia();
+        patologia.setIdPatologia(rs.getInt("ID_Patologia"));
+        patologia.setNombre(rs.getString("Nombre"));
+        return patologia;
     }
 }

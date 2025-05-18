@@ -1,56 +1,96 @@
 package com.proyectointegral2.dao;
 
 import com.proyectointegral2.Model.Raza;
-import com.proyectointegral2.utils.ConexionDB; // Usar la clase de conexión centralizada
+import com.proyectointegral2.utils.ConexionDB;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
-public class RazaDao {
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
-    public RazaDao() {
-        // Constructor vacío
-    }
+public class RazaDao{
 
-    public void insertarRaza(Raza raza) throws SQLException {
-        // Nombres de tabla y columnas deben coincidir con tu CREATE TABLE
-        // Tabla: Raza, Columnas: ID_Raza, Nombre_Raza
-        String sql = "INSERT INTO Raza (ID_Raza, Nombre_Raza) VALUES (?, ?)";
-        try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, raza.getId()); // Asumiendo que el ID se establece antes
-            stmt.setString(2, raza.getNombre());
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Error al insertar raza: " + e.getMessage());
-            throw e;
+    public int crearRaza(Raza raza) throws SQLException {
+        String sqlInsert = "INSERT INTO Raza (Nombre_Raza) VALUES (?)";
+        try (Connection conn = ConexionDB.getConnection() ;
+             PreparedStatement pstmt = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setString(1, raza.getNombreRaza());
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows == 0) throw new SQLException("No se pudo crear la raza.");
+            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                } else {
+                    throw new SQLException("No se pudo obtener el ID generado.");
+                }
+            }
         }
     }
 
-    public void actualizarRaza(Raza raza) throws SQLException {
-        String sql = "UPDATE Raza SET Nombre_Raza=? WHERE ID_Raza=?";
+    public Raza obtenerRazaPorId(int idRaza) throws SQLException {
+        String sql = "SELECT * FROM Raza WHERE ID_Raza = ?";
         try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, raza.getNombre());
-            stmt.setInt(2, raza.getId());
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Error al actualizar raza: " + e.getMessage());
-            throw e;
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, idRaza);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToRaza(rs);
+                }
+            }
+        }
+        return null;
+    }
+
+    public Raza obtenerRazaPorNombre(String nombreRaza) throws SQLException {
+        String sql = "SELECT * FROM Raza WHERE Nombre_Raza = ?";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, nombreRaza);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToRaza(rs);
+                }
+            }
+        }
+        return null;
+    }
+
+    public List<Raza> obtenerTodasLasRazas() throws SQLException {
+        List<Raza> razas = new ArrayList<>();
+        String sql = "SELECT * FROM Raza ORDER BY Nombre_Raza";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                razas.add(mapResultSetToRaza(rs));
+            }
+        }
+        return razas;
+    }
+
+    public boolean actualizarRaza(Raza raza) throws SQLException {
+        String sql = "UPDATE Raza SET Nombre_Raza = ? WHERE ID_Raza = ?";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, raza.getNombreRaza());
+            pstmt.setInt(2, raza.getIdRaza());
+            return pstmt.executeUpdate() > 0;
         }
     }
 
-    public void eliminarRaza(int idRaza) throws SQLException {
-        String sql = "DELETE FROM Raza WHERE ID_Raza=?";
+    public boolean eliminarRaza(int idRaza) throws SQLException {
+        String sql = "DELETE FROM Raza WHERE ID_Raza = ?";
         try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, idRaza);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Error al eliminar raza: " + e.getMessage());
-            throw e;
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, idRaza);
+            return pstmt.executeUpdate() > 0;
         }
     }
-    // Aquí irían métodos para leer razas
+
+    private Raza mapResultSetToRaza(ResultSet rs) throws SQLException {
+        Raza raza = new Raza();
+        raza.setIdRaza(rs.getInt("ID_Raza"));
+        raza.setNombreRaza(rs.getString("Nombre_Raza"));
+        return raza;
+    }
 }

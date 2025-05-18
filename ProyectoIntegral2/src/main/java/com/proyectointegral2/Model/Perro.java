@@ -1,40 +1,36 @@
 package com.proyectointegral2.Model;
 
-import com.proyectointegral2.Model.Raza;
-
 import java.time.LocalDate;
-// En Perro.java
-// ...
+
 public class Perro {
-    private int id;
+    private int idPerro;
     private String nombre;
-    private String foto; // ESTO YA ES STRING, ¡Perfecto!
-    private LocalDate fechaNacimiento;
     private String sexo;
-    private boolean adoptado;
-    private Raza raza;
-    // Asegúrate de tener el campo idProtectora y su getter/setter
+    private LocalDate fechaNacimiento;
+    private String adoptado;
+    private byte[] foto;
     private int idProtectora;
+    private int idRaza;
 
+    public Perro() {}
 
-    public Perro(int id, String nombre, String foto, LocalDate fechaNacimiento, String sexo, boolean adoptado, Raza raza, int idProtectora) {
-        this.id = id;
+    public Perro(int idPerro, String nombre, String sexo, LocalDate fechaNacimiento, String adoptado, byte[] foto, int idProtectora, int idRaza) {
+        this.idPerro = idPerro;
         this.nombre = nombre;
-        this.foto = foto; // String
-        this.fechaNacimiento = fechaNacimiento;
         this.sexo = sexo;
+        this.fechaNacimiento = fechaNacimiento;
         this.adoptado = adoptado;
-        this.raza = raza;
-        this.idProtectora = idProtectora; // Asegúrate que esto esté
-    }
-    public Perro(){} // Constructor por defecto
-
-    public int getId() {
-        return id;
+        this.foto = foto;
+        this.idProtectora = idProtectora;
+        this.idRaza = idRaza;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public int getIdPerro() {
+        return idPerro;
+    }
+
+    public void setIdPerro(int idPerro) {
+        this.idPerro = idPerro;
     }
 
     public String getNombre() {
@@ -45,14 +41,6 @@ public class Perro {
         this.nombre = nombre;
     }
 
-    public LocalDate getFechaNacimiento() {
-        return fechaNacimiento;
-    }
-
-    public void setFechaNacimiento(LocalDate fechaNacimiento) {
-        this.fechaNacimiento = fechaNacimiento;
-    }
-
     public String getSexo() {
         return sexo;
     }
@@ -61,32 +49,43 @@ public class Perro {
         this.sexo = sexo;
     }
 
-    public boolean isAdoptado() {
+    public LocalDate getFechaNacimiento() {
+        return fechaNacimiento;
+    }
+
+    public void setFechaNacimiento(LocalDate fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
+    }
+
+    public String getAdoptado() {
         return adoptado;
     }
 
-    public void setAdoptado(boolean adoptado) {
+    public void setAdoptado(String adoptado) {
         this.adoptado = adoptado;
     }
 
-    public Raza getRaza() {
-        return raza;
-    }
-
-    public void setRaza(Raza raza) {
-        this.raza = raza;
-    }
-
-    public String getFoto() { // Devuelve String
+    public byte[] getFoto() {
         return foto;
     }
-    public void setFoto(String foto) { // Acepta String
+
+    public void setFoto(byte[] foto) {
         this.foto = foto;
     }
 
-    public int getIdProtectora() { return idProtectora; }
-    public void setIdProtectora(int idProtectora) { this.idProtectora = idProtectora; }
+    public int getIdProtectora() {
+        return idProtectora;
+    }
 
-    public void setAdoptadoChar(String adoptadoChar) { this.adoptado = "S".equalsIgnoreCase(adoptadoChar); }
-    public String getAdoptadoChar() { return this.adoptado ? "S" : "N"; }
+    public void setIdProtectora(int idProtectora) {
+        this.idProtectora = idProtectora;
+    }
+
+    public int getIdRaza() {
+        return idRaza;
+    }
+
+    public void setIdRaza(int idRaza) {
+        this.idRaza = idRaza;
+    }
 }
