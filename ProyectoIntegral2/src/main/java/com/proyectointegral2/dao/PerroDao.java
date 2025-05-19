@@ -18,57 +18,56 @@ public class PerroDao {
     }
 
     public int crearPerro(Perro perro) throws SQLException {
-        // ID_PERRO se genera por secuencia DEFAULT
         String sqlInsert = "INSERT INTO PERROS (NOMBRE, SEXO, FECHANACIMIENTO, ADOPTADO, FOTO, ID_PROTECTORA, ID_RAZA) VALUES (?, ?, ?, ?, ?, ?, ?)";
         Connection conn = null;
         PreparedStatement pstmt = null;
-        ResultSet generatedKeys = null;
-        int nuevoIdPerro = -1;
+        int nuevoIdPerro = -1; // No podremos obtenerlo así, pero es para probar el INSERT
 
         try {
             conn = ConexionDB.getConnection();
-            conn.setAutoCommit(false);
+            // conn.setAutoCommit(false); // Para esta prueba simple, puedes quitarlo o dejarlo
 
-            pstmt = conn.prepareStatement(sqlInsert, new String[]{"ID_PERRO"});
+            pstmt = conn.prepareStatement(sqlInsert); // SIN el segundo argumento de getGeneratedKeys
 
             pstmt.setString(1, perro.getNombre());
             pstmt.setString(2, perro.getSexo());
             if (perro.getFechaNacimiento() != null) {
                 pstmt.setDate(3, java.sql.Date.valueOf(perro.getFechaNacimiento()));
             } else {
-                pstmt.setNull(3, Types.DATE);
+                pstmt.setNull(3, java.sql.Types.DATE);
             }
-            pstmt.setString(4, perro.getAdoptado()); // 'S' o 'N'
-            pstmt.setString(5, perro.getFoto());     // CORREGIDO: setString para la ruta de la foto
+            pstmt.setString(4, perro.getAdoptado());
+            pstmt.setString(5, perro.getFoto());
             pstmt.setInt(6, perro.getIdProtectora());
-            pstmt.setInt(7, perro.getRaza() != null ? perro.getRaza().getIdRaza() : 0); // Obtener ID del objeto Raza, o 0/null si no hay raza
 
+            if (perro.getRaza() != null && perro.getRaza().getIdRaza() > 0) { // getIdRaza es de tu modelo Raza
+                pstmt.setInt(7, perro.getRaza().getIdRaza());
+            } else {
+                // Si ID_RAZA es NOT NULL en la BD y no tiene default, esto fallará.
+                // Si permite NULL, está bien. Tu tabla permite NULL para ID_Raza.
+                pstmt.setNull(7, java.sql.Types.NUMERIC);
+            }
 
             int affectedRows = pstmt.executeUpdate();
-            if (affectedRows == 0) {
-                conn.rollback();
+            if (affectedRows > 0) {
+                System.out.println("Perro insertado (sin obtener ID generado para esta prueba).");
+                // Como no podemos obtener el ID así, no podemos asignarlo al objeto perro
+                // ni devolverlo fácilmente. Esta es solo una prueba de INSERT.
+                nuevoIdPerro = perro.getIdPerro(); // Devolvería el ID que tenía el objeto (si tenía uno)
+            } else {
                 throw new SQLException("No se pudo crear el perro, ninguna fila afectada.");
             }
-
-            generatedKeys = pstmt.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                nuevoIdPerro = generatedKeys.getInt(1);
-                perro.setIdPerro(nuevoIdPerro); // Actualizar el objeto perro
-            } else {
-                System.out.println("Advertencia: Perro insertado, pero no se recuperó ID con getGeneratedKeys.");
-            }
-            conn.commit();
-            return nuevoIdPerro;
+            // if (!conn.getAutoCommit()) conn.commit(); // Si usaste setAutoCommit(false)
 
         } catch (SQLException e) {
-            if (conn != null) try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
-            System.err.println("Error SQL al crear perro: " + e.getMessage());
+            // if (conn != null && !conn.getAutoCommit()) try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            System.err.println("Error SQL al crear perro (prueba simplificada): " + e.getMessage());
             throw e;
         } finally {
-            if (generatedKeys != null) try { generatedKeys.close(); } catch (SQLException ex) { /* ignore */ }
             if (pstmt != null) try { pstmt.close(); } catch (SQLException ex) { /* ignore */ }
-            if (conn != null) try { conn.setAutoCommit(true); conn.close(); } catch (SQLException ex) { /* ignore */ }
+            if (conn != null) try { conn.close(); } catch (SQLException ex) { /* ignore */ }
         }
+        return nuevoIdPerro; // Devolverá -1 o el ID original del objeto Perro
     }
 
     public Perro obtenerPerroPorId(int idPerro) throws SQLException {

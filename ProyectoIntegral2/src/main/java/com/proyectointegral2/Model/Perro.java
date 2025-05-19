@@ -10,7 +10,6 @@ public class Perro {
     private String adoptado;
     private String foto;
     private int idProtectora;
-    private String descripcionPerro;
     private Raza raza;
 
     public Perro() {}
@@ -37,7 +36,6 @@ public class Perro {
         this.adoptado = adoptado;
         this.raza = raza;
         this.idProtectora = idProtectora;
-        this.descripcionPerro = descripcionPerro;
     }
 
     public int getIdPerro() { return idPerro; }
