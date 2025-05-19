@@ -215,38 +215,25 @@ public class DetallesPerroController {
 
     @FXML
     void ReservarCita(ActionEvent event) {
-        if (perroActual == null) {
-            UtilidadesVentana.mostrarAlertaError("Error", "No hay información del perro para reservar una cita.");
+        if (perroActual == null || perroActual.isAdoptado()) {
+            UtilidadesVentana.mostrarAlertaInformacion("No Disponible", "Este perrito no está disponible para reservar citas.");
             return;
         }
-        if (perroActual.isAdoptado()) {
-            UtilidadesVentana.mostrarAlertaInformacion("No Disponible", "Este perrito ya ha sido adoptado y no está disponible para reservar citas.");
-            return;
-        }
+        System.out.println("Botón Reservar Cita presionado para el perro ID: " + perroActual.getIdPerro() + ", Nombre: " + perroActual.getNombre()); // VERIFICA ESTE NOMBRE
 
-        System.out.println("Botón Reservar Cita presionado para el perro ID: " + perroActual.getIdPerro() + ", Nombre: " + perroActual.getNombre());
+        String formularioReservaFxml = "/com/proyectointegral2/Vista/FormularioSolicitarCita.fxml";
+        String titulo = "Solicitar Cita con " + perroActual.getNombre();
+        Stage ownerStage = (Stage) BtnReservarCita.getScene().getWindow();
 
-        String formularioReservaFxml = "/com/proyectointegral2/Vista/FormularioReservaCita.fxml";
-        String titulo = "Reservar Cita con " + perroActual.getNombre();
+        FormularioSolicitudCitaController formController =
+                UtilidadesVentana.mostrarVentanaPopup(formularioReservaFxml, titulo, true, ownerStage);
 
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(formularioReservaFxml));
-            Parent root = loader.load();
-
-            DetallesPerroController controller = loader.getController();
-            if (controller != null) {
-                controller.initData(perroActual); // Asegúrate de que este método existe en el controlador destino
-            } else {
-                UtilidadesVentana.mostrarAlertaError("Error", "No se pudo inicializar el controlador del formulario de reserva.");
-                return;
-            }
-
-            Stage owner = (Stage) BtnReservarCita.getScene().getWindow();
-            UtilidadesVentana.mostrarVentanaComoDialogo(root, titulo, owner);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            UtilidadesVentana.mostrarAlertaError("Error de Navegación", "No se pudo abrir el formulario de reserva de cita: " + e.getMessage());
+        if (formController != null) {
+            System.out.println("Pasando perro a FormularioSolicitudCita: " + perroActual.getNombre()); // DEBUG
+            formController.initData(this.perroActual); // Pasar el objeto Perro
+        } else {
+            System.err.println("No se pudo obtener el controlador para FormularioSolicitudCita.");
+            // El método mostrarVentanaPopup ya debería haber mostrado una alerta si el FXML no cargó.
         }
     }
 }
