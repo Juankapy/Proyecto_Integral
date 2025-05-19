@@ -99,7 +99,6 @@ public class MainProtectoraController {
 
         if (perroDao != null && idProtectoraActual > 0) {
             try {
-                // Necesitarás un método en PerroDao como: obtenerPerrosPorIdProtectora
                 this.listaDePerrosDeLaProtectora = perroDao.obtenerPerrosPorProtectora(this.idProtectoraActual);
                 if (this.listaDePerrosDeLaProtectora == null) { // El DAO podría devolver null si no hay perros o error
                     this.listaDePerrosDeLaProtectora = new ArrayList<>();
@@ -108,16 +107,13 @@ public class MainProtectoraController {
             } catch (SQLException e) {
                 e.printStackTrace();
                 UtilidadesVentana.mostrarAlertaError("Error de Base de Datos", "No se pudieron cargar los perros de la protectora: " + e.getMessage());
-                // this.listaDePerrosDeLaProtectora ya está inicializada como ArrayList vacía
+
             }
         } else {
             if (idProtectoraActual <= 0) System.err.println("ID Protectora ("+idProtectoraActual+") inválido para cargar perros.");
             else if (perroDao == null) System.err.println("PerroDao no inicializado, no se pueden cargar perros.");
-            // this.listaDePerrosDeLaProtectora ya está inicializada como ArrayList vacía
         }
 
-        // Forzar adaptación inicial si la ventana ya está visible
-        // Esta llamada es importante para que el grid se popule después de cargar los datos
         if (mainBorderPane.getScene() != null && mainBorderPane.getScene().getWindow() != null &&
                 ((Stage)mainBorderPane.getScene().getWindow()).isShowing()) {
             Platform.runLater(() -> adaptarUIAlTamanoVentana((Stage) mainBorderPane.getScene().getWindow()));
@@ -151,8 +147,6 @@ public class MainProtectoraController {
         }
     }
 
-
-    // adaptarUIAlTamanoVentana se mantiene igual
     private void adaptarUIAlTamanoVentana(Stage stage) {
         if (stage == null || stage.getWidth() <= 0 || Double.isNaN(stage.getWidth())) return;
         double currentWidth = stage.getWidth();
@@ -440,7 +434,6 @@ public class MainProtectoraController {
 
     @FXML
     void RegistroAdopciones(ActionEvent event) {
-        // ... (igual que antes) ...
         boolean mostrarAdopciones = tablaRegistroAdopciones == null || !tablaRegistroAdopciones.isVisible();
         if (mostrarAdopciones) {
             lblRegistroTitulo.setText("Registro de adopciones");

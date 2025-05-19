@@ -30,8 +30,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 public class FormularioPerroController {
@@ -61,11 +59,10 @@ public class FormularioPerroController {
 
     @FXML
     public void initialize() {
-        System.out.println("FormularioPerroController inicializado.");
         try {
             perroDao = new PerroDao();
             razaDao = new RazaDao();
-        } catch (Exception e) { // Constructor de RazaDao podría lanzar Exception
+        } catch (Exception e) {
             e.printStackTrace();
             UtilidadesVentana.mostrarAlertaError("Error Crítico DAO", "No se pudo inicializar el acceso a datos: " + e.getMessage());
             if (BtnAnadirPerro != null) BtnAnadirPerro.setDisable(true);
@@ -89,7 +86,7 @@ public class FormularioPerroController {
         this.idProtectoraDelPerro = idProtectora;
 
         TxtNombrePerro.setText(perro.getNombre());
-        if (DatePickerFechaNacimiento != null) DatePickerFechaNacimiento.setValue(perro.getFechaNacimiento()); // CORREGIDO
+        if (DatePickerFechaNacimiento != null) DatePickerFechaNacimiento.setValue(perro.getFechaNacimiento());
         CmbSexo.setValue(perro.getSexo());
 
         if (perro.getRaza() != null) {
@@ -97,7 +94,6 @@ public class FormularioPerroController {
         } else {
             TxtRazaPerro.clear();
         }
-
 
         if (CmbEstado != null) {
             if (perro.isAdoptado()) CmbEstado.setValue("Adoptado");
@@ -123,14 +119,13 @@ public class FormularioPerroController {
     public void initDataParaNuevoPerro(int idProtectora) {
         this.perroAEditar = null;
         this.idProtectoraDelPerro = idProtectora;
-        System.out.println("Formulario para nuevo perro de protectora ID: " + this.idProtectoraDelPerro);
         limpiarCamposFormulario();
         if (BtnAnadirPerro != null) BtnAnadirPerro.setText("Añadir Perro");
     }
 
     private void limpiarCamposFormulario() {
         TxtNombrePerro.clear();
-        if (DatePickerFechaNacimiento != null) DatePickerFechaNacimiento.setValue(null); // CORREGIDO
+        if (DatePickerFechaNacimiento != null) DatePickerFechaNacimiento.setValue(null);
         if (CmbSexo != null) CmbSexo.getSelectionModel().clearSelection();
         TxtRazaPerro.clear();
         if (TxtAreaPatologia != null) TxtAreaPatologia.clear();
@@ -167,7 +162,7 @@ public class FormularioPerroController {
     void AnadirPerro(ActionEvent event) {
         String nombre = TxtNombrePerro.getText();
         LocalDate fechaNac = null;
-        if (DatePickerFechaNacimiento != null) fechaNac = DatePickerFechaNacimiento.getValue(); // CORREGIDO
+        if (DatePickerFechaNacimiento != null) fechaNac = DatePickerFechaNacimiento.getValue();
         String sexo = CmbSexo.getValue();
         String nombreRazaStr = TxtRazaPerro.getText();
         String estadoSeleccionado = CmbEstado.getValue();
@@ -214,6 +209,7 @@ public class FormularioPerroController {
         perroParaGuardar.setSexo(sexo);
         perroParaGuardar.setRaza(razaObjeto);
 
+        // Estado de adopción: solo "S" para adoptado, "N" para el resto
         if ("Adoptado".equalsIgnoreCase(estadoSeleccionado)) {
             perroParaGuardar.setAdoptado("S");
         } else {
@@ -224,21 +220,25 @@ public class FormularioPerroController {
         if (archivoFotoSeleccionada != null) {
             try {
                 String extension = obtenerExtensionArchivo(archivoFotoSeleccionada.getName());
-                String nombreUnicoArchivo = UUID.randomUUID().toString() + (extension.isEmpty() ? "" : "." + extension);
+                if (extension.isEmpty() || !(extension.equals("png") || extension.equals("jpg") || extension.equals("jpeg") || extension.equals("gif"))) {
+                    UtilidadesVentana.mostrarAlertaError("Error Foto", "La extensión de la imagen no es válida.");
+                    return;
+                }
+                String nombreUnicoArchivo = UUID.randomUUID().toString() + "." + extension;
                 Path destinoFileSystem = Paths.get(DIRECTORIO_IMAGENES_PERROS_FILESYSTEM + nombreUnicoArchivo);
                 Files.createDirectories(destinoFileSystem.getParent());
                 Files.copy(archivoFotoSeleccionada.toPath(), destinoFileSystem, StandardCopyOption.REPLACE_EXISTING);
                 rutaDestinoFotoParaBD = RUTA_BASE_IMAGENES_PERROS_RESOURCES + nombreUnicoArchivo;
+                rutaDestinoFotoParaBD = rutaDestinoFotoParaBD.replace("\\", "/");
             } catch (IOException e) { e.printStackTrace(); UtilidadesVentana.mostrarAlertaError("Error Foto", "No se pudo guardar la imagen."); return; }
         } else if (!esNuevo && rutaFotoActualEnModelo != null) {
-            rutaDestinoFotoParaBD = rutaFotoActualEnModelo;
+            rutaDestinoFotoParaBD = rutaFotoActualEnModelo.replace("\\", "/");
         }
         perroParaGuardar.setFoto(rutaDestinoFotoParaBD);
 
         try {
             if (perroDao == null) { UtilidadesVentana.mostrarAlertaError("Error DAO", "Servicio de perros no disponible."); return; }
             if (esNuevo) {
-                System.out.println("Intentando crear perro con ID_Protectora: " + perroParaGuardar.getIdProtectora());
                 int nuevoId = perroDao.crearPerro(perroParaGuardar);
                 if (nuevoId > 0) {
                     perroParaGuardar.setIdPerro(nuevoId);
@@ -280,8 +280,6 @@ public class FormularioPerroController {
         if(sourceNode != null && sourceNode.getScene() != null && sourceNode.getScene().getWindow() instanceof Stage) {
             Stage stage = (Stage) sourceNode.getScene().getWindow();
             stage.close();
-        } else {
-            System.err.println("No se pudo obtener el Stage para cerrar el formulario.");
         }
     }
 }

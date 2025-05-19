@@ -108,6 +108,8 @@ VALUES ('Nueva peticion de adopcion para Luna recibida de Ana Garc�a.', 'NUEVA
            AND ID_CLIENTE = (SELECT ID_CLIENTE FROM CLIENTE WHERE EMAIL = 'ana.garcia@example.com')
            AND ROWNUM = 1), -- Asume una sola petici�n para el ejemplo
         'PETICION_ADOPCION');
+        
+        
 
 INSERT INTO NOTIFICACION (MENSAJE, TIPO_NOTIFICACION, ID_ENTIDAD_RELACIONADA, ENTIDAD_TIPO)
 VALUES ('Tu cita con Max para el 15/08/2025 ha sido confirmada.', 'CITA_CONFIRMADA', 

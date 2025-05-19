@@ -8,7 +8,6 @@ import com.proyectointegral2.dao.ProtectoraDao;
 import com.proyectointegral2.dao.PatologiaDao;
 import com.proyectointegral2.dao.IdentificacionPatologiaDao;
 import com.proyectointegral2.utils.UtilidadesVentana;
-import com.proyectointegral2.Controller.FormularioReservaCitaController; // Asegúrate de que la ruta es correcta
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -215,38 +214,38 @@ public class DetallesPerroController {
 
     @FXML
     void ReservarCita(ActionEvent event) {
-        if (perroActual == null) {
-            UtilidadesVentana.mostrarAlertaError("Error", "No hay información del perro para reservar una cita.");
-            return;
-        }
-        if (perroActual.isAdoptado()) {
-            UtilidadesVentana.mostrarAlertaInformacion("No Disponible", "Este perrito ya ha sido adoptado y no está disponible para reservar citas.");
-            return;
-        }
-
-        System.out.println("Botón Reservar Cita presionado para el perro ID: " + perroActual.getIdPerro() + ", Nombre: " + perroActual.getNombre());
-
-        String formularioReservaFxml = "/com/proyectointegral2/Vista/FormularioReservaCita.fxml";
-        String titulo = "Reservar Cita con " + perroActual.getNombre();
-
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(formularioReservaFxml));
-            Parent root = loader.load();
-
-            FormularioReservaCitaController controller = loader.getController();
-            if (controller != null) {
-                controller.initData(perroActual); // Asegúrate de que este método existe en el controlador destino
-            } else {
-                UtilidadesVentana.mostrarAlertaError("Error", "No se pudo inicializar el controlador del formulario de reserva.");
-                return;
-            }
-
-            Stage owner = (Stage) BtnReservarCita.getScene().getWindow();
-            UtilidadesVentana.mostrarVentanaComoDialogo(root, titulo, owner);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            UtilidadesVentana.mostrarAlertaError("Error de Navegación", "No se pudo abrir el formulario de reserva de cita: " + e.getMessage());
-        }
+//        if (perroActual == null) {
+//            UtilidadesVentana.mostrarAlertaError("Error", "No hay información del perro para reservar una cita.");
+//            return;
+//        }
+//        if (perroActual.isAdoptado()) {
+//            UtilidadesVentana.mostrarAlertaInformacion("No Disponible", "Este perrito ya ha sido adoptado y no está disponible para reservar citas.");
+//            return;
+//        }
+//
+//        System.out.println("Botón Reservar Cita presionado para el perro ID: " + perroActual.getIdPerro() + ", Nombre: " + perroActual.getNombre());
+//
+//        String formularioReservaFxml = "/com/proyectointegral2/Vista/FormularioReservaCita.fxml";
+//        String titulo = "Reservar Cita con " + perroActual.getNombre();
+//
+//        try {
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource(formularioReservaFxml));
+//            Parent root = loader.load();
+//
+//            FormularioReservaCitaController controller = loader.getController();
+//            if (controller != null) {
+//                controller.initData(perroActual); // Asegúrate de que este método existe en el controlador destino
+//            } else {
+//                UtilidadesVentana.mostrarAlertaError("Error", "No se pudo inicializar el controlador del formulario de reserva.");
+//                return;
+//            }
+//
+//            Stage owner = (Stage) BtnReservarCita.getScene().getWindow();
+//            UtilidadesVentana.mostrarVentanaComoDialogo(root, titulo, owner);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            UtilidadesVentana.mostrarAlertaError("Error de Navegación", "No se pudo abrir el formulario de reserva de cita: " + e.getMessage());
+//        }
     }
 }
