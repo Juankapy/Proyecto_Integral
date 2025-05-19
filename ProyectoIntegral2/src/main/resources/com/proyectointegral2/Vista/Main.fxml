@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
@@ -43,7 +42,7 @@
          <children>
             <HBox alignment="CENTER_LEFT" prefHeight="40.0" spacing="15.0">
                <children>
-                  <Button fx:id="BtnReservar" mnemonicParsing="false" onMouseClicked="#Reservar" style="-fx-background-color: #D2691E; -fx-text-fill: white; -fx-background-radius: 20; -fx-font-weight: bold;" text="Reservar cita">
+                  <Button fx:id="BtnReservar" mnemonicParsing="false" onAction="#Reservar" style="-fx-background-color: #D2691E; -fx-text-fill: white; -fx-background-radius: 20; -fx-font-weight: bold;" text="Reservar cita">
                      <padding>
                         <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
                      </padding>
@@ -59,7 +58,15 @@
                      </padding>
                   </Button>
                   <Region HBox.hgrow="SOMETIMES" />
-                  <ImageView fx:id="ImgIconBuscar" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#onSearchIconClicked" pickOnBounds="true" preserveRatio="true">
+
+                  <!-- NUEVO ComboBox para seleccionar criterio de búsqueda -->
+                  <ComboBox fx:id="comboCriterioBusqueda" prefHeight="31.0" prefWidth="120.0" promptText="Buscar por...">
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
+                  </ComboBox>
+
+                  <ImageView fx:id="ImgIconBuscar" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#onSearchIconClicked" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
                      <image>
                         <Image url="@../../../assets/Imagenes/iconos/buscar.png" />
                      </image>

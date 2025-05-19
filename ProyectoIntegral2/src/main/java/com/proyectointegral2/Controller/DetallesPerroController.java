@@ -3,10 +3,12 @@ package com.proyectointegral2.Controller;
 import com.proyectointegral2.Model.Perro;
 import com.proyectointegral2.Model.Protectora;
 import com.proyectointegral2.Model.Patologia;
+import com.proyectointegral2.Model.IdentificacionPatologia;
 import com.proyectointegral2.dao.ProtectoraDao;
 import com.proyectointegral2.dao.PatologiaDao;
 import com.proyectointegral2.dao.IdentificacionPatologiaDao;
 import com.proyectointegral2.utils.UtilidadesVentana;
+import com.proyectointegral2.Controller.FormularioReservaCitaController; // Asegúrate de que la ruta es correcta
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -41,12 +43,17 @@ public class DetallesPerroController {
     @FXML private ImageView imgLogoPequeno;
 
     private Perro perroActual;
-
+    private ProtectoraDao protectoraDao;
+    private PatologiaDao patologiaDao;
+    private IdentificacionPatologiaDao identificacionPatologiaDao;
 
     private final String RUTA_IMAGEN_PLACEHOLDER_DETALLES = "/assets/Imagenes/iconos/placeholder_dog_grande.png";
 
     @FXML
     public void initialize() {
+        this.protectoraDao = new ProtectoraDao();
+        this.patologiaDao = new PatologiaDao();
+        this.identificacionPatologiaDao = new IdentificacionPatologiaDao();
         System.out.println("DetallesPerroController inicializado. Esperando datos del perro...");
     }
 
@@ -93,12 +100,19 @@ public class DetallesPerroController {
             TxtRaza.setText("Raza no especificada");
         }
 
+        cargarImagenPerro();
+        cargarDatosProtectora();
+        cargarDatosPatologias();
+        actualizarEstadoBotonReserva();
+    }
+
+    private void cargarImagenPerro() {
         String imagePath = perroActual.getFoto();
         try {
             Image loadedImage = null;
             if (imagePath != null && !imagePath.trim().isEmpty()) {
                 if (!imagePath.startsWith("/")) {
-                    imagePath = "/" + imagePath;
+                    imagePath = "/" + imagePath.replace("\\", "/");
                 }
                 InputStream stream = getClass().getResourceAsStream(imagePath);
                 if (stream != null) {
@@ -122,18 +136,58 @@ public class DetallesPerroController {
             e.printStackTrace();
             cargarImagenPlaceholder();
         }
+    }
 
+    private void cargarDatosProtectora() {
+        // Elimina el uso de getNombreProtectora(), usa solo el ID
         if (perroActual.getIdProtectora() > 0) {
-
-            TxtProtectora.setText("Protectora ID: " + perroActual.getIdProtectora() + " (Nombre Simulada)");
+            try {
+                Protectora protectora = protectoraDao.obtenerProtectoraPorId(perroActual.getIdProtectora());
+                if (protectora != null && protectora.getNombre() != null) {
+                    TxtProtectora.setText(protectora.getNombre());
+                } else {
+                    TxtProtectora.setText("No especificada");
+                }
+            } catch (SQLException e) {
+                System.err.println("Error al obtener la protectora: " + e.getMessage());
+                TxtProtectora.setText("Error al cargar");
+            }
         } else {
             TxtProtectora.setText("No especificada");
         }
+    }
 
+    private void cargarDatosPatologias() {
+        try {
+            List<IdentificacionPatologia> identificaciones = identificacionPatologiaDao.obtenerPatologiasPorPerro(perroActual.getIdPerro());
+            if (identificaciones != null && !identificaciones.isEmpty()) {
+                List<String> nombresPatologias = identificaciones.stream()
+                        .map(ident -> {
+                            try {
+                                Patologia pat = patologiaDao.obtenerPatologiaPorId(ident.getIdPatologia());
+                                return pat != null ? pat.getNombre() : null;
+                            } catch (SQLException e) {
+                                System.err.println("Error al obtener detalle de patología ID " + ident.getIdPatologia() + ": " + e.getMessage());
+                                return null;
+                            }
+                        })
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+                if (!nombresPatologias.isEmpty()) {
+                    TxtPatologia.setText(String.join(", ", nombresPatologias));
+                } else {
+                    TxtPatologia.setText("Ninguna conocida");
+                }
+            } else {
+                TxtPatologia.setText("Ninguna conocida");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al obtener identificaciones de patologías: " + e.getMessage());
+            TxtPatologia.setText("Error al cargar");
+        }
+    }
 
-        TxtPatologia.setText("Ninguna conocida (Simulado)");
-
-
+    private void actualizarEstadoBotonReserva() {
         if (perroActual.isAdoptado()) {
             BtnReservarCita.setText("Adoptado");
             BtnReservarCita.setDisable(true);
@@ -178,6 +232,14 @@ public class DetallesPerroController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(formularioReservaFxml));
             Parent root = loader.load();
+
+            FormularioReservaCitaController controller = loader.getController();
+            if (controller != null) {
+                controller.initData(perroActual); // Asegúrate de que este método existe en el controlador destino
+            } else {
+                UtilidadesVentana.mostrarAlertaError("Error", "No se pudo inicializar el controlador del formulario de reserva.");
+                return;
+            }
 
             Stage owner = (Stage) BtnReservarCita.getScene().getWindow();
             UtilidadesVentana.mostrarVentanaComoDialogo(root, titulo, owner);

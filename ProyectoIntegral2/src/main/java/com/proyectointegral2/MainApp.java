@@ -11,7 +11,6 @@ import java.net.URL;
 
 public class MainApp extends Application {
 
-    @Override
     public void start(Stage stage) throws IOException {
         UtilidadesVentana.setPrimaryStage(stage);
 

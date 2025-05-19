@@ -2,7 +2,7 @@ package com.proyectointegral2.Controller;
 
 import com.proyectointegral2.Model.Perro;
 import com.proyectointegral2.Model.Raza;
-// import com.proyectointegral2.dao.PerroDao; // Descomentar si usas el DAO aquí para cargar perros
+import com.proyectointegral2.dao.PerroDao;
 import com.proyectointegral2.utils.UtilidadesVentana;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -22,17 +22,15 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.layout.HBox; // IMPORTADO
-import javafx.scene.layout.ColumnConstraints; // IMPORTADO
-import javafx.scene.layout.Priority; // IMPORTADO
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.Priority;
 import javafx.geometry.Pos;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.io.InputStream;
-// import java.sql.SQLException; // Si usas DAO
-import java.time.LocalDate;
-// import java.time.Period; // No se usa aquí directamente
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -55,7 +53,6 @@ public class MainClienteController {
     private final String RUTA_IMAGEN_PLACEHOLDER_PERRO = "/assets/Imagenes/iconos/placeholder_dog.jpg";
     private List<Perro> listaDePerrosOriginal;
     private List<Perro> perrosMostradosActuales;
-    // private PerroDao perroDao;
 
     private static final double HEADER_HEIGHT_ESTIMADA = 70;
     private static final double BOTTOM_BAR_HEIGHT_ESTIMADA = 80;
@@ -68,11 +65,10 @@ public class MainClienteController {
     private static final double CARD_HORIZONTAL_GAP = 20;
     private static final double CARD_PADDING = 10;
 
-
     @FXML
     public void initialize() {
         System.out.println("MainClienteController inicializado.");
-        cargarDatosDePerrosOriginalesSimulados();
+        cargarPerrosDesdeBaseDeDatos();
         if (this.listaDePerrosOriginal != null) {
             this.perrosMostradosActuales = new ArrayList<>(this.listaDePerrosOriginal);
         } else {
@@ -103,6 +99,18 @@ public class MainClienteController {
                 System.out.println("WARN: Escena o ventana no disponible en initialize() para forzar adaptación.");
             }
         });
+    }
+
+    private void cargarPerrosDesdeBaseDeDatos() {
+        try {
+            PerroDao perroDao = new PerroDao();
+            listaDePerrosOriginal = perroDao.obtenerTodosLosPerros();
+            System.out.println("Perros cargados desde la base de datos: " + listaDePerrosOriginal.size());
+        } catch (SQLException e) {
+            System.err.println("Error al cargar perros desde la base de datos: " + e.getMessage());
+            listaDePerrosOriginal = new ArrayList<>();
+            UtilidadesVentana.mostrarAlertaError("Error de Base de Datos", "No se pudieron cargar los perros desde la base de datos.");
+        }
     }
 
     private void configurarListenersDeVentana() {
@@ -149,25 +157,10 @@ public class MainClienteController {
         }
     }
 
-    private void cargarDatosDePerrosOriginalesSimulados() {
-        listaDePerrosOriginal = new ArrayList<>();
-        Raza labrador = new Raza(1, "Labrador Retriever");
-        Raza husky = new Raza(2, "Siberian Husky");
-        Raza golden = new Raza(3, "Golden Retriever");
-
-        listaDePerrosOriginal.add(new Perro(101, "Buddy", "/assets/Imagenes/perros/buddy_labrador.jpg", LocalDate.of(2022, 3, 15), "Macho", "N", labrador, 1));
-        listaDePerrosOriginal.add(new Perro(102, "Kira", "/assets/Imagenes/perros/kira_husky.png", LocalDate.of(2021, 11, 1), "Hembra", "N", husky, 1));
-        listaDePerrosOriginal.add(new Perro(103, "Goldie", "/assets/Imagenes/perros/goldie_golden.jpg", LocalDate.of(2023, 1, 20), "Macho", "S", golden, 2));
-        listaDePerrosOriginal.add(new Perro(104, "Rocky", "/assets/Imagenes/perros/perro1.jpg", LocalDate.of(2020, 7, 7), "Macho", "N", husky, 2));
-        listaDePerrosOriginal.add(new Perro(105, "Bella", "/assets/Imagenes/perros/perro1.jpg", LocalDate.of(2022, 9, 12), "Hembra", "N", labrador, 1));
-
-        System.out.println("Datos simulados cargados. Total perros originales: " + listaDePerrosOriginal.size());
-    }
-
     private VBox crearTarjetaPerro(Perro perro) {
         VBox card = new VBox(5);
         card.setPrefWidth(TARJETA_PREF_WIDTH);
-        card.setMaxWidth(Double.MAX_VALUE); // Permitir que crezca con Hgrow
+        card.setMaxWidth(Double.MAX_VALUE);
         card.setAlignment(Pos.TOP_CENTER);
         card.setStyle("-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2); -fx-padding: "+CARD_PADDING+";");
         card.setMinHeight(230);
@@ -304,7 +297,6 @@ public class MainClienteController {
             anchoDisponibleParaGrid -= (dogScrollPane.getPadding().getLeft() + dogScrollPane.getPadding().getRight());
         }
 
-
         int nuevasColumnas = calcularColumnasSegunAncho(anchoDisponibleParaGrid);
 
         boolean necesitaReconfigurarColumnas = dogGrid.getColumnConstraints().size() != nuevasColumnas;
@@ -395,7 +387,7 @@ public class MainClienteController {
                 Parent root = loader.load();
                 PerfilUsuarioController perfilController = loader.getController();
                 if (perfilController != null) {
-                    perfilController.initData(idUsuarioActual, nombreUsuarioLogin); 
+                    perfilController.initData(idUsuarioActual, nombreUsuarioLogin);
                     UtilidadesVentana.cambiarEscenaConRoot(root, "Mi Perfil ("+nombreUsuarioLogin+")", false);
                 } else { UtilidadesVentana.mostrarAlertaError("Error", "No se pudo cargar el controlador del perfil.");}
             } catch (Exception e) {
@@ -417,7 +409,7 @@ public class MainClienteController {
     }
 
     private void filtrarYRepopularPerros(String textoBusqueda) {
-        if (listaDePerrosOriginal == null) { cargarDatosDePerrosOriginalesSimulados(); }
+        if (listaDePerrosOriginal == null) { cargarPerrosDesdeBaseDeDatos(); }
         String textoBusquedaLower = (textoBusqueda == null) ? "" : textoBusqueda.toLowerCase().trim();
 
         if (textoBusquedaLower.isEmpty()) {

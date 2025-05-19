@@ -139,10 +139,8 @@ public class LoginController {
 
             Object controller = loader.getController();
             if (controller instanceof MainClienteController && "Cliente".equalsIgnoreCase(usuario.getRol())) {
-                // ((MainClienteController) controller).initData(usuario, entidadId); // Asumiendo que MainClienteController tiene initData
                 System.out.println("Datos pasados a MainClienteController (simulado)");
             } else if (controller instanceof MainProtectoraController && "Protectora".equalsIgnoreCase(usuario.getRol())) {
-                // ((MainProtectoraController) controller).initData(usuario, entidadId); // Asumiendo que MainProtectoraController tiene initData
                 System.out.println("Datos pasados a MainProtectoraController (simulado)");
             }
 
