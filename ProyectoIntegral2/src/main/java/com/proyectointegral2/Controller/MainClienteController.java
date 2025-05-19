@@ -53,40 +53,38 @@ public class MainClienteController {
     @FXML private Button BtnEventos;
     @FXML private Button BtnReservar;
 
-    private final String RUTA_IMAGEN_PLACEHOLDER_PERRO = "/assets/Imagenes/iconos/placeholder_dog.jpg"; // Asegúrate que esta ruta sea correcta
+    private final String RUTA_IMAGEN_PLACEHOLDER_PERRO = "/assets/Imagenes/iconos/placeholder_dog.jpg";
     private List<Perro> listaDePerrosOriginal;
     private List<Perro> perrosMostradosActuales;
-    private Usuario usuarioLogueado; // Almacenará el objeto del usuario que inició sesión
+    private Usuario usuarioLogueado;
 
-    private PerroDao perroDao; // Instancia del DAO
+    private PerroDao perroDao;
 
-    // Constantes para layout
     private static final double HEADER_HEIGHT_ESTIMADA = 70;
     private static final double BOTTOM_BAR_HEIGHT_ESTIMADA = 80;
-    private static final double SCROLLPANE_PADDING_VERTICAL = 40; // Suma de top+bottom padding del VBox que contiene el ScrollPane
+    private static final double SCROLLPANE_PADDING_VERTICAL = 40;
     private static final double MIN_SCROLLPANE_HEIGHT = 300;
-    private static final double TARJETA_PREF_WIDTH = 190; // Ajustado para incluir padding
+    private static final double TARJETA_PREF_WIDTH = 190;
     private static final double TARJETA_IMG_AREA_WIDTH = 160;
     private static final double TARJETA_IMG_AREA_HEIGHT = 160;
-    private static final double CARD_HORIZONTAL_GAP = 20; // Debe coincidir con dogGrid.hgap
-    private static final double CARD_INTERNAL_PADDING = 10; // Padding dentro de la VBox de la tarjeta
+    private static final double CARD_HORIZONTAL_GAP = 20;
+    private static final double CARD_INTERNAL_PADDING = 10;
 
 
     @FXML
     public void initialize() {
         System.out.println("MainClienteController inicializado.");
-        // Obtener el usuario de la sesión ESTATICA
         Usuario usuarioActual = SesionUsuario.getUsuarioLogueado();
 
         if (usuarioActual == null) {
             UtilidadesVentana.mostrarAlertaError("Error Crítico de Sesión", "No hay usuario logueado. Volviendo al login.");
             UtilidadesVentana.cambiarEscena("/com/proyectointegral2/Vista/Login.fxml", "Inicio de Sesión", false);
-            return; // Detener la inicialización si no hay usuario
+            return;
         }
         System.out.println("Bienvenido a MainCliente: " + usuarioActual.getNombreUsu());
 
         this.perroDao = new PerroDao();
-        cargarPerrosDesdeBaseDeDatos(); // Esto usará el perroDao
+        cargarPerrosDesdeBaseDeDatos();
         if (this.listaDePerrosOriginal != null) {
             this.perrosMostradosActuales = new ArrayList<>(this.listaDePerrosOriginal);
         } else {
@@ -365,7 +363,7 @@ public class MainClienteController {
             UtilidadesVentana.mostrarAlertaError("Error de Sesión", "No se pudo identificar el usuario para ver sus citas.");
             return;
         }
-        int idCliente = usuarioActual.getIdUsuario(); // Asumiendo que ID_USUARIO es lo que necesita BandejaCitasController
+        int idCliente = usuarioActual.getIdUsuario();
 
         String bandejaFxml = "/com/proyectointegral2/Vista/BandejaCitas.fxml";
         String titulo = "Mis Citas Programadas";
@@ -383,7 +381,7 @@ public class MainClienteController {
     @FXML
     void DetallesUsuario(MouseEvent event) {
         System.out.println("Icono Usuario presionado - Navegando a Perfil");
-        Usuario usuarioActual = SesionUsuario.getUsuarioLogueado(); // Obtener de la sesión
+        Usuario usuarioActual = SesionUsuario.getUsuarioLogueado();
 
         if (usuarioActual == null) {
             UtilidadesVentana.mostrarAlertaError("Error de Sesión", "No se pudo identificar el usuario actual.");

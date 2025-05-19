@@ -443,12 +443,11 @@ public class MainProtectoraController {
     @FXML
     void IrABandeja(MouseEvent event) {
         System.out.println("Protectora - Icono Bandeja presionado. Mostrando peticiones/citas.");
-        // Aquí deberías abrir una nueva ventana (pop-up) o cambiar de vista para la bandeja de la protectora
-        // String bandejaProtectoraFxml = "/com/proyectointegral2/Vista/BandejaProtectora.fxml";
-        // String titulo = "Bandeja de " + this.nombreProtectoraActual;
-        // Stage owner = (Stage) mainBorderPane.getScene().getWindow();
-        // BandejaProtectoraController bpController = UtilidadesVentana.mostrarVentanaPopup(bandejaProtectoraFxml, titulo, true, owner);
-        // if (bpController != null) bpController.initData(this.idProtectoraActual);
+         // String bandejaProtectoraFxml = "/com/proyectointegral2/Vista/BandejaProtectora.fxml";
+         // String titulo = "Bandeja de " + this.nombreProtectoraActual;
+         // Stage owner = (Stage) mainBorderPane.getScene().getWindow();
+         // BandejaProtectoraController bpController = UtilidadesVentana.mostrarVentanaPopup(bandejaProtectoraFxml, titulo, true, owner);
+         // if (bpController != null) bpController.initData(this.idProtectoraActual);
         UtilidadesVentana.mostrarAlertaInformacion("Próximamente", "Bandeja de peticiones de la protectora no implementada.");
     }
 
