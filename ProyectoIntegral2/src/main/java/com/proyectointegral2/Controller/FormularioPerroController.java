@@ -76,9 +76,7 @@ public class FormularioPerroController {
             perro.setSexo(sexo);
             perro.setFechaNacimiento(fechaNacimiento);
             perro.setAdoptado(estado.equalsIgnoreCase("Adoptado") ? "S" : "N");
-            perro.setFoto(null); // Si tienes lógica para la foto, reemplaza esto
-
-            // Aquí puedes asignar raza, descripción, patología, idProtectora si corresponde
+            perro.setFoto(null);
 
             com.proyectointegral2.dao.PerroDao perroDao = new com.proyectointegral2.dao.PerroDao();
             perroDao.crearPerro(perro);

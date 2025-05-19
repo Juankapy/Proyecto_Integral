@@ -11,14 +11,14 @@ import java.util.List;
 
 public class PerroDao {
 
-    private RazaDao razaDao; // Para obtener el objeto Raza
+    private RazaDao razaDao;
 
     public PerroDao() {
-        this.razaDao = new RazaDao(); // Instanciar el DAO de Raza
+        this.razaDao = new RazaDao();
     }
 
     public int crearPerro(Perro perro) throws SQLException {
-        // ID_PERRO se genera por secuencia DEFAULT
+
         String sqlInsert = "INSERT INTO PERROS (NOMBRE, SEXO, FECHA_NACIMIENTO, ADOPTADO, FOTO, ID_PROTECTORA, ID_RAZA, DESCRIPCION_PERRO) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -38,10 +38,10 @@ public class PerroDao {
             } else {
                 pstmt.setNull(3, Types.DATE);
             }
-            pstmt.setString(4, perro.getAdoptado()); // 'S' o 'N'
-            pstmt.setString(5, perro.getFoto());     // CORREGIDO: setString para la ruta de la foto
+            pstmt.setString(4, perro.getAdoptado());
+            pstmt.setString(5, perro.getFoto());
             pstmt.setInt(6, perro.getIdProtectora());
-            pstmt.setInt(7, perro.getRaza() != null ? perro.getRaza().getIdRaza() : 0); // Obtener ID del objeto Raza, o 0/null si no hay raza
+            pstmt.setInt(7, perro.getRaza() != null ? perro.getRaza().getIdRaza() : 0);
 
 
             int affectedRows = pstmt.executeUpdate();
@@ -53,7 +53,7 @@ public class PerroDao {
             generatedKeys = pstmt.getGeneratedKeys();
             if (generatedKeys.next()) {
                 nuevoIdPerro = generatedKeys.getInt(1);
-                perro.setIdPerro(nuevoIdPerro); // Actualizar el objeto perro
+                perro.setIdPerro(nuevoIdPerro);
             } else {
                 System.out.println("Advertencia: Perro insertado, pero no se recuperó ID con getGeneratedKeys.");
             }
@@ -65,9 +65,9 @@ public class PerroDao {
             System.err.println("Error SQL al crear perro: " + e.getMessage());
             throw e;
         } finally {
-            if (generatedKeys != null) try { generatedKeys.close(); } catch (SQLException ex) { /* ignore */ }
-            if (pstmt != null) try { pstmt.close(); } catch (SQLException ex) { /* ignore */ }
-            if (conn != null) try { conn.setAutoCommit(true); conn.close(); } catch (SQLException ex) { /* ignore */ }
+            if (generatedKeys != null) try { generatedKeys.close(); } catch (SQLException ex) {  }
+            if (pstmt != null) try { pstmt.close(); } catch (SQLException ex) {  }
+            if (conn != null) try { conn.setAutoCommit(true); conn.close(); } catch (SQLException ex) {  }
         }
     }
 
@@ -89,7 +89,7 @@ public class PerroDao {
         List<Perro> perros = new ArrayList<>();
         String sql = "SELECT * FROM PERROS ORDER BY NOMBRE";
         try (Connection conn = ConexionDB.getConnection();
-             Statement stmt = conn.createStatement(); // Usar Statement si no hay parámetros
+             Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 perros.add(mapResultSetToPerro(rs));
@@ -98,7 +98,6 @@ public class PerroDao {
         return perros;
     }
 
-    // Método para obtener todos los perros de una protectora específica
     public List<Perro> obtenerPerrosPorProtectora(int idProtectora) throws SQLException {
         List<Perro> perros = new ArrayList<>();
         String sql = "SELECT * FROM PERROS WHERE ID_PROTECTORA = ? ORDER BY NOMBRE";
@@ -127,9 +126,9 @@ public class PerroDao {
                 pstmt.setNull(3, Types.DATE);
             }
             pstmt.setString(4, perro.getAdoptado());
-            pstmt.setString(5, perro.getFoto()); // CORREGIDO: setString
+            pstmt.setString(5, perro.getFoto());
             pstmt.setInt(6, perro.getIdProtectora());
-            pstmt.setInt(7, perro.getRaza() != null ? perro.getRaza().getIdRaza() : 0); // Obtener ID del objeto Raza
+            pstmt.setInt(7, perro.getRaza() != null ? perro.getRaza().getIdRaza() : 0);
             pstmt.setString(8, perro.getDescripcionPerro());
             pstmt.setInt(9, perro.getIdPerro());
             return pstmt.executeUpdate() > 0;
@@ -137,9 +136,7 @@ public class PerroDao {
     }
 
     public boolean eliminarPerro(int idPerro) throws SQLException {
-        // Considerar eliminar también las entradas en IDENTIFICACION_PATOLOGIAS, RESERVAS_CITAS, PETICIONES_ADOPCION
-        // si no tienes ON DELETE CASCADE en esas tablas referenciando a PERROS.
-        // O manejarlo en una capa de servicio.
+
         String sql = "DELETE FROM PERROS WHERE ID_PERRO = ?";
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -164,12 +161,11 @@ public class PerroDao {
 
         // Obtener y setear el objeto Raza
         int idRaza = rs.getInt("ID_RAZA");
-        if (idRaza > 0 && razaDao != null) { // Comprobar que razaDao esté inicializado
-            Raza raza = razaDao.obtenerRazaPorId(idRaza); // Asume que tienes este método en RazaDao
+        if (idRaza > 0 && razaDao != null) {
+            Raza raza = razaDao.obtenerRazaPorId(idRaza);
             perro.setRaza(raza);
         } else if (idRaza > 0) {
-            // Si razaDao es null, al menos guardar el ID si se quiere manejar después
-            // O crear un objeto Raza solo con el ID
+
             Raza razaConId = new Raza();
             razaConId.setIdRaza(idRaza);
             perro.setRaza(razaConId);

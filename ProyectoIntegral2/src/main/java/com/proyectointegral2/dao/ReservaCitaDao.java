@@ -124,7 +124,6 @@ public class ReservaCitaDao {
                     cita.setFecha(rs.getDate("Fecha").toLocalDate());
                     cita.setHora(rs.getTime("Hora").toLocalTime());
                     cita.setMotivo(rs.getString("Motivo"));
-                    // Agrega aquí otros campos si es necesario
                     citas.add(cita);
                 }
             }

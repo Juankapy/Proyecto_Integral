@@ -134,7 +134,7 @@ public class DetallesPerroController {
         TxtPatologia.setText("Ninguna conocida (Simulado)");
 
 
-        if (perroActual.isAdoptado()) { // Usa el método booleano
+        if (perroActual.isAdoptado()) {
             BtnReservarCita.setText("Adoptado");
             BtnReservarCita.setDisable(true);
             BtnReservarCita.setStyle("-fx-background-color: #bdc3c7; -fx-text-fill: #7f8c8d; -fx-font-weight: normal; -fx-background-radius: 20; -fx-font-size: 16px;");
@@ -185,17 +185,6 @@ public class DetallesPerroController {
         } catch (Exception e) {
             e.printStackTrace();
             UtilidadesVentana.mostrarAlertaError("Error de Navegación", "No se pudo abrir el formulario de reserva de cita: " + e.getMessage());
-        }
-    }
-
-    @FXML
-    void handleVolver(MouseEvent event) {
-        Node source = (Node) event.getSource();
-        Stage stage = (Stage) source.getScene().getWindow();
-        if (stage.getOwner() != null || !UtilidadesVentana.getPrimaryStage().equals(stage)) {
-            stage.close();
-        } else {
-            UtilidadesVentana.volverAEscenaAnterior();
         }
     }
 }

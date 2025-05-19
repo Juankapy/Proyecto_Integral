@@ -42,17 +42,13 @@ public class BandejaCitasController {
 
     @FXML
     public void initialize() {
-        this.reservaCitaDao = new ReservaCitaDao(); // Instanciar tu DAO
+        this.reservaCitaDao = new ReservaCitaDao();
 
         lblNoCitas.setText("Cargando citas...");
         lblNoCitas.setVisible(true);
         citasContainerVBox.getChildren().clear();
     }
 
-    /**
-     * Inicializa el controlador con el ID del cliente y carga sus citas.
-     * @param idCliente El ID del cliente.
-     */
     public void initData(int idCliente) {
         this.idClienteActual = idCliente;
         cargarCitasDelCliente();
@@ -99,8 +95,8 @@ public class BandejaCitasController {
         tarjetaVBox.setMaxWidth(VBox.USE_PREF_SIZE);
         tarjetaVBox.setStyle("-fx-background-color: white; -fx-padding: 20; -fx-border-color: #D0D0D0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);");
 
-        String nombrePerroConRaza = "Perro Desconocido"; // Placeholder
-        String nombreProtectora = "Protectora Desconocida"; // Placeholder
+        String nombrePerroConRaza = "Perro Desconocido";
+        String nombreProtectora = "Protectora Desconocida";
 
         Label lblNombrePerroRaza = new Label(nombrePerroConRaza);
         lblNombrePerroRaza.setStyle("-fx-text-fill: black; -fx-font-weight: bold; -fx-font-size: 18px;");
@@ -108,7 +104,7 @@ public class BandejaCitasController {
 
         HBox fechaHBox = crearFilaDetalle("Fecha:", cita.getFecha().format(dateFormatter));
         HBox horaHBox = crearFilaDetalle("Hora:", cita.getHora().format(timeFormatter));
-        HBox lugarHBox = crearFilaDetalle("Lugar:", Objects.requireNonNullElse(cita.getMotivo(), "No especificado")); // Usando motivo como lugar/descripción
+        HBox lugarHBox = crearFilaDetalle("Lugar:", Objects.requireNonNullElse(cita.getMotivo(), "No especificado"));
 
         HBox protectoraHBox = null;
         if (!nombreProtectora.equals("Protectora Desconocida") && !nombreProtectora.isEmpty()) {
@@ -162,6 +158,5 @@ public class BandejaCitasController {
         System.out.println("Intentando cancelar cita ID: " + cita.getIdReserva());
         UtilidadesVentana.mostrarAlertaInformacion("Cancelar Cita", "Funcionalidad para cancelar cita no implementada.");
     }
-
 
 }

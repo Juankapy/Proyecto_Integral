@@ -43,13 +43,11 @@ public class FormularioUsuarioController {
 
     private UsuarioDao usuarioDAO;
     private Usuario usuarioAEditar;
-    private File nuevaFotoSeleccionada; // Almacena el archivo de la nueva foto
-    private String rutaRelativaNuevaFoto; // Almacena la ruta relativa para la BD
+    private File nuevaFotoSeleccionada;
+    private String rutaRelativaNuevaFoto;
     private boolean modoEdicion = false;
 
     private final String RUTA_PLACEHOLDER_USUARIO = "/assets/Imagenes/iconos/sinusuario.jpg";
-    // Define una carpeta base dentro de tus recursos para guardar las fotos de perfil de los usuarios
-    // Esto es un ejemplo, ajusta según tu proyecto. La idea es que sea accesible por el classpath.
     private final String CARPETA_FOTOS_PERFIL_USUARIOS = "src/main/resources/assets/Imagenes/perfiles_usuarios/";
 
 
@@ -68,44 +66,10 @@ public class FormularioUsuarioController {
     }
 
     public void initDataParaNuevoUsuario() {
-//        this.usuarioAEditar = new Usuario();
-//        this.modoEdicion = false;
-//        lblTituloFormulario.setText("Crear Nuevo Usuario");
-//        btnGuardar.setText("Crear Usuario");
-//        limpiarCampos();
-//        cargarImagenPlaceholder();
+
     }
 
     private void poblarCamposConDatosUsuario() {
-//        if (usuarioAEditar != null) {
-//            txtNombre.setText(Objects.requireNonNullElse(usuarioAEditar.getNombre(), ""));
-//            txtApellidos.setText(Objects.requireNonNullElse(usuarioAEditar.getApellidos(), ""));
-//            txtEmail.setText(Objects.requireNonNullElse(usuarioAEditar.getEmail(), ""));
-//            txtTelefono.setText(Objects.requireNonNullElse(usuarioAEditar.getTelefono(), ""));
-//            txtDireccion.setText(Objects.requireNonNullElse(usuarioAEditar.getDireccion(), ""));
-//
-//            txtPassword.setPromptText("Dejar en blanco para no cambiar");
-//            txtConfirmPassword.setPromptText("Dejar en blanco para no cambiar");
-//
-//            String rutaFoto = usuarioAEditar.getRutaFotoPerfil();
-//            if (rutaFoto != null && !rutaFoto.isEmpty()) {
-//                try {
-//                    // Asumimos que la ruta guardada en la BD es relativa al classpath
-//                    InputStream stream = getClass().getResourceAsStream(rutaFoto);
-//                    if (stream != null) {
-//                        imgFotoPerfilEditable.setImage(new Image(stream));
-//                    } else {
-//                        System.err.println("No se encontró la imagen de perfil en: " + rutaFoto);
-//                        cargarImagenPlaceholder();
-//                    }
-//                } catch (Exception e) {
-//                    cargarImagenPlaceholder();
-//                    System.err.println("Error al cargar foto de perfil del usuario: " + e.getMessage());
-//                }
-//            } else {
-//                cargarImagenPlaceholder();
-//            }
-//        }
     }
 
     private void limpiarCampos() {
@@ -144,7 +108,7 @@ public class FormularioUsuarioController {
         File archivo = fileChooser.showOpenDialog(stage);
 
         if (archivo != null) {
-            nuevaFotoSeleccionada = archivo; // Guardar el File para el proceso de guardado
+            nuevaFotoSeleccionada = archivo;
             try {
                 Image image = new Image(archivo.toURI().toURL().toString());
                 imgFotoPerfilEditable.setImage(image);
@@ -169,13 +133,11 @@ public class FormularioUsuarioController {
             UtilidadesVentana.mostrarAlertaError("Campos Vacíos", "Nombre, apellidos y email son obligatorios.");
             return;
         }
-        // Validar email (simple, puedes usar regex más complejo)
         if (!email.contains("@") || !email.contains(".")) {
             UtilidadesVentana.mostrarAlertaError("Email Inválido", "Por favor, introduce un email válido.");
             return;
         }
 
-        // Si se está creando un nuevo usuario O si se está editando y se ha escrito una nueva contraseña
         if (!modoEdicion || (modoEdicion && !password.isEmpty())) {
             if (password.isEmpty()) {
                 UtilidadesVentana.mostrarAlertaError("Contraseña Vacía", "La contraseña es obligatoria.");
@@ -185,43 +147,20 @@ public class FormularioUsuarioController {
                 UtilidadesVentana.mostrarAlertaError("Contraseña", "Las contraseñas no coinciden.");
                 return;
             }
-            // Aquí deberías llamar a un método para encriptar 'password' antes de asignarlo al objeto Usuario
-            // String passwordEncriptada = EncriptadorUtil.encriptar(password);
-            // usuarioAEditar.setPassword(passwordEncriptada); // O nuevoUsuario.setPassword(passwordEncriptada)
         }
 
-
-        // Asignar valores al objeto Usuario
-//        usuarioAEditar.setNombre(nombre);
-//        usuarioAEditar.setApellidos(apellidos);
-//        usuarioAEditar.setEmail(email);
-//        usuarioAEditar.setTelefono(telefono);
-//        usuarioAEditar.setDireccion(direccion);
-
-        // Solo actualiza la contraseña en el objeto si se proporcionó una nueva
         if (!password.isEmpty()) {
-            // IDEALMENTE: Encriptar contraseña antes de setearla
-            // String passwordEncriptada = miMetodoDeEncriptacion(password);
-            // usuarioAEditar.setPassword(passwordEncriptada);
-//            usuarioAEditar.setPassword(password); // Placeholder sin encriptación
-        }
+         }
 
-
-        // Manejar la foto de perfil
         if (nuevaFotoSeleccionada != null) {
             try {
-                rutaRelativaNuevaFoto = guardarNuevaFotoDePerfil(nuevaFotoSeleccionada, email); // Pasar email para nombre único
+                rutaRelativaNuevaFoto = guardarNuevaFotoDePerfil(nuevaFotoSeleccionada, email);
                 if (rutaRelativaNuevaFoto != null) {
-//                    usuarioAEditar.setRutaFotoPerfil(rutaRelativaNuevaFoto);
                 } else {
-                    // Error al guardar la foto, no actualizamos la ruta en el objeto
-                    // UtilidadesVentana.mostrarAlertaError("Error Foto", "No se pudo guardar la nueva foto de perfil.");
-                    // Decidir si continuar sin la nueva foto o detenerse. Por ahora, continuamos.
                 }
             } catch (IOException e) {
                 UtilidadesVentana.mostrarAlertaError("Error Foto", "Ocurrió un error al procesar la nueva foto de perfil.");
                 e.printStackTrace();
-                // No continuar si hay error de IO con la foto.
                 return;
             }
         }
@@ -229,12 +168,7 @@ public class FormularioUsuarioController {
 
         boolean exitoOperacion;
         if (modoEdicion) {
-            // --- LLAMADA AL DAO PARA ACTUALIZAR ---
-//            System.out.println("Intentando actualizar usuario: " + usuarioAEditar.getNombre());
-            // exitoOperacion = usuarioDAO.actualizarUsuario(usuarioAEditar); // DESCOMENTAR CUANDO DAO ESTÉ LISTO
-            exitoOperacion = true; // SIMULACIÓN DAO
-            // ------------------------------------
-
+            exitoOperacion = true;
             if (exitoOperacion) {
                 UtilidadesVentana.mostrarAlertaInformacion("Perfil Actualizado", "Tus datos se han guardado correctamente.");
                 Volver(null);
@@ -242,13 +176,7 @@ public class FormularioUsuarioController {
                 UtilidadesVentana.mostrarAlertaError("Error al Guardar", "No se pudieron guardar los cambios en la base de datos.");
             }
         } else {
-            // Modo Creación Nuevo Usuario
-            // --- LLAMADA AL DAO PARA CREAR ---
-//            System.out.println("Intentando crear nuevo usuario: " + usuarioAEditar.getNombre());
-            // exitoOperacion = usuarioDAO.crearUsuario(usuarioAEditar); // DESCOMENTAR CUANDO DAO ESTÉ LISTO
-            exitoOperacion = true; // SIMULACIÓN DAO
-            // ---------------------------------
-
+            exitoOperacion = true;
             if (exitoOperacion) {
                 UtilidadesVentana.mostrarAlertaInformacion("Registro Exitoso", "Usuario creado correctamente. Ahora puedes iniciar sesión.");
                 UtilidadesVentana.cambiarEscena("/com/proyectointegral2/Vista/Login.fxml", "Inicio de Sesión", false);
@@ -258,13 +186,6 @@ public class FormularioUsuarioController {
         }
     }
 
-    /**
-     * Guarda la foto seleccionada en una ubicación permanente y devuelve la ruta relativa.
-     * @param foto El archivo de la foto seleccionada.
-     * @param identificadorUnico Un identificador para hacer el nombre del archivo único (ej. email o ID de usuario).
-     * @return La ruta relativa para guardar en la BD (ej. "/assets/Imagenes/perfiles_usuarios/...") o null si falla.
-     * @throws IOException Si ocurre un error al copiar el archivo.
-     */
     private String guardarNuevaFotoDePerfil(File foto, String identificadorUnico) throws IOException {
         if (foto == null) return null;
 
@@ -276,14 +197,13 @@ public class FormularioUsuarioController {
             }
         }
 
-        // Crear un nombre de archivo único para evitar colisiones y problemas con espacios/caracteres especiales
         String nombreOriginal = foto.getName();
         String extension = "";
         int i = nombreOriginal.lastIndexOf('.');
         if (i > 0) {
-            extension = nombreOriginal.substring(i); // Incluye el punto, ej. ".jpg"
+            extension = nombreOriginal.substring(i);
         }
-        // Limpiar el identificador para usarlo en el nombre del archivo
+
         String identificadorLimpio = identificadorUnico.replaceAll("[^a-zA-Z0-9.-]", "_");
         String nombreArchivo = "perfil_" + identificadorLimpio + "_" + System.currentTimeMillis() + extension;
 
@@ -291,11 +211,10 @@ public class FormularioUsuarioController {
 
         try {
             Files.copy(foto.toPath(), pathDestino, StandardCopyOption.REPLACE_EXISTING);
-            // Devolver la ruta relativa al classpath para usar en FXML y guardar en BD
             return "/assets/Imagenes/perfiles_usuarios/" + nombreArchivo;
         } catch (IOException e) {
             System.err.println("Error al guardar la nueva foto de perfil: " + e.getMessage());
-            throw e; // Relanzar para que handleGuardar pueda manejarlo
+            throw e;
         }
     }
 
@@ -307,10 +226,8 @@ public class FormularioUsuarioController {
     @FXML
     void Volver(MouseEvent event) {
         if (modoEdicion) {
-            // Asumimos que la vista de perfil es dinámica (pantalla completa/redimensionable)
             UtilidadesVentana.cambiarEscena("/com/proyectointegral2/Vista/PerfilUsuario.fxml", "Perfil de Usuario", true);
         } else {
-            // Si es nuevo registro y cancela, volver a la selección de rol
             UtilidadesVentana.cambiarEscena("/com/proyectointegral2/Vista/InicioChoose.fxml", "Selección de Rol", false);
         }
     }

@@ -181,19 +181,19 @@ public class ClienteDao {
         cliente.setNif(rs.getString("NIF"));
         cliente.setNombre(rs.getString("NOMBRE"));
         cliente.setApellidos(rs.getString("APELLIDOS"));
-        Date fechaNacSQL = rs.getDate("FECHA_NACIMIENTO"); // Corregido a FECHA_NACIMIENTO
+        Date fechaNacSQL = rs.getDate("FECHA_NACIMIENTO");
         if (fechaNacSQL != null) {
             cliente.setFechaNacimiento(fechaNacSQL.toLocalDate());
         }
         cliente.setProvincia(rs.getString("PROVINCIA"));
         cliente.setCiudad(rs.getString("CIUDAD"));
         cliente.setCalle(rs.getString("CALLE"));
-        cliente.setCodigoPostal(rs.getString("CP")); // Asume que la columna en BD es CP
+        cliente.setCodigoPostal(rs.getString("CP"));
 
         cliente.setTelefono(rs.getString("TELEFONO"));
         cliente.setEmail(rs.getString("EMAIL"));
         cliente.setIdUsuario(rs.getInt("ID_USUARIO"));
-        cliente.setRutaFotoPerfil(rs.getString("RUTA_FOTO_PERFIL")); // Mapear si la columna existe
+        cliente.setRutaFotoPerfil(rs.getString("RUTA_FOTO_PERFIL"));
         return cliente;
     }
 }
