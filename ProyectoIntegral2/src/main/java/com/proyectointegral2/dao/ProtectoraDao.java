@@ -37,7 +37,7 @@ public class ProtectoraDao{
             pstmt.setString(5, protectora.getProvincia());
             pstmt.setString(6, protectora.getCiudad());
             pstmt.setString(7, protectora.getCalle());
-            pstmt.setString(8, protectora.getCodigoPostal()); // Asume getCodigoPostal() en Protectora.java
+            pstmt.setString(8, protectora.getCodigoPostal());
             pstmt.setInt(9, protectora.getIdUsuario());
 
             int affectedRows = pstmt.executeUpdate();
@@ -198,7 +198,7 @@ public class ProtectoraDao{
         protectora.setProvincia(rs.getString("PROVINCIA"));
         protectora.setCiudad(rs.getString("CIUDAD"));
         protectora.setCalle(rs.getString("CALLE"));
-        protectora.setCodigoPostal(rs.getString("CP")); // Asume setCodigoPostal() en Protectora.java
+        protectora.setCodigoPostal(rs.getString("CP"));
         protectora.setIdUsuario(rs.getInt("ID_USUARIO"));
         return protectora;
     }

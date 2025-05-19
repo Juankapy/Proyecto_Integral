@@ -15,14 +15,6 @@ public class Usuario {
         this.rol = rol;
     }
 
-    public Usuario(int idUsuario, String nombreUsu, String contrasena) {
-        this.idUsuario = idUsuario;
-        this.nombreUsu = nombreUsu;
-        this.contrasena = contrasena;
-        // this.rol = "DESCONOCIDO"; // O determinarlo después
-    }
-
-
     // Getters y Setters
     public int getIdUsuario() { return idUsuario; }
     public void setIdUsuario(int idUsuario) { this.idUsuario = idUsuario; }

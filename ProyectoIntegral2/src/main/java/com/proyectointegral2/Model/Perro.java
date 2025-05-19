@@ -28,7 +28,7 @@ public class Perro {
     }
 
     public Perro(int idPerro, String nombre, String foto, LocalDate fechaNacimiento, String sexo,
-                 String adoptado, Raza raza, int idProtectora, String descripcionPerro) { // Orden cambiado para consistencia y foto como String
+                 String adoptado, Raza raza, int idProtectora, String descripcionPerro) {
         this.idPerro = idPerro;
         this.nombre = nombre;
         this.foto = foto;

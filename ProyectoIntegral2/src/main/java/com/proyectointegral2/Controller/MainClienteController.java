@@ -62,18 +62,17 @@ public class MainClienteController {
     private static final double SCROLLPANE_PADDING_VERTICAL = 40;
     private static final double MIN_SCROLLPANE_HEIGHT = 300;
     private static final double PREFERRED_GRID_WIDTH_FALLBACK = 1200;
-    private static final double TARJETA_PREF_WIDTH = 180; // Ancho preferido de la tarjeta
+    private static final double TARJETA_PREF_WIDTH = 180;
     private static final double TARJETA_IMG_AREA_WIDTH = 160;
     private static final double TARJETA_IMG_AREA_HEIGHT = 160;
-    private static final double CARD_HORIZONTAL_GAP = 20; // Mismo que dogGrid.hgap
-    private static final double CARD_PADDING = 10; // Padding dentro de la tarjeta
+    private static final double CARD_HORIZONTAL_GAP = 20;
+    private static final double CARD_PADDING = 10;
 
 
     @FXML
     public void initialize() {
         System.out.println("MainClienteController inicializado.");
-        // this.perroDao = new PerroDao();
-        cargarDatosDePerrosOriginalesSimulados(); // O cargarDatosDePerrosDesdeDAO();
+        cargarDatosDePerrosOriginalesSimulados();
         if (this.listaDePerrosOriginal != null) {
             this.perrosMostradosActuales = new ArrayList<>(this.listaDePerrosOriginal);
         } else {
@@ -113,7 +112,6 @@ public class MainClienteController {
                     newScene.windowProperty().addListener((obsWindow, oldWindow, newWindow) -> {
                         if (newWindow != null) {
                             Stage stage = (Stage) newWindow;
-                            // Si ya está mostrando, adaptar. Si no, esperar a setOnShown
                             if (stage.isShowing()) {
                                 Platform.runLater(() -> adaptarUIAlTamanoVentana(stage));
                             } else {
@@ -178,10 +176,9 @@ public class MainClienteController {
         imageContainer.setPrefSize(TARJETA_IMG_AREA_WIDTH, TARJETA_IMG_AREA_HEIGHT);
         imageContainer.setMinSize(TARJETA_IMG_AREA_WIDTH, TARJETA_IMG_AREA_HEIGHT);
         imageContainer.setMaxSize(TARJETA_IMG_AREA_WIDTH, TARJETA_IMG_AREA_HEIGHT);
-        // imageContainer.setStyle("-fx-border-color: red;"); // Para debug de layout
 
         ImageView imgView = new ImageView();
-        String imagePath = perro.getFoto(); // Devuelve String (ruta)
+        String imagePath = perro.getFoto();
         try {
             Image loadedImage = null;
             if (imagePath != null && !imagePath.trim().isEmpty()) {
@@ -207,7 +204,7 @@ public class MainClienteController {
             System.err.println("ERROR cargando imagen para " + perro.getNombre() + ": " + imagePath + ". " + e.getMessage());
             try (InputStream placeholderStream = getClass().getResourceAsStream(RUTA_IMAGEN_PLACEHOLDER_PERRO)) {
                 if (placeholderStream != null) imgView.setImage(new Image(placeholderStream));
-            } catch (Exception ex) { /* Falló hasta el placeholder */ }
+            } catch (Exception ex) { }
         }
 
         imgView.setPreserveRatio(true);
@@ -229,7 +226,7 @@ public class MainClienteController {
         Button btnAccionTarjeta = new Button();
         VBox.setMargin(btnAccionTarjeta, new Insets(8,0,0,0));
 
-        if (perro.isAdoptado()) { // Usa el método booleano
+        if (perro.isAdoptado()) {
             btnAccionTarjeta.setText("Adoptado");
             btnAccionTarjeta.setStyle("-fx-background-color: #7f8c8d; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-font-size:12px; -fx-padding: 5 10;");
             btnAccionTarjeta.setDisable(true);
@@ -275,7 +272,7 @@ public class MainClienteController {
             Parent root = loader.load();
             DetallesPerroController controller = loader.getController();
             if (controller != null) {
-                controller.initData(perro); // Llamada correcta
+                controller.initData(perro);
             } else {
                 UtilidadesVentana.mostrarAlertaError("Error", "Controlador de detalles no encontrado."); return;
             }
@@ -287,10 +284,10 @@ public class MainClienteController {
     }
 
     private int calcularColumnasSegunAncho(double anchoDisponibleParaGrid) {
-        if (anchoDisponibleParaGrid <= 0) return 1; // Fallback a 1 columna
-        double anchoTarjetaEstimado = TARJETA_PREF_WIDTH + CARD_HORIZONTAL_GAP; // Ancho de tarjeta + espacio horizontal
+        if (anchoDisponibleParaGrid <= 0) return 1;
+        double anchoTarjetaEstimado = TARJETA_PREF_WIDTH + CARD_HORIZONTAL_GAP;
         int numColumnas = Math.max(1, (int) (anchoDisponibleParaGrid / anchoTarjetaEstimado));
-        return Math.min(numColumnas, 5); // Máximo 5 columnas
+        return Math.min(numColumnas, 5);
     }
 
     private void adaptarContenidoAlAnchoYPopular(double anchoVentana) {
@@ -301,7 +298,7 @@ public class MainClienteController {
 
         double paddingIzquierdoGrid = dogGrid.getPadding().getLeft();
         double paddingDerechoGrid = dogGrid.getPadding().getRight();
-        double anchoDisponibleParaGrid = anchoVentana - mainBorderPane.getPadding().getLeft() - mainBorderPane.getPadding().getRight() - paddingIzquierdoGrid - paddingDerechoGrid - 40; // 40 es el padding del VBox contenedor
+        double anchoDisponibleParaGrid = anchoVentana - mainBorderPane.getPadding().getLeft() - mainBorderPane.getPadding().getRight() - paddingIzquierdoGrid - paddingDerechoGrid - 40;
 
         if (dogScrollPane != null && dogScrollPane.getPadding() != null) {
             anchoDisponibleParaGrid -= (dogScrollPane.getPadding().getLeft() + dogScrollPane.getPadding().getRight());
@@ -331,7 +328,7 @@ public class MainClienteController {
     private void adaptarContenidoALaAltura(double nuevaAltura) {
         if (dogScrollPane != null && mainBorderPane != null) {
             Node topNode = mainBorderPane.getTop();
-            VBox centerVBox = (VBox) mainBorderPane.getCenter(); // Asumimos que el centro es un VBox
+            VBox centerVBox = (VBox) mainBorderPane.getCenter();
             Node bottomNode = mainBorderPane.getBottom();
 
             double topHeight = (topNode != null) ? topNode.getLayoutBounds().getHeight() : HEADER_HEIGHT_ESTIMADA;
