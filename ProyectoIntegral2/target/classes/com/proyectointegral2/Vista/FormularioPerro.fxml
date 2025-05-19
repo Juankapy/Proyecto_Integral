@@ -66,7 +66,6 @@
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 <RowConstraints minHeight="10.0" prefHeight="60.0" vgrow="SOMETIMES" />
-                                <RowConstraints minHeight="10.0" prefHeight="60.0" vgrow="SOMETIMES" />
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             </rowConstraints>
                             <children>
@@ -80,7 +79,7 @@
                                 </Label>
                                 <HBox spacing="5.0" style="-fx-text-fill:black" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <DatePicker fx:id="DateFechaNacimiento" />
+                              <DatePicker fx:id="DatePickerFechaNacimiento" />
                            </children>
                                 </HBox>
 
@@ -94,22 +93,16 @@
                                 </Label>
                                 <ComboBox fx:id="CmbSexo" prefWidth="150.0" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
-                                <Label style="-fx-text-fill:black" text="Descripción:" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="TOP">
+                                <Label style="-fx-text-fill:black" text="Patología:" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="TOP">
                                     <font><Font size="14.0" /></font>
                                     <GridPane.margin><Insets top="5.0" /></GridPane.margin>
                                 </Label>
-                                <TextArea fx:id="TxtAreaDescripcion" prefHeight="60.0" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                <TextArea fx:id="TxtAreaPatologia" prefHeight="60.0" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 
-                                <Label style="-fx-text-fill:black" text="Patología:" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="TOP">
-                                    <font><Font size="14.0" /></font>
-                                    <GridPane.margin><Insets top="5.0" /></GridPane.margin>
-                                </Label>
-                                <TextArea fx:id="TxtAreaPatologia" prefHeight="60.0" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-
-                                <Label style="-fx-text-fill:black" text="Estado:" GridPane.halignment="RIGHT" GridPane.rowIndex="6">
+                                <Label style="-fx-text-fill:black" text="Estado:" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
                                     <font><Font size="14.0" /></font>
                                 </Label>
-                                <ComboBox fx:id="CmbEstado" prefWidth="150.0" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                <ComboBox fx:id="CmbEstado" prefWidth="150.0" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                             </children>
                         </GridPane>
 
@@ -121,7 +114,7 @@
                                         <Image url="@../../../assets/Imagenes/iconos/placeholder_dog.jpg" />
                                     </image>
                                 </ImageView>
-                                <Button fx:id="btnSeleccionarImagen" mnemonicParsing="false" style="-fx-background-color: #6495ED; -fx-text-fill: white; -fx-background-radius: 5;" text="Seleccionar Imagen">
+                                <Button fx:id="btnSeleccionarImagen" onAction="#handleSeleccionarFoto" mnemonicParsing="false" style="-fx-background-color: #6495ED; -fx-text-fill: white; -fx-background-radius: 5;" text="Seleccionar Imagen">
                                     <font><Font size="13.0" /></font>
                                 </Button>
                             </children>

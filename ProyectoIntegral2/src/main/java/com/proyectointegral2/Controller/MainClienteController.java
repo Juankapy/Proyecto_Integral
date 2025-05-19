@@ -72,7 +72,7 @@ public class MainClienteController {
     @FXML
     public void initialize() {
         System.out.println("MainClienteController inicializado.");
-        cargarDatosDePerrosOriginalesSimulados();
+        //cargarDatosDePerrosOriginalesSimulados();
         if (this.listaDePerrosOriginal != null) {
             this.perrosMostradosActuales = new ArrayList<>(this.listaDePerrosOriginal);
         } else {
@@ -104,6 +104,8 @@ public class MainClienteController {
             }
         });
     }
+
+
 
     private void configurarListenersDeVentana() {
         if (mainBorderPane != null) {
@@ -149,20 +151,20 @@ public class MainClienteController {
         }
     }
 
-    private void cargarDatosDePerrosOriginalesSimulados() {
-        listaDePerrosOriginal = new ArrayList<>();
-        Raza labrador = new Raza(1, "Labrador Retriever");
-        Raza husky = new Raza(2, "Siberian Husky");
-        Raza golden = new Raza(3, "Golden Retriever");
-
-        listaDePerrosOriginal.add(new Perro(101, "Buddy", "/assets/Imagenes/perros/buddy_labrador.jpg", LocalDate.of(2022, 3, 15), "Macho", "N", labrador, 1));
-        listaDePerrosOriginal.add(new Perro(102, "Kira", "/assets/Imagenes/perros/kira_husky.png", LocalDate.of(2021, 11, 1), "Hembra", "N", husky, 1));
-        listaDePerrosOriginal.add(new Perro(103, "Goldie", "/assets/Imagenes/perros/goldie_golden.jpg", LocalDate.of(2023, 1, 20), "Macho", "S", golden, 2));
-        listaDePerrosOriginal.add(new Perro(104, "Rocky", "/assets/Imagenes/perros/perro1.jpg", LocalDate.of(2020, 7, 7), "Macho", "N", husky, 2));
-        listaDePerrosOriginal.add(new Perro(105, "Bella", "/assets/Imagenes/perros/perro1.jpg", LocalDate.of(2022, 9, 12), "Hembra", "N", labrador, 1));
-
-        System.out.println("Datos simulados cargados. Total perros originales: " + listaDePerrosOriginal.size());
-    }
+//    private void cargarDatosDePerrosOriginalesSimulados() {
+//        listaDePerrosOriginal = new ArrayList<>();
+//        Raza labrador = new Raza(1, "Labrador Retriever");
+//        Raza husky = new Raza(2, "Siberian Husky");
+//        Raza golden = new Raza(3, "Golden Retriever");
+//
+//        listaDePerrosOriginal.add(new Perro(101, "Buddy", "/assets/Imagenes/perros/buddy_labrador.jpg", LocalDate.of(2022, 3, 15), "Macho", "N", labrador, 1));
+//        listaDePerrosOriginal.add(new Perro(102, "Kira", "/assets/Imagenes/perros/kira_husky.png", LocalDate.of(2021, 11, 1), "Hembra", "N", husky, 1));
+//        listaDePerrosOriginal.add(new Perro(103, "Goldie", "/assets/Imagenes/perros/goldie_golden.jpg", LocalDate.of(2023, 1, 20), "Macho", "S", golden, 2));
+//        listaDePerrosOriginal.add(new Perro(104, "Rocky", "/assets/Imagenes/perros/perro1.jpg", LocalDate.of(2020, 7, 7), "Macho", "N", husky, 2));
+//        listaDePerrosOriginal.add(new Perro(105, "Bella", "/assets/Imagenes/perros/perro1.jpg", LocalDate.of(2022, 9, 12), "Hembra", "N", labrador, 1));
+//
+//        System.out.println("Datos simulados cargados. Total perros originales: " + listaDePerrosOriginal.size());
+//    }
 
     private VBox crearTarjetaPerro(Perro perro) {
         VBox card = new VBox(5);
@@ -417,7 +419,7 @@ public class MainClienteController {
     }
 
     private void filtrarYRepopularPerros(String textoBusqueda) {
-        if (listaDePerrosOriginal == null) { cargarDatosDePerrosOriginalesSimulados(); }
+        if (listaDePerrosOriginal == null) {  }
         String textoBusquedaLower = (textoBusqueda == null) ? "" : textoBusqueda.toLowerCase().trim();
 
         if (textoBusquedaLower.isEmpty()) {
