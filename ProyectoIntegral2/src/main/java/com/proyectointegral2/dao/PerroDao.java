@@ -17,7 +17,6 @@ public class PerroDao {
     }
 
     public int crearPerro(Perro perro) throws SQLException {
-        // ELIMINADO DESCRIPCION_PERRO de la query y de los parámetros
         String sqlInsert = "INSERT INTO PERROS (NOMBRE, SEXO, FECHA_NACIMIENTO, ADOPTADO, FOTO, ID_PROTECTORA, ID_RAZA) VALUES (?, ?, ?, ?, ?, ?, ?)";
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -125,6 +124,7 @@ public class PerroDao {
     public boolean actualizarPerro(Perro perro) throws SQLException {
         // ELIMINADO DESCRIPCION_PERRO de la query y de los parámetros
         String sql = "UPDATE PERROS SET NOMBRE = ?, SEXO = ?, FECHA_NACIMIENTO = ?, ADOPTADO = ?, FOTO = ?, ID_PROTECTORA = ?, ID_RAZA = ? WHERE ID_PERRO = ?";
+
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 

@@ -209,7 +209,6 @@ public class FormularioPerroController {
         perroParaGuardar.setSexo(sexo);
         perroParaGuardar.setRaza(razaObjeto);
 
-        // Estado de adopción: solo "S" para adoptado, "N" para el resto
         if ("Adoptado".equalsIgnoreCase(estadoSeleccionado)) {
             perroParaGuardar.setAdoptado("S");
         } else {

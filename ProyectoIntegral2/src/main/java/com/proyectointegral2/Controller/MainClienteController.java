@@ -14,10 +14,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -30,6 +27,9 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.Priority;
 import javafx.geometry.Pos;
 import javafx.stage.Stage;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,6 +52,7 @@ public class MainClienteController {
     @FXML private Button BtnAdopciones;
     @FXML private Button BtnEventos;
     @FXML private Button BtnReservar;
+    @FXML private ComboBox<String> comboCriterioBusqueda;
 
     private final String RUTA_IMAGEN_PLACEHOLDER_PERRO = "/assets/Imagenes/iconos/placeholder_dog.jpg";
     private List<Perro> listaDePerrosOriginal;
@@ -92,6 +93,19 @@ public class MainClienteController {
             this.perrosMostradosActuales = new ArrayList<>();
         }
 
+        if (comboCriterioBusqueda != null) {
+            comboCriterioBusqueda.getItems().setAll("Nombre", "Raza");
+            comboCriterioBusqueda.getSelectionModel().selectFirst();
+            comboCriterioBusqueda.valueProperty().addListener((obs, oldVal, newVal) ->
+                    filtrarYRepopularPerros(searchTextField.getText())
+            );
+        }
+        if (searchTextField != null) {
+            searchTextField.textProperty().addListener((obs, oldVal, newVal) ->
+                    filtrarYRepopularPerros(newVal)
+            );
+        }
+
         configurarListenersDeVentana();
         configurarPlaceholderSearchTextField();
         configurarAccionIconoBusqueda();
@@ -108,6 +122,39 @@ public class MainClienteController {
         });
     }
 
+    private void filtrarYRepopularPerros(String textoBusqueda) {
+        if (listaDePerrosOriginal == null) {
+            cargarPerrosDesdeBaseDeDatos();
+            if (listaDePerrosOriginal == null) {
+                UtilidadesVentana.mostrarAlertaError("Error Datos", "No se pudieron cargar los datos de los perros para filtrar.");
+                return;
+            }
+        }
+        String textoBusquedaTrim = (textoBusqueda == null) ? "" : textoBusqueda.trim().toLowerCase();
+        String criterio = (comboCriterioBusqueda != null && comboCriterioBusqueda.getValue() != null) ? comboCriterioBusqueda.getValue() : "Nombre";
+
+        if (textoBusquedaTrim.isEmpty()) {
+            this.perrosMostradosActuales = new ArrayList<>(this.listaDePerrosOriginal);
+        } else {
+            this.perrosMostradosActuales = this.listaDePerrosOriginal.stream().filter(perro -> {
+                switch (criterio) {
+                    case "Raza":
+                        return perro.getRaza() != null && perro.getRaza().getNombreRaza() != null &&
+                                perro.getRaza().getNombreRaza().toLowerCase().startsWith(textoBusquedaTrim);
+                    case "Nombre":
+                    default:
+                        return perro.getNombre() != null &&
+                                perro.getNombre().toLowerCase().startsWith(textoBusquedaTrim);
+                }
+            }).collect(Collectors.toList());
+        }
+
+        if (mainBorderPane.getScene() != null && mainBorderPane.getScene().getWindow() != null && mainBorderPane.getScene().getWindow().getWidth() > 0) {
+            adaptarContenidoAlAnchoYPopular(mainBorderPane.getScene().getWindow().getWidth());
+        } else {
+            popularGridDePerros();
+        }
+    }
 
     private void cargarPerrosDesdeBaseDeDatos() {
         try {
@@ -413,31 +460,5 @@ public class MainClienteController {
     }
     @FXML void onSearchTextFieldAction(ActionEvent event) {
         filtrarYRepopularPerros(searchTextField.getText());
-    }
-
-    private void filtrarYRepopularPerros(String textoBusqueda) {
-        if (listaDePerrosOriginal == null) {
-            cargarPerrosDesdeBaseDeDatos();
-            if (listaDePerrosOriginal == null) {
-                UtilidadesVentana.mostrarAlertaError("Error Datos", "No se pudieron cargar los datos de los perros para filtrar.");
-                return;
-            }
-        }
-        String textoBusquedaLower = (textoBusqueda == null) ? "" : textoBusqueda.toLowerCase().trim();
-
-        if (textoBusquedaLower.isEmpty()) {
-            this.perrosMostradosActuales = new ArrayList<>(this.listaDePerrosOriginal);
-        } else {
-            this.perrosMostradosActuales = this.listaDePerrosOriginal.stream()
-                    .filter(perro -> (perro.getNombre() != null && perro.getNombre().toLowerCase().contains(textoBusquedaLower)) ||
-                            (perro.getRaza() != null && perro.getRaza().getNombreRaza() != null && perro.getRaza().getNombreRaza().toLowerCase().contains(textoBusquedaLower)))
-                    .collect(Collectors.toList());
-        }
-
-        if (mainBorderPane.getScene() != null && mainBorderPane.getScene().getWindow() != null && mainBorderPane.getScene().getWindow().getWidth() > 0) {
-            adaptarContenidoAlAnchoYPopular(mainBorderPane.getScene().getWindow().getWidth());
-        } else {
-            popularGridDePerros();
-        }
     }
 }

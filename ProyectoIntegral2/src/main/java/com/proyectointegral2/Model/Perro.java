@@ -11,6 +11,7 @@ public class Perro {
     private String foto;
     private int idProtectora;
     private Raza raza;
+    private String protectora;
 
 
     public Perro() {}
@@ -60,4 +61,11 @@ public class Perro {
         return (this.raza != null) ? this.raza.getIdRaza() : 0;
     }
 
+    public String getProtectora() {
+        return protectora;
+    }
+
+    public void setProtectora(String protectora) {
+        this.protectora = protectora;
+    }
 }
