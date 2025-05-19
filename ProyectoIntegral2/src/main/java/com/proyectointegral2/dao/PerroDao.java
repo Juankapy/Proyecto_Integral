@@ -19,7 +19,7 @@ public class PerroDao {
 
     public int crearPerro(Perro perro) throws SQLException {
         // ID_PERRO se genera por secuencia DEFAULT
-        String sqlInsert = "INSERT INTO PERROS (NOMBRE, SEXO, FECHA_NACIMIENTO, ADOPTADO, FOTO, ID_PROTECTORA, ID_RAZA, DESCRIPCION_PERRO) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sqlInsert = "INSERT INTO PERROS (NOMBRE, SEXO, FECHANACIMIENTO, ADOPTADO, FOTO, ID_PROTECTORA, ID_RAZA) VALUES (?, ?, ?, ?, ?, ?, ?)";
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet generatedKeys = null;
@@ -98,7 +98,6 @@ public class PerroDao {
         return perros;
     }
 
-    // Método para obtener todos los perros de una protectora específica
     public List<Perro> obtenerPerrosPorProtectora(int idProtectora) throws SQLException {
         List<Perro> perros = new ArrayList<>();
         String sql = "SELECT * FROM PERROS WHERE ID_PROTECTORA = ? ORDER BY NOMBRE";
@@ -116,7 +115,8 @@ public class PerroDao {
 
 
     public boolean actualizarPerro(Perro perro) throws SQLException {
-        String sql = "UPDATE PERROS SET NOMBRE = ?, SEXO = ?, FECHA_NACIMIENTO = ?, ADOPTADO = ?, FOTO = ?, ID_PROTECTORA = ?, ID_RAZA = ?, DESCRIPCION_PERRO = ? WHERE ID_PERRO = ?";
+        String sql = "UPDATE PERROS SET NOMBRE = ?, SEXO = ?, FECHANACIMIENTO = ?, " +
+                "ADOPTADO = ?, FOTO = ?, ID_PROTECTORA = ?, ID_RAZA = ?";
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, perro.getNombre());
@@ -130,8 +130,7 @@ public class PerroDao {
             pstmt.setString(5, perro.getFoto()); // CORREGIDO: setString
             pstmt.setInt(6, perro.getIdProtectora());
             pstmt.setInt(7, perro.getRaza() != null ? perro.getRaza().getIdRaza() : 0); // Obtener ID del objeto Raza
-            pstmt.setString(8, perro.getDescripcionPerro());
-            pstmt.setInt(9, perro.getIdPerro());
+            pstmt.setInt(8, perro.getIdPerro());
             return pstmt.executeUpdate() > 0;
         }
     }
@@ -160,7 +159,6 @@ public class PerroDao {
         perro.setAdoptado(rs.getString("ADOPTADO"));
         perro.setFoto(rs.getString("FOTO")); // CORREGIDO: getString
         perro.setIdProtectora(rs.getInt("ID_PROTECTORA"));
-        perro.setDescripcionPerro(rs.getString("DESCRIPCION_PERRO"));
 
         // Obtener y setear el objeto Raza
         int idRaza = rs.getInt("ID_RAZA");

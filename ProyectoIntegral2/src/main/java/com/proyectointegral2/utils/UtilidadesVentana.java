@@ -4,12 +4,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.Stack; // Para el historial de navegación
 
 public class UtilidadesVentana {
@@ -339,6 +341,16 @@ public class UtilidadesVentana {
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
+    public static boolean mostrarAlertaConfirmacion(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.isPresent() && result.get() == ButtonType.OK;
+    }
+
 
     public static void setFxmlActual(String fxmlPath) {
         fxmlActual = fxmlPath;

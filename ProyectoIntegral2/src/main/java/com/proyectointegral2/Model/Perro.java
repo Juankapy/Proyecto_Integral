@@ -72,11 +72,4 @@ public class Perro {
         return (this.raza != null) ? this.raza.getIdRaza() : 0;
     }
 
-    public String getDescripcionPerro() {
-        return descripcionPerro;
-    }
-
-    public void setDescripcionPerro(String descripcionPerro) {
-        this.descripcionPerro = descripcionPerro;
-    }
 }
