@@ -12,6 +12,7 @@ public class Perro {
     private int idProtectora;
     private Raza raza;
 
+
     public Perro() {}
 
     public Perro(int idPerro, String nombre, String foto, LocalDate fechaNacimiento, String sexo,

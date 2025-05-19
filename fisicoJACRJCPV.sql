@@ -224,6 +224,8 @@ BEGIN
 END;
 /
 
+
+
 -- ========= DISPARADOR: Nueva petición de adopción =========
 
 CREATE OR REPLACE TRIGGER nueva_peticion
