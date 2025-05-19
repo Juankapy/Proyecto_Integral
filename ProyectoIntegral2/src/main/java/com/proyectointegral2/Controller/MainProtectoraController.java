@@ -452,21 +452,47 @@ public class MainProtectoraController {
     }
 
     @FXML
-    void IrAPerfilUsuario(MouseEvent event) { // Este es el perfil de la CUENTA de la protectora
-        System.out.println("Protectora - Icono Usuario (Perfil Cuenta) presionado.");
-        if (usuarioCuentaLogueada == null) {
-            UtilidadesVentana.mostrarAlertaError("Error Sesión", "No se pudo identificar la cuenta de la protectora.");
+    void IrAPerfilUsuario(MouseEvent event) { // Este lleva al PERFIL DE VISUALIZACIÓN de la Protectora
+        System.out.println("Protectora - Icono Usuario. Navegando a Vista Perfil Protectora.");
+
+        if (this.idProtectoraActual <= 0 || this.usuarioCuentaLogueada == null) {
+            UtilidadesVentana.mostrarAlertaError("Error de Sesión", "No se pudo identificar la protectora o la cuenta asociada.");
             return;
         }
-        // String perfilCuentaFxml = "/com/proyectointegral2/Vista/PerfilCuentaProtectora.fxml"; // Un FXML para editar la cuenta
-        // String titulo = "Editar Cuenta de " + this.nombreProtectoraActual;
-        // FormularioUsuarioController formController = UtilidadesVentana.cambiarEscenaYObtenerController(perfilCuentaFxml, titulo, false);
-        // if(formController != null) formController.initDataParaEdicion(this.usuarioCuentaLogueada);
-        UtilidadesVentana.mostrarAlertaInformacion("Perfil Cuenta", "Funcionalidad para editar la cuenta de la protectora (ID Usuario: " + usuarioCuentaLogueada.getIdUsuario() + ") no implementada.");
+
+        String perfilProtectoraFxml = "/com/proyectointegral2/Vista/PerfilProtectora.fxml"; // El FXML que acabamos de definir
+        String titulo = "Perfil de " + (this.nombreProtectoraActual != null ? this.nombreProtectoraActual : "Protectora");
+
+        try {
+            // Primero, obtener el objeto Protectora actualizado por si acaso (aunque ya deberíamos tenerlo)
+            Protectora protectoraParaPerfil = protectoraDao.obtenerProtectoraPorId(this.idProtectoraActual);
+            if (protectoraParaPerfil == null) {
+                UtilidadesVentana.mostrarAlertaError("Error de Datos", "No se encontró la información de la protectora.");
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(perfilProtectoraFxml));
+            Parent root = loader.load();
+            PerfilProtectoraController perfilController = loader.getController();
+
+            if (perfilController != null) {
+                // Pasar el objeto Protectora y el objeto Usuario de la cuenta
+                perfilController.initData(protectoraParaPerfil, this.usuarioCuentaLogueada);
+                UtilidadesVentana.cambiarEscenaConRoot(root, titulo, false); // 'false' para tamaño fijo del perfil
+            } else {
+                UtilidadesVentana.mostrarAlertaError("Error Interno", "No se pudo cargar el controlador del perfil de protectora.");
+            }
+        } catch (SQLException sqlEx) {
+            UtilidadesVentana.mostrarAlertaError("Error Base de Datos", "No se pudo cargar la información para el perfil: " + sqlEx.getMessage());
+            sqlEx.printStackTrace();
+        } catch (IOException ioEx) {
+            UtilidadesVentana.mostrarAlertaError("Error Navegación", "No se pudo abrir el perfil de la protectora: " + ioEx.getMessage());
+            ioEx.printStackTrace();
+        }
     }
 
     @FXML
-    void RegistroAdopciones(ActionEvent event) { // Renombrado de toggleRegistroView
+    void RegistroAdopciones(ActionEvent event) {
         mostrandoRegistroPerros = !mostrandoRegistroPerros;
         if (mostrandoRegistroPerros) {
             lblRegistroTitulo.setText("Registro de Perros de la Protectora");

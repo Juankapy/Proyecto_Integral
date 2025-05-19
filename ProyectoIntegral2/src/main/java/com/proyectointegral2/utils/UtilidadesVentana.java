@@ -289,6 +289,14 @@ public class UtilidadesVentana {
         return result.isPresent() && result.get() == ButtonType.OK;
     }
 
+    public static void mostrarAlertaAdvertencia(String titulo, String cabecera, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(titulo);
+        alert.setHeaderText(cabecera);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
+
 
     public static void setFxmlActual(String fxmlPath) {
         fxmlActual = fxmlPath;

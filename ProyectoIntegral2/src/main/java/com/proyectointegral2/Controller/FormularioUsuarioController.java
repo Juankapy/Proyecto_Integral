@@ -53,7 +53,7 @@ public class FormularioUsuarioController {
 
     @FXML
     public void initialize() {
-        this.usuarioDAO = new UsuarioDao(); // Instanciar tu DAO
+        this.usuarioDAO = new UsuarioDao();
         cargarImagenPlaceholder();
     }
 
