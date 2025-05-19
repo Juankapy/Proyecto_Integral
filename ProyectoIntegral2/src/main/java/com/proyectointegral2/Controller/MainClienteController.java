@@ -2,7 +2,10 @@ package com.proyectointegral2.Controller;
 
 import com.proyectointegral2.Model.Perro;
 import com.proyectointegral2.Model.Raza;
+import com.proyectointegral2.Model.SesionUsuario;
+import com.proyectointegral2.Model.Usuario;
 import com.proyectointegral2.dao.PerroDao;
+import com.proyectointegral2.dao.UsuarioDao;
 import com.proyectointegral2.utils.UtilidadesVentana;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -50,31 +53,45 @@ public class MainClienteController {
     @FXML private Button BtnEventos;
     @FXML private Button BtnReservar;
 
-    private final String RUTA_IMAGEN_PLACEHOLDER_PERRO = "/assets/Imagenes/iconos/placeholder_dog.jpg";
+    private final String RUTA_IMAGEN_PLACEHOLDER_PERRO = "/assets/Imagenes/iconos/placeholder_dog.jpg"; // Asegúrate que esta ruta sea correcta
     private List<Perro> listaDePerrosOriginal;
     private List<Perro> perrosMostradosActuales;
+    private Usuario usuarioLogueado; // Almacenará el objeto del usuario que inició sesión
 
+    private PerroDao perroDao; // Instancia del DAO
+
+    // Constantes para layout
     private static final double HEADER_HEIGHT_ESTIMADA = 70;
     private static final double BOTTOM_BAR_HEIGHT_ESTIMADA = 80;
-    private static final double SCROLLPANE_PADDING_VERTICAL = 40;
+    private static final double SCROLLPANE_PADDING_VERTICAL = 40; // Suma de top+bottom padding del VBox que contiene el ScrollPane
     private static final double MIN_SCROLLPANE_HEIGHT = 300;
-    private static final double PREFERRED_GRID_WIDTH_FALLBACK = 1200;
-    private static final double TARJETA_PREF_WIDTH = 180;
+    private static final double TARJETA_PREF_WIDTH = 190; // Ajustado para incluir padding
     private static final double TARJETA_IMG_AREA_WIDTH = 160;
     private static final double TARJETA_IMG_AREA_HEIGHT = 160;
-    private static final double CARD_HORIZONTAL_GAP = 20;
-    private static final double CARD_PADDING = 10;
+    private static final double CARD_HORIZONTAL_GAP = 20; // Debe coincidir con dogGrid.hgap
+    private static final double CARD_INTERNAL_PADDING = 10; // Padding dentro de la VBox de la tarjeta
+
 
     @FXML
     public void initialize() {
         System.out.println("MainClienteController inicializado.");
-        cargarPerrosDesdeBaseDeDatos();
+        // Obtener el usuario de la sesión ESTATICA
+        Usuario usuarioActual = SesionUsuario.getUsuarioLogueado();
+
+        if (usuarioActual == null) {
+            UtilidadesVentana.mostrarAlertaError("Error Crítico de Sesión", "No hay usuario logueado. Volviendo al login.");
+            UtilidadesVentana.cambiarEscena("/com/proyectointegral2/Vista/Login.fxml", "Inicio de Sesión", false);
+            return; // Detener la inicialización si no hay usuario
+        }
+        System.out.println("Bienvenido a MainCliente: " + usuarioActual.getNombreUsu());
+
+        this.perroDao = new PerroDao();
+        cargarPerrosDesdeBaseDeDatos(); // Esto usará el perroDao
         if (this.listaDePerrosOriginal != null) {
             this.perrosMostradosActuales = new ArrayList<>(this.listaDePerrosOriginal);
         } else {
             this.listaDePerrosOriginal = new ArrayList<>();
             this.perrosMostradosActuales = new ArrayList<>();
-            UtilidadesVentana.mostrarAlertaError("Error Carga Perros", "No se pudieron cargar los datos de los perros.");
         }
 
         configurarListenersDeVentana();
@@ -85,31 +102,27 @@ public class MainClienteController {
             if (mainBorderPane.getScene() != null && mainBorderPane.getScene().getWindow() != null) {
                 Stage stage = (Stage) mainBorderPane.getScene().getWindow();
                 if (stage.isShowing() && stage.getWidth() > 0 && !Double.isNaN(stage.getWidth())) {
-                    System.out.println("Forzando adaptación inicial en initialize() con Platform.runLater. Ancho: " + stage.getWidth());
                     adaptarUIAlTamanoVentana(stage);
                 } else if (!stage.isShowing()) {
-                    stage.setOnShown(event -> Platform.runLater(() -> {
-                        System.out.println("Stage.setOnShown, adaptando UI. Ancho: " + stage.getWidth());
-                        adaptarUIAlTamanoVentana(stage);
-                    }));
-                } else {
-                    System.out.println("WARN: Ancho de stage no disponible o no mostrado en initialize(). Esperando a listeners.");
+                    stage.setOnShown(event -> Platform.runLater(() -> adaptarUIAlTamanoVentana(stage)));
                 }
-            } else {
-                System.out.println("WARN: Escena o ventana no disponible en initialize() para forzar adaptación.");
             }
         });
     }
 
+
     private void cargarPerrosDesdeBaseDeDatos() {
         try {
-            PerroDao perroDao = new PerroDao();
-            listaDePerrosOriginal = perroDao.obtenerTodosLosPerros();
-            System.out.println("Perros cargados desde la base de datos: " + listaDePerrosOriginal.size());
+            this.listaDePerrosOriginal = perroDao.obtenerTodosLosPerros();
+            if (this.listaDePerrosOriginal == null) {
+                this.listaDePerrosOriginal = new ArrayList<>();
+            }
+            System.out.println("Perros cargados desde la base de datos: " + this.listaDePerrosOriginal.size());
         } catch (SQLException e) {
             System.err.println("Error al cargar perros desde la base de datos: " + e.getMessage());
-            listaDePerrosOriginal = new ArrayList<>();
-            UtilidadesVentana.mostrarAlertaError("Error de Base de Datos", "No se pudieron cargar los perros desde la base de datos.");
+            e.printStackTrace();
+            this.listaDePerrosOriginal = new ArrayList<>();
+            UtilidadesVentana.mostrarAlertaError("Error de Base de Datos", "No se pudieron cargar los perros: " + e.getMessage());
         }
     }
 
@@ -136,9 +149,7 @@ public class MainClienteController {
     }
 
     private void adaptarUIAlTamanoVentana(Stage stage) {
-        if (stage == null || stage.getWidth() <= 0 || Double.isNaN(stage.getWidth())) {
-            return;
-        }
+        if (stage == null || stage.getWidth() <= 0 || Double.isNaN(stage.getWidth())) return;
         double currentWidth = stage.getWidth();
         double currentHeight = stage.getHeight();
         adaptarContenidoAlAnchoYPopular(currentWidth);
@@ -160,10 +171,11 @@ public class MainClienteController {
     private VBox crearTarjetaPerro(Perro perro) {
         VBox card = new VBox(5);
         card.setPrefWidth(TARJETA_PREF_WIDTH);
-        card.setMaxWidth(Double.MAX_VALUE);
+        card.setMaxWidth(TARJETA_PREF_WIDTH);
+        card.setMinWidth(TARJETA_PREF_WIDTH);
         card.setAlignment(Pos.TOP_CENTER);
-        card.setStyle("-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2); -fx-padding: "+CARD_PADDING+";");
-        card.setMinHeight(230);
+        card.setStyle(String.format("-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2); -fx-padding: %f;", CARD_INTERNAL_PADDING));
+        card.setMinHeight(240);
 
         StackPane imageContainer = new StackPane();
         imageContainer.setPrefSize(TARJETA_IMG_AREA_WIDTH, TARJETA_IMG_AREA_HEIGHT);
@@ -197,7 +209,7 @@ public class MainClienteController {
             System.err.println("ERROR cargando imagen para " + perro.getNombre() + ": " + imagePath + ". " + e.getMessage());
             try (InputStream placeholderStream = getClass().getResourceAsStream(RUTA_IMAGEN_PLACEHOLDER_PERRO)) {
                 if (placeholderStream != null) imgView.setImage(new Image(placeholderStream));
-            } catch (Exception ex) { }
+            } catch (Exception ex) {  }
         }
 
         imgView.setPreserveRatio(true);
@@ -259,52 +271,42 @@ public class MainClienteController {
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(detallesFxml));
-            if (loader.getLocation() == null) {
-                UtilidadesVentana.mostrarAlertaError("Error", "Vista de detalles no encontrada."); return;
-            }
             Parent root = loader.load();
             DetallesPerroController controller = loader.getController();
             if (controller != null) {
                 controller.initData(perro);
             } else {
-                UtilidadesVentana.mostrarAlertaError("Error", "Controlador de detalles no encontrado."); return;
+                UtilidadesVentana.mostrarAlertaError("Error Interno", "Controlador de detalles no encontrado."); return;
             }
             UtilidadesVentana.mostrarVentanaComoDialogo(root, titulo, ownerStage);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             UtilidadesVentana.mostrarAlertaError("Error de Navegación", "No se pudo abrir la vista de detalles: " + e.getMessage());
         }
     }
 
-    private int calcularColumnasSegunAncho(double anchoDisponibleParaGrid) {
-        if (anchoDisponibleParaGrid <= 0) return 1;
+    private int calcularColumnasSegunAncho(double anchoGridDisponible) {
+        if (anchoGridDisponible <= 0) return 1;
         double anchoTarjetaEstimado = TARJETA_PREF_WIDTH + CARD_HORIZONTAL_GAP;
-        int numColumnas = Math.max(1, (int) (anchoDisponibleParaGrid / anchoTarjetaEstimado));
+        int numColumnas = Math.max(1, (int) (anchoGridDisponible / anchoTarjetaEstimado));
         return Math.min(numColumnas, 5);
     }
 
     private void adaptarContenidoAlAnchoYPopular(double anchoVentana) {
-        if (dogGrid == null || listaDePerrosOriginal == null || mainBorderPane == null) {
-            System.err.println("WARN: dogGrid, listaDePerrosOriginal, o mainBorderPane es null en adaptarContenidoAlAnchoYPopular.");
-            return;
+        if (dogGrid == null || listaDePerrosOriginal == null || mainBorderPane == null) return;
+        double paddingLateralTotalVBox = mainBorderPane.getPadding().getLeft() + mainBorderPane.getPadding().getRight();
+        if (mainBorderPane.getCenter() instanceof VBox) {
+            VBox centerVBox = (VBox) mainBorderPane.getCenter();
+            paddingLateralTotalVBox += centerVBox.getPadding().getLeft() + centerVBox.getPadding().getRight();
         }
-
-        double paddingIzquierdoGrid = dogGrid.getPadding().getLeft();
-        double paddingDerechoGrid = dogGrid.getPadding().getRight();
-        double anchoDisponibleParaGrid = anchoVentana - mainBorderPane.getPadding().getLeft() - mainBorderPane.getPadding().getRight() - paddingIzquierdoGrid - paddingDerechoGrid - 40;
-
-        if (dogScrollPane != null && dogScrollPane.getPadding() != null) {
-            anchoDisponibleParaGrid -= (dogScrollPane.getPadding().getLeft() + dogScrollPane.getPadding().getRight());
-        }
-
+        double paddingLateralScrollPane = (dogScrollPane != null && dogScrollPane.getPadding() != null) ? dogScrollPane.getPadding().getLeft() + dogScrollPane.getPadding().getRight() : 0;
+        double paddingLateralGrid = dogGrid.getPadding().getLeft() + dogGrid.getPadding().getRight();
+        double anchoDisponibleParaGrid = anchoVentana - paddingLateralTotalVBox - paddingLateralScrollPane - paddingLateralGrid - 20;
         int nuevasColumnas = calcularColumnasSegunAncho(anchoDisponibleParaGrid);
-
-        boolean necesitaReconfigurarColumnas = dogGrid.getColumnConstraints().size() != nuevasColumnas;
-        boolean gridVacioConDatos = dogGrid.getChildren().isEmpty() && (perrosMostradosActuales != null && !perrosMostradosActuales.isEmpty());
-        boolean cantidadPerrosCambio = perrosMostradosActuales != null && dogGrid.getChildren().size() != perrosMostradosActuales.size();
-
-        if (necesitaReconfigurarColumnas || gridVacioConDatos || cantidadPerrosCambio) {
-            if (necesitaReconfigurarColumnas) {
+        if (dogGrid.getColumnConstraints().size() != nuevasColumnas ||
+                (dogGrid.getChildren().isEmpty() && perrosMostradosActuales != null && !perrosMostradosActuales.isEmpty()) ||
+                (perrosMostradosActuales != null && dogGrid.getChildren().size() != perrosMostradosActuales.size()) ) {
+            if (dogGrid.getColumnConstraints().size() != nuevasColumnas) {
                 dogGrid.getColumnConstraints().clear();
                 for (int i = 0; i < nuevasColumnas; i++) {
                     ColumnConstraints colConst = new ColumnConstraints();
@@ -318,22 +320,19 @@ public class MainClienteController {
     }
 
     private void adaptarContenidoALaAltura(double nuevaAltura) {
-        if (dogScrollPane != null && mainBorderPane != null) {
+        if (dogScrollPane != null && mainBorderPane != null && mainBorderPane.getCenter() instanceof VBox) {
             Node topNode = mainBorderPane.getTop();
             VBox centerVBox = (VBox) mainBorderPane.getCenter();
             Node bottomNode = mainBorderPane.getBottom();
-
-            double topHeight = (topNode != null) ? topNode.getLayoutBounds().getHeight() : HEADER_HEIGHT_ESTIMADA;
-            double bottomHeight = (bottomNode != null) ? bottomNode.getLayoutBounds().getHeight() : BOTTOM_BAR_HEIGHT_ESTIMADA;
-
-            double vBoxPaddingTotal = (centerVBox != null && centerVBox.getPadding() != null) ? centerVBox.getPadding().getTop() + centerVBox.getPadding().getBottom() : SCROLLPANE_PADDING_VERTICAL;
+            double topHeight = (topNode != null) ? topNode.getBoundsInParent().getHeight() : HEADER_HEIGHT_ESTIMADA;
+            double bottomHeight = (bottomNode != null) ? bottomNode.getBoundsInParent().getHeight() : BOTTOM_BAR_HEIGHT_ESTIMADA;
+            double vBoxPaddingVertical = centerVBox.getPadding().getTop() + centerVBox.getPadding().getBottom();
             double hBoxBotonesFiltroHeight = 0;
-
-            if (centerVBox != null && !centerVBox.getChildren().isEmpty() && centerVBox.getChildren().get(0) instanceof HBox) {
+            if (!centerVBox.getChildren().isEmpty() && centerVBox.getChildren().get(0) instanceof HBox) {
                 HBox filterButtonHBox = (HBox) centerVBox.getChildren().get(0);
-                hBoxBotonesFiltroHeight = filterButtonHBox.getLayoutBounds().getHeight() > 0 ? filterButtonHBox.getLayoutBounds().getHeight() : 40;
+                hBoxBotonesFiltroHeight = filterButtonHBox.getHeight() > 0 ? filterButtonHBox.getHeight() : 40;
             }
-            double alturaDisponibleParaScroll = nuevaAltura - topHeight - hBoxBotonesFiltroHeight - vBoxPaddingTotal - bottomHeight;
+            double alturaDisponibleParaScroll = nuevaAltura - topHeight - hBoxBotonesFiltroHeight - vBoxPaddingVertical - bottomHeight - 20;
             dogScrollPane.setPrefHeight(Math.max(MIN_SCROLLPANE_HEIGHT, alturaDisponibleParaScroll));
         }
     }
@@ -342,7 +341,6 @@ public class MainClienteController {
         if (dogGrid == null || perrosMostradosActuales == null) return;
         dogGrid.getChildren().clear();
         int numColumnas = Math.max(1, dogGrid.getColumnConstraints().size());
-
         int columnaActual = 0; int filaActual = 0;
         for (Perro perro : perrosMostradosActuales) {
             VBox tarjetaPerro = crearTarjetaPerro(perro);
@@ -362,13 +360,19 @@ public class MainClienteController {
     @FXML
     void Bandeja(MouseEvent event) {
         System.out.println("Abriendo bandeja de citas como pop-up...");
-        String bandejaFxml = "/com/proyectointegral2/Vista/BandejasCitas.fxml";
+        Usuario usuarioActual = SesionUsuario.getUsuarioLogueado(); // Obtener de la sesión
+        if (usuarioActual == null) {
+            UtilidadesVentana.mostrarAlertaError("Error de Sesión", "No se pudo identificar el usuario para ver sus citas.");
+            return;
+        }
+        int idCliente = usuarioActual.getIdUsuario(); // Asumiendo que ID_USUARIO es lo que necesita BandejaCitasController
+
+        String bandejaFxml = "/com/proyectointegral2/Vista/BandejaCitas.fxml";
         String titulo = "Mis Citas Programadas";
         Stage ownerStage = (event.getSource() instanceof Node) ? (Stage) ((Node) event.getSource()).getScene().getWindow() : UtilidadesVentana.getPrimaryStage();
 
         BandejaCitasController bandejaController = UtilidadesVentana.mostrarVentanaPopup(bandejaFxml, titulo, true, ownerStage);
         if (bandejaController != null) {
-            int idCliente = obtenerIdSimuladoDelUsuario();
             bandejaController.initData(idCliente);
             System.out.println("Pop-up de bandeja de citas mostrado.");
         } else {
@@ -379,26 +383,31 @@ public class MainClienteController {
     @FXML
     void DetallesUsuario(MouseEvent event) {
         System.out.println("Icono Usuario presionado - Navegando a Perfil");
-        int idUsuarioActual = obtenerIdSimuladoDelUsuario();
-        String nombreUsuarioLogin = obtenerNombreUsuarioSimuladoDelLogin();
-        if (idUsuarioActual > 0) {
+        Usuario usuarioActual = SesionUsuario.getUsuarioLogueado(); // Obtener de la sesión
+
+        if (usuarioActual == null) {
+            UtilidadesVentana.mostrarAlertaError("Error de Sesión", "No se pudo identificar el usuario actual.");
+            return;
+        }
+
+        int idUsuario = usuarioActual.getIdUsuario();
+        String nombreUsuario = usuarioActual.getNombreUsu();
+
+        if (idUsuario > 0) {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/proyectointegral2/Vista/PerfilUsuario.fxml"));
                 Parent root = loader.load();
                 PerfilUsuarioController perfilController = loader.getController();
                 if (perfilController != null) {
-                    perfilController.initData(idUsuarioActual, nombreUsuarioLogin);
-                    UtilidadesVentana.cambiarEscenaConRoot(root, "Mi Perfil ("+nombreUsuarioLogin+")", false);
-                } else { UtilidadesVentana.mostrarAlertaError("Error", "No se pudo cargar el controlador del perfil.");}
+                    perfilController.initData(idUsuario, nombreUsuario);
+                    UtilidadesVentana.cambiarEscenaConRoot(root, "Mi Perfil (" + nombreUsuario + ")", false);
+                } else { UtilidadesVentana.mostrarAlertaError("Error Interno", "No se pudo cargar el controlador del perfil.");}
             } catch (Exception e) {
                 e.printStackTrace();
-                UtilidadesVentana.mostrarAlertaError("Error de Navegación", "No se pudo abrir la vista del perfil.");
+                UtilidadesVentana.mostrarAlertaError("Error de Navegación", "No se pudo abrir la vista del perfil: " + e.getMessage());
             }
-        } else { UtilidadesVentana.mostrarAlertaError("Error de Sesión", "No se pudo identificar el usuario actual.");}
+        } else { UtilidadesVentana.mostrarAlertaError("Error de Sesión", "ID de usuario no válido.");}
     }
-
-    private int obtenerIdSimuladoDelUsuario() { return 1; }
-    private String obtenerNombreUsuarioSimuladoDelLogin() { return "cliente_test"; }
 
     @FXML
     void onSearchIconClicked(MouseEvent event) {
@@ -409,7 +418,13 @@ public class MainClienteController {
     }
 
     private void filtrarYRepopularPerros(String textoBusqueda) {
-        if (listaDePerrosOriginal == null) { cargarPerrosDesdeBaseDeDatos(); }
+        if (listaDePerrosOriginal == null) {
+            cargarPerrosDesdeBaseDeDatos();
+            if (listaDePerrosOriginal == null) {
+                UtilidadesVentana.mostrarAlertaError("Error Datos", "No se pudieron cargar los datos de los perros para filtrar.");
+                return;
+            }
+        }
         String textoBusquedaLower = (textoBusqueda == null) ? "" : textoBusqueda.toLowerCase().trim();
 
         if (textoBusquedaLower.isEmpty()) {
@@ -420,6 +435,7 @@ public class MainClienteController {
                             (perro.getRaza() != null && perro.getRaza().getNombreRaza() != null && perro.getRaza().getNombreRaza().toLowerCase().contains(textoBusquedaLower)))
                     .collect(Collectors.toList());
         }
+
         if (mainBorderPane.getScene() != null && mainBorderPane.getScene().getWindow() != null && mainBorderPane.getScene().getWindow().getWidth() > 0) {
             adaptarContenidoAlAnchoYPopular(mainBorderPane.getScene().getWindow().getWidth());
         } else {

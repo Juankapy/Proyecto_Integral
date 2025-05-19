@@ -159,9 +159,6 @@ public class UtilidadesVentana {
         } catch (IOException e) {  }
     }
 
-    public static void cambiarEscena(String fxmlFile, String title) {
-        cambiarEscena(fxmlFile, title, false);
-    }
 
     public static void volverAEscenaAnterior() {
         if (primaryStageRef == null) {

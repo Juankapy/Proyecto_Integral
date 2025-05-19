@@ -26,17 +26,6 @@ public class Perro {
         this.idProtectora = idProtectora;
     }
 
-    public Perro(int idPerro, String nombre, String foto, LocalDate fechaNacimiento, String sexo,
-                 String adoptado, Raza raza, int idProtectora, String descripcionPerro) {
-        this.idPerro = idPerro;
-        this.nombre = nombre;
-        this.foto = foto;
-        this.fechaNacimiento = fechaNacimiento;
-        this.sexo = sexo;
-        this.adoptado = adoptado;
-        this.raza = raza;
-        this.idProtectora = idProtectora;
-    }
 
     public int getIdPerro() { return idPerro; }
     public void setIdPerro(int idPerro) { this.idPerro = idPerro; }

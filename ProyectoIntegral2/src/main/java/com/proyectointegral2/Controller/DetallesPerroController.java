@@ -8,7 +8,7 @@ import com.proyectointegral2.dao.ProtectoraDao;
 import com.proyectointegral2.dao.PatologiaDao;
 import com.proyectointegral2.dao.IdentificacionPatologiaDao;
 import com.proyectointegral2.utils.UtilidadesVentana;
-import com.proyectointegral2.Controller.FormularioReservaCitaController; // Asegúrate de que la ruta es correcta
+import com.proyectointegral2.Controller.DetallesPerroController; // Asegúrate de que la ruta es correcta
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -233,7 +233,7 @@ public class DetallesPerroController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(formularioReservaFxml));
             Parent root = loader.load();
 
-            FormularioReservaCitaController controller = loader.getController();
+            DetallesPerroController controller = loader.getController();
             if (controller != null) {
                 controller.initData(perroActual); // Asegúrate de que este método existe en el controlador destino
             } else {

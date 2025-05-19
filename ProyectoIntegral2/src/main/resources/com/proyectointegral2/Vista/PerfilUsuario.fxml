@@ -14,7 +14,6 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -22,8 +21,9 @@
     <top>
         <BorderPane prefHeight="80.0">
             <left>
-                <ImageView fx:id="imgIconoVolver" fitHeight="30.0" fitWidth="30.0" onMouseClicked="#Volver" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;" BorderPane.alignment="CENTER_LEFT">
+                <ImageView fx:id="imgIconoVolver" fitHeight="30.0" fitWidth="30.0" onMouseClicked="#handleVolver" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;" BorderPane.alignment="CENTER_LEFT">
                     <image>
+                        <!-- RUTA CORREGIDA -->
                         <Image url="@../../../assets/Imagenes/iconos/salir.png" />
                     </image>
                     <BorderPane.margin>
@@ -36,7 +36,8 @@
                     <children>
                         <ImageView fx:id="imgIconoUsuarioGrande" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../../../assets/Imagenes/iconos/usuario-main.png" />
+                                <!-- RUTA CORREGIDA -->
+                                <Image url="@../../../assets/Imagenes/iconos/usuario-main-blue.png" /> <!-- Asegúrate que este es el icono correcto -->
                             </image>
                         </ImageView>
                         <Label text="Perfil de usuario" textFill="#3E2723">
@@ -58,7 +59,6 @@
                 <Insets left="50.0" right="50.0" />
             </BorderPane.margin>
             <children>
-
                 <VBox spacing="15.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 10; -fx-padding: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);">
                     <children>
                         <Label text="Datos personales" textFill="#3E2723">
@@ -78,7 +78,7 @@
                                                 <Label text="Nombre:">
                                                     <font><Font name="System Bold" size="15.0" /></font>
                                                 </Label>
-                                                <Label fx:id="TxtNombre" text="Juan Ejemplo">
+                                                <Label fx:id="TxtNombre" text="Cargando..."> <!-- Texto inicial mientras carga -->
                                                     <font><Font size="15.0" /></font>
                                                 </Label>
                                             </children>
@@ -88,7 +88,7 @@
                                                 <Label text="Email:">
                                                     <font><Font name="System Bold" size="15.0" /></font>
                                                 </Label>
-                                                <Label fx:id="TxtEmail" text="juan.ejemplo@mail.com">
+                                                <Label fx:id="TxtEmail" text="Cargando...">
                                                     <font><Font size="15.0" /></font>
                                                 </Label>
                                             </children>
@@ -98,7 +98,7 @@
                                                 <Label text="Teléfono:">
                                                     <font><Font name="System Bold" size="15.0" /></font>
                                                 </Label>
-                                                <Label fx:id="TxtTelefono" text="+34 600 000 000">
+                                                <Label fx:id="TxtTelefono" text="Cargando...">
                                                     <font><Font size="15.0" /></font>
                                                 </Label>
                                             </children>
@@ -108,7 +108,7 @@
                                                 <Label text="Dirección:">
                                                     <font><Font name="System Bold" size="15.0" /></font>
                                                 </Label>
-                                                <Label fx:id="TxtDireccion" text="C/ Falsa 123, Ciudad">
+                                                <Label fx:id="TxtDireccion" text="Cargando...">
                                                     <font><Font size="15.0" /></font>
                                                 </Label>
                                             </children>
@@ -128,7 +128,6 @@
                         </HBox>
                     </children>
                 </VBox>
-
 
                 <VBox spacing="10.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 10; -fx-padding: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);" VBox.vgrow="ALWAYS">
                     <children>
@@ -151,6 +150,7 @@
             <children>
                 <ImageView fx:id="imgLogoDogpuccino" fitHeight="82.0" fitWidth="97.0" pickOnBounds="true" preserveRatio="true">
                     <image>
+                        <!-- RUTA CORREGIDA -->
                         <Image url="@../../../assets/Imagenes/iconos/icono-bgless.png" />
                     </image>
                 </ImageView>
