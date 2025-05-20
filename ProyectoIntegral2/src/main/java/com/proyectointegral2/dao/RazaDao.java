@@ -3,41 +3,54 @@ package com.proyectointegral2.dao;
 import com.proyectointegral2.Model.Raza;
 import com.proyectointegral2.utils.ConexionDB;
 
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RazaDao{
+public class RazaDao {
 
     public int crearRaza(Raza raza) throws SQLException {
-        String sqlInsert = "INSERT INTO Raza (Nombre_Raza) VALUES (?)";
-        try (Connection conn = ConexionDB.getConnection() ;
-             PreparedStatement pstmt = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(1, raza.getNombreRaza());
-            int affectedRows = pstmt.executeUpdate();
-            if (affectedRows == 0) throw new SQLException("No se pudo crear la raza.");
-            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    return generatedKeys.getInt(1);
-                } else {
-                    throw new SQLException("No se pudo obtener el ID generado.");
-                }
+        String sql = "BEGIN INSERT INTO RAZA (NOMBRE_RAZA) VALUES (?) RETURNING ID_RAZA INTO ?; END;";
+        Connection conn = null;
+        CallableStatement cstmt = null;
+        int nuevoIdRaza = -1;
+
+        try {
+            conn = ConexionDB.getConnection();
+
+            cstmt = conn.prepareCall(sql);
+            cstmt.setString(1, raza.getNombreRaza());
+
+            cstmt.registerOutParameter(2, Types.NUMERIC);
+
+            cstmt.execute();
+
+            nuevoIdRaza = cstmt.getInt(2);
+
+            if (nuevoIdRaza > 0) {
+                raza.setIdRaza(nuevoIdRaza);
+            } else {
+                throw new SQLException("No se pudo crear la raza u obtener el ID generado (RETURNING falló).");
             }
+            return nuevoIdRaza;
+
+        } catch (SQLException e) {
+            System.err.println("Error SQL al crear raza: " + e.getMessage());
+            throw e;
+        } finally {
+                if (cstmt != null) try { cstmt.close(); } catch (SQLException ex) { }
+            if (conn != null) try { conn.close(); } catch (SQLException ex) { }
         }
     }
 
     public Raza obtenerRazaPorId(int idRaza) throws SQLException {
-        String sql = "SELECT * FROM RAZA WHERE ID_RAZA = ?";
+        String sql = "SELECT ID_RAZA, NOMBRE_RAZA FROM RAZA WHERE ID_RAZA = ?";
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, idRaza);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    Raza raza = new Raza();
-                    raza.setIdRaza(rs.getInt("ID_RAZA"));
-                    raza.setNombreRaza(rs.getString("NOMBRE_RAZA"));
-                    return raza;
+                    return mapResultSetToRaza(rs);
                 }
             }
         }
@@ -45,10 +58,10 @@ public class RazaDao{
     }
 
     public Raza obtenerRazaPorNombre(String nombreRaza) throws SQLException {
-        String sql = "SELECT * FROM Raza WHERE Nombre_Raza = ?";
+        String sql = "SELECT ID_RAZA, NOMBRE_RAZA FROM RAZA WHERE UPPER(NOMBRE_RAZA) = UPPER(?)";
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, nombreRaza);
+            pstmt.setString(1, nombreRaza.trim());
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return mapResultSetToRaza(rs);
@@ -60,10 +73,10 @@ public class RazaDao{
 
     public List<Raza> obtenerTodasLasRazas() throws SQLException {
         List<Raza> razas = new ArrayList<>();
-        String sql = "SELECT * FROM Raza ORDER BY Nombre_Raza";
+        String sql = "SELECT ID_RAZA, NOMBRE_RAZA FROM RAZA ORDER BY NOMBRE_RAZA";
         try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 razas.add(mapResultSetToRaza(rs));
             }
@@ -72,7 +85,7 @@ public class RazaDao{
     }
 
     public boolean actualizarRaza(Raza raza) throws SQLException {
-        String sql = "UPDATE Raza SET Nombre_Raza = ? WHERE ID_Raza = ?";
+        String sql = "UPDATE RAZA SET NOMBRE_RAZA = ? WHERE ID_RAZA = ?";
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, raza.getNombreRaza());
@@ -82,7 +95,7 @@ public class RazaDao{
     }
 
     public boolean eliminarRaza(int idRaza) throws SQLException {
-        String sql = "DELETE FROM Raza WHERE ID_Raza = ?";
+        String sql = "DELETE FROM RAZA WHERE ID_RAZA = ?";
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, idRaza);
@@ -92,8 +105,8 @@ public class RazaDao{
 
     private Raza mapResultSetToRaza(ResultSet rs) throws SQLException {
         Raza raza = new Raza();
-        raza.setIdRaza(rs.getInt("ID_Raza"));
-        raza.setNombreRaza(rs.getString("Nombre_Raza"));
+        raza.setIdRaza(rs.getInt("ID_RAZA"));
+        raza.setNombreRaza(rs.getString("NOMBRE_RAZA"));
         return raza;
     }
 }

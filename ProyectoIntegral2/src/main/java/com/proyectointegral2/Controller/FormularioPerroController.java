@@ -183,16 +183,22 @@ public class FormularioPerroController {
                     boolean crear = UtilidadesVentana.mostrarAlertaConfirmacion("Raza no encontrada",
                             "La raza '" + nombreRazaStr.trim() + "' no existe. ¿Desea crearla?");
                     if (crear) {
-                        Raza nuevaRaza = new Raza(0, nombreRazaStr.trim());
+                        Raza nuevaRaza = new Raza(nombreRazaStr.trim());
                         int nuevoIdRaza = razaDao.crearRaza(nuevaRaza);
                         if (nuevoIdRaza > 0) {
                             nuevaRaza.setIdRaza(nuevoIdRaza);
                             razaObjeto = nuevaRaza;
+                            UtilidadesVentana.mostrarAlertaInformacion("Raza Creada", "La raza '" + razaObjeto.getNombreRaza() + "' ha sido creada con ID: " + razaObjeto.getIdRaza());
                         } else { UtilidadesVentana.mostrarAlertaError("Error", "No se pudo crear la nueva raza."); return; }
                     } else { return; }
                 }
             } catch (SQLException e) { e.printStackTrace(); UtilidadesVentana.mostrarAlertaError("Error BD", "Error al procesar la raza."); return; }
         } else { UtilidadesVentana.mostrarAlertaError("Error DAO", "Servicio de razas no disponible."); return; }
+
+        if (razaObjeto == null || razaObjeto.getIdRaza() <= 0) {
+            UtilidadesVentana.mostrarAlertaError("Error Raza", "No se pudo determinar la raza del perro. Operación cancelada.");
+            return;
+        }
 
         Perro perroParaGuardar;
         boolean esNuevo = (this.perroAEditar == null);

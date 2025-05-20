@@ -442,6 +442,7 @@ public class MainClienteController {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/proyectointegral2/Vista/PerfilUsuario.fxml"));
                 Parent root = loader.load();
+                root.getProperties().put("fxmlLocation", "/com/proyectointegral2/Vista/PerfilUsuario.fxml");
                 PerfilUsuarioController perfilController = loader.getController();
                 if (perfilController != null) {
                     perfilController.initData(idUsuario, nombreUsuario);

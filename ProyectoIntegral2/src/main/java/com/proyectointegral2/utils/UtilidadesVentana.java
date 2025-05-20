@@ -60,7 +60,6 @@ public class UtilidadesVentana {
         }
     }
 
-    // --- Pila para el Historial de Navegación ---
     private static class VistaAnterior {
         String fxmlFile;
         String title;
@@ -202,12 +201,18 @@ public class UtilidadesVentana {
     }
 
     public static void cambiarEscenaConRoot(Parent newRoot, String title, boolean esDinamicaYMaximizada) {
-        if (primaryStageRef == null) { /* ... error ... */ return; }
+        if (primaryStageRef == null) { return; }
+        String fxmlAnterior = null;
+        boolean actualEraDinamica = false;
+        if (primaryStageRef.getScene() != null && primaryStageRef.getScene().getRoot() != null &&
+                primaryStageRef.getScene().getRoot().getProperties().containsKey("fxmlLocation")) { // (A)
+            fxmlAnterior = (String) primaryStageRef.getScene().getRoot().getProperties().get("fxmlLocation");
+            actualEraDinamica = primaryStageRef.isMaximized() || primaryStageRef.isFullScreen();
+        }
 
-        if (fxmlActual != null) {
-            boolean actualEsDinamica = primaryStageRef.isMaximized() || primaryStageRef.isFullScreen();
-            historialNavegacion.push(new VistaAnterior(fxmlActual, primaryStageRef.getTitle(), actualEsDinamica));
-            System.out.println("Historial (con root): Añadido " + fxmlActual);
+        if (fxmlAnterior != null) {
+            historialNavegacion.push(new VistaAnterior(fxmlAnterior, primaryStageRef.getTitle(), actualEraDinamica));
+            System.out.println("Historial (con root): Añadido '" + fxmlAnterior + "' (era dinámica: " + actualEraDinamica + ")");
         }
 
         Scene currentScene = primaryStageRef.getScene();

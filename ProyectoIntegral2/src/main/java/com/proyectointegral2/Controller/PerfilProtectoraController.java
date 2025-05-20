@@ -41,18 +41,16 @@ public class PerfilProtectoraController {
     @FXML private ListView<String> listViewRedesSociales;
     @FXML private ImageView imgLogoDogpuccino;
 
-    // No necesitamos ProtectoraDao aquí si los datos vienen por initData
-    // private ProtectoraDao protectoraDao;
     private RedesSocialesDao redesSocialesDao;
     private Protectora protectoraActual;
     private Usuario cuentaUsuarioAsociada;
 
-    private final String RUTA_PLACEHOLDER_LOGO_PROT = "/assets/Imagenes/iconos/sinusuario.jpg"; // Asegúrate que esta imagen exista
+    private final String RUTA_PLACEHOLDER_LOGO_PROT = "/assets/Imagenes/iconos/sinusuario.jpg";
 
     @FXML
     public void initialize() {
         this.redesSocialesDao = new RedesSocialesDao();
-        limpiarYMostrarCargando(); // Prepara la UI para recibir datos
+        limpiarYMostrarCargando();
     }
 
 
@@ -102,7 +100,7 @@ public class PerfilProtectoraController {
         cargarLogoProtectora(protectoraActual.getRutaFotoPerfil());
         cargarRedesSocialesDeLaProtectora(protectoraActual.getIdProtectora());
 
-        BtnEditarDatosProtectora.setDisable(false); // Habilitar botón de editar
+        BtnEditarDatosProtectora.setDisable(false);
     }
 
     private String construirDireccion(Protectora p) {
@@ -117,7 +115,7 @@ public class PerfilProtectoraController {
     private void cargarLogoProtectora(String rutaLogoRelativa) {
         if (rutaLogoRelativa != null && !rutaLogoRelativa.trim().isEmpty()) {
             String pathCorregido = rutaLogoRelativa;
-            if (!pathCorregido.startsWith("/")) pathCorregido = "/" + pathCorregido;
+            if (!pathCorregido.startsWith("/")) pathCorregido = "\\" + pathCorregido;
             try (InputStream stream = getClass().getResourceAsStream(pathCorregido)) {
                 if (stream != null) {
                     imgLogoOFotoProtectora.setImage(new Image(stream));
@@ -156,7 +154,7 @@ public class PerfilProtectoraController {
                     itemsRedes.add(rs.getPlataforma() + ": " + rs.getUrl());
                 }
                 listViewRedesSociales.setItems(itemsRedes);
-                listViewRedesSociales.setPlaceholder(null); // Quitar placeholder si hay items
+                listViewRedesSociales.setPlaceholder(null);
             } else {
                 listViewRedesSociales.getItems().clear();
                 listViewRedesSociales.setPlaceholder(new Label("No hay redes sociales registradas."));

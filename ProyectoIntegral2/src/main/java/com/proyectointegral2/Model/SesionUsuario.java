@@ -12,6 +12,14 @@ public class SesionUsuario {
         entidadIdEspecifica = entidadId;
     }
 
+    public static void setUsuarioLogueado(Usuario usuarioLogueado) {
+        SesionUsuario.usuarioLogueado = usuarioLogueado;
+    }
+
+    public static void setEntidadIdEspecifica(int entidadIdEspecifica) {
+        SesionUsuario.entidadIdEspecifica = entidadIdEspecifica;
+    }
+
     public static Usuario getUsuarioLogueado() {
         return usuarioLogueado;
     }

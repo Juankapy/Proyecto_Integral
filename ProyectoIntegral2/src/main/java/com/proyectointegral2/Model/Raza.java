@@ -1,17 +1,22 @@
 package com.proyectointegral2.Model;
 
 public class Raza {
-
     private int idRaza;
     private String nombreRaza;
 
-    public Raza() {}
+    public Raza(String nombreRaza) {
+        this.nombreRaza = nombreRaza;
+    }
 
     public Raza(int idRaza, String nombreRaza) {
         this.idRaza = idRaza;
         this.nombreRaza = nombreRaza;
     }
 
+    // Constructor vacío (buena práctica)
+    public Raza() {}
+
+    // Getters y Setters
     public int getIdRaza() {
         return idRaza;
     }

@@ -37,7 +37,7 @@
                         <ImageView fx:id="imgIconoUsuarioGrande" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <!-- RUTA CORREGIDA -->
-                                <Image url="@../../../assets/Imagenes/iconos/usuario-main-blue.png" /> <!-- Asegúrate que este es el icono correcto -->
+                                <Image url="@../../../assets/Imagenes/iconos/usuario-main-blue.png" />
                             </image>
                         </ImageView>
                         <Label text="Perfil de usuario" textFill="#3E2723">
@@ -78,7 +78,7 @@
                                                 <Label text="Nombre:">
                                                     <font><Font name="System Bold" size="15.0" /></font>
                                                 </Label>
-                                                <Label fx:id="TxtNombre" text="Cargando..."> <!-- Texto inicial mientras carga -->
+                                                <Label fx:id="TxtNombre" text="Cargando...">
                                                     <font><Font size="15.0" /></font>
                                                 </Label>
                                             </children>
@@ -150,7 +150,6 @@
             <children>
                 <ImageView fx:id="imgLogoDogpuccino" fitHeight="82.0" fitWidth="97.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <!-- RUTA CORREGIDA -->
                         <Image url="@../../../assets/Imagenes/iconos/icono-bgless.png" />
                     </image>
                 </ImageView>

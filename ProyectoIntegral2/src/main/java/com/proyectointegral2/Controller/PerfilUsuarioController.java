@@ -5,6 +5,7 @@ import com.proyectointegral2.Model.Usuario; // Para el objeto que se pasa a Form
 import com.proyectointegral2.Model.ReservaCita;
 import com.proyectointegral2.dao.ClienteDao;
 import com.proyectointegral2.dao.ReservaCitaDao; // DAO para el historial de citas
+import com.proyectointegral2.dao.UsuarioDao;
 import com.proyectointegral2.utils.UtilidadesVentana;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -42,9 +43,9 @@ public class PerfilUsuarioController {
     @FXML private ImageView imgLogoDogpuccino;
 
     private ClienteDao clienteDAO;
-    private ReservaCitaDao reservaCitaDao; // Para el historial
+    private ReservaCitaDao reservaCitaDao;
     private Cliente clienteActual;
-    private int idUsuarioDelPerfil; // ID del USUARIO (de la tabla Usuario)
+    private int idUsuarioDelPerfil;
 
     private final String RUTA_PLACEHOLDER_PERFIL = "/assets/Imagenes/iconos/sinusuario.jpg";
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -53,7 +54,7 @@ public class PerfilUsuarioController {
     @FXML
     public void initialize() {
         this.clienteDAO = new ClienteDao();
-        this.reservaCitaDao = new ReservaCitaDao(); // Instanciar DAO de citas
+        this.reservaCitaDao = new ReservaCitaDao();
         limpiarYMostrarCargando();
     }
 
@@ -96,7 +97,7 @@ public class PerfilUsuarioController {
                 TxtDireccion.setText(direccionCompleta.isEmpty() ? "No disponible" : direccionCompleta);
 
                 cargarFotoDePerfil(clienteActual.getRutaFotoPerfil());
-                cargarHistorialCitasDelCliente(clienteActual.getIdCliente()); // Usar ID_CLIENTE
+                cargarHistorialCitasDelCliente(clienteActual.getIdCliente());
 
                 BtnEditarDatos.setDisable(false);
             } else {
@@ -126,7 +127,7 @@ public class PerfilUsuarioController {
     private void cargarFotoDePerfil(String rutaImagenRelativaAlClasspath) {
         if (rutaImagenRelativaAlClasspath != null && !rutaImagenRelativaAlClasspath.trim().isEmpty()) {
             String pathCorregido = rutaImagenRelativaAlClasspath;
-            if (!pathCorregido.startsWith("/")) { pathCorregido = "/" + pathCorregido; }
+            if (!pathCorregido.startsWith("/")) { pathCorregido = "\\" + pathCorregido; }
             try (InputStream stream = getClass().getResourceAsStream(pathCorregido)) {
                 if (stream != null) {
                     imgFotoPerfil.setImage(new Image(stream));
@@ -138,7 +139,7 @@ public class PerfilUsuarioController {
                 System.err.println("Excepción al cargar la imagen de perfil desde '" + pathCorregido + "': " + e.getMessage());
             }
         }
-        cargarImagenPlaceholder(); // Cargar placeholder si la imagen del usuario falla o no existe
+        cargarImagenPlaceholder();
     }
 
     private void cargarHistorialCitasDelCliente(int idCliente) {
@@ -147,20 +148,17 @@ public class PerfilUsuarioController {
             return;
         }
         try {
-            List<ReservaCita> citas = reservaCitaDao.obtenerReservasPorCliente(idCliente); // Usa tu método DAO
+            List<ReservaCita> citas = reservaCitaDao.obtenerReservasPorCliente(idCliente);
             ObservableList<String> historialItems = FXCollections.observableArrayList();
             if (citas != null && !citas.isEmpty()) {
                 for (ReservaCita rc : citas) {
-                    // Formatear la entrada del historial como en tu imagen de ejemplo
-                    String perroInfo = rc.getMotivo(); // Asumimos que el motivo incluye el nombre del perro o descripción
-                    // Si tienes un idPerro en ReservaCita y quieres el nombre del perro:
-                    // Perro perro = perroDao.obtenerPerroPorId(rc.getIdPerro());
-                    // if (perro != null) perroInfo = "Cita con " + perro.getNombre();
+
+                    String perroInfo = rc.getMotivo();
 
                     historialItems.add(rc.getFecha().format(dateFormatter) + " - " + perroInfo);
                 }
                 listViewHistorial.setItems(historialItems);
-                listViewHistorial.setPlaceholder(null); // Quitar placeholder si hay items
+                listViewHistorial.setPlaceholder(null);
             } else {
                 listViewHistorial.getItems().clear();
                 listViewHistorial.setPlaceholder(new Label("No hay historial de citas o eventos."));
@@ -199,36 +197,38 @@ public class PerfilUsuarioController {
 
     @FXML
     void IrAFormularioUsuario(MouseEvent event) {
-        if (clienteActual == null || clienteActual.getIdUsuario() <= 0) {
+        if (clienteActual == null) {
             UtilidadesVentana.mostrarAlertaError("Error", "No hay datos de cliente cargados para editar.");
             return;
         }
-        System.out.println("Botón Editar Datos presionado para Usuario ID: " + clienteActual.getIdUsuario());
+        Usuario cuentaDelCliente = null;
+        if (this.idUsuarioDelPerfil > 0) {
+            UsuarioDao tempUsuarioDao = new UsuarioDao();
+            try {
+                cuentaDelCliente = tempUsuarioDao.obtenerUsuarioPorId(this.idUsuarioDelPerfil);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                UtilidadesVentana.mostrarAlertaError("Error DB", "No se pudo obtener la cuenta de usuario para editar.");
+                return;
+            }
+        }
+        if (cuentaDelCliente == null) {
+            UtilidadesVentana.mostrarAlertaError("Error", "No se pudo obtener la información de la cuenta para editar.");
+            return;
+        }
+
+        System.out.println("Botón Editar Datos Personales presionado para Cliente ID: " + clienteActual.getIdCliente());
         String formularioUsuarioFxml = "/com/proyectointegral2/Vista/FormularioUsuario.fxml";
-        String titulo = "Editar Perfil";
+        String titulo = "Editar Perfil de " + clienteActual.getNombre();
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(formularioUsuarioFxml));
             Parent root = loader.load();
+            root.getProperties().put("fxmlLocation", formularioUsuarioFxml);
             FormularioUsuarioController formularioController = loader.getController();
 
             if (formularioController != null) {
-                // Necesitas una forma de obtener el objeto Usuario completo si FormularioUsuarioController lo espera
-                // o adaptar FormularioUsuarioController para que acepte un Cliente o un idUsuario.
-                // Por ahora, asumimos que podemos pasar el objeto Cliente directamente si FormularioUsuarioController
-                // tiene un método initDataParaEdicion(Cliente cliente).
-                // O, si FormularioUsuarioController espera un Usuario, construye uno:
-                Usuario usuarioParaEdicion = new Usuario(); // Necesitarás obtener el NombreUsu real
-                usuarioParaEdicion.setIdUsuario(clienteActual.getIdUsuario());
-                // Idealmente, FormularioUsuarioController carga el Usuario por ID o acepta Cliente.
-                // Si no tienes el nombre de usuario aquí, el formulario de edición no podrá mostrarlo/editarlo.
-                // Podrías obtenerlo con UsuarioDao si es necesario:
-                // UsuarioDao tempUsuarioDao = new UsuarioDao();
-                // Usuario cuentaUsuario = tempUsuarioDao.obtenerUsuarioPorId(clienteActual.getIdUsuario());
-                // if (cuentaUsuario != null) usuarioParaEdicion.setNombreUsu(cuentaUsuario.getNombreUsu());
-
-                formularioController.initDataParaEdicion(usuarioParaEdicion); // O initDataParaEdicion(clienteActual)
-                // si FormularioUsuarioController está preparado
+                formularioController.initDataParaEdicion(this.clienteActual, cuentaDelCliente);
                 UtilidadesVentana.cambiarEscenaConRoot(root, titulo, false);
             } else {
                 UtilidadesVentana.mostrarAlertaError("Error Interno", "No se pudo abrir el formulario de edición.");
@@ -236,15 +236,14 @@ public class PerfilUsuarioController {
         } catch (IOException e) {
             e.printStackTrace();
             UtilidadesVentana.mostrarAlertaError("Error de Navegación", "No se pudo abrir el formulario de edición: " + e.getMessage());
-        } catch (Exception e) { // Captura más genérica por si initData del otro controller falla
-            e.printStackTrace();
-            UtilidadesVentana.mostrarAlertaError("Error Inesperado", "Ocurrió un error al intentar editar el perfil.");
         }
     }
 
     @FXML
     void handleVolver(MouseEvent event) {
         System.out.println("Icono Volver presionado en PerfilUsuario.");
-        UtilidadesVentana.volverAEscenaAnterior();
+        String MainFxml = "/com/proyectointegral2/Vista/Main.fxml";
+        String MainTitle = "Inicio de Sesión - Dogpuccino";
+        UtilidadesVentana.cambiarEscena(MainFxml, MainTitle, false);
     }
 }
