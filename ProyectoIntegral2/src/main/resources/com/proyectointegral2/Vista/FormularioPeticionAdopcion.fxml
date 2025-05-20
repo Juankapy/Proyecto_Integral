@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<BorderPane fx:id="solicitudAdopcionPane" prefHeight="793.0" prefWidth="650.0" style="-fx-background-color: #F5F1EA;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyectointegral2.Controller.FormularioSolicitudAdopcionController">
+    <top>
+        <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="10.0" style="-fx-background-color: #8FBC8F;" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+            </padding>
+            <children>
+                <ImageView fx:id="imgIconoAdopcion" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../../../assets/Imagenes/iconos/pata.png" />
+                    </image>
+                </ImageView>
+                <Label text="Solicitud de Adopción" textFill="WHITE">
+                    <font><Font name="System Bold" size="20.0" /></font>
+                </Label>
+            </children>
+        </HBox>
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent; -fx-background: transparent;">
+            <content>
+                <VBox alignment="TOP_CENTER" spacing="25.0">
+                    <padding>
+                        <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
+                    </padding>
+                    <children>
+                        <VBox spacing="10.0" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #D0D0D0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 1);">
+                            <children>
+                                <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #3E2723;" text="Tus Datos (Solicitante)">
+                                    <VBox.margin><Insets bottom="10.0" /></VBox.margin>
+                                </Label>
+                                <GridPane hgap="8.0" vgap="8.0">
+                                    <columnConstraints>
+                                        <ColumnConstraints halignment="RIGHT" hgrow="NEVER" minWidth="10.0" prefWidth="120.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                    </columnConstraints>
+                                    <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="28.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="28.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="28.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="28.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="28.0" vgrow="SOMETIMES" />
+                                    </rowConstraints>
+                                    <children>
+                                        <Label text="Nombre:" style="-fx-text-fill:black"><font><Font name="System Bold" size="14.0" /></font></Label>
+                                        <Label fx:id="lblNombreCliente" style="-fx-font-size: 14px;" text="[Nombre Cliente]" GridPane.columnIndex="1" />
+
+                                        <Label text="NIF/NIE:" GridPane.rowIndex="1" style="-fx-text-fill:black"><font><Font name="System Bold" size="14.0" /></font></Label>
+                                        <Label fx:id="lblNifCliente" style="-fx-font-size: 14px;" text="[NIF Cliente]" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                                        <Label text="Email:" GridPane.rowIndex="2" style="-fx-text-fill:black"><font><Font name="System Bold" size="14.0" /></font></Label>
+                                        <Label fx:id="lblEmailCliente" style="-fx-font-size: 14px;" text="[Email Cliente]" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                                        <Label text="Teléfono:" GridPane.rowIndex="3" style="-fx-text-fill:black"><font><Font name="System Bold" size="14.0" /></font></Label>
+                                        <Label fx:id="lblTelefonoCliente" style="-fx-font-size: 14px;" text="[Teléfono Cliente]" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                                        <Label text="Dirección:" GridPane.rowIndex="4" GridPane.valignment="TOP" style="-fx-text-fill:black"><font><Font name="System Bold" size="14.0" /></font></Label>
+                                        <Label fx:id="lblDireccionCliente" style="-fx-font-size: 14px;" text="[Dirección Cliente]" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                    </children>
+                                </GridPane>
+                            </children>
+                        </VBox>
+
+                        <VBox spacing="10.0" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #D0D0D0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 1);">
+                            <children>
+                                <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #3E2723;" text="Perro a Adoptar">
+                                    <VBox.margin><Insets bottom="10.0" /></VBox.margin>
+                                </Label>
+                                <GridPane hgap="8.0" vgap="8.0">
+                                    <columnConstraints>
+                                        <ColumnConstraints halignment="RIGHT" hgrow="NEVER" minWidth="10.0" prefWidth="120.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                    </columnConstraints>
+                                    <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="28.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="28.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="28.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="28.0" vgrow="SOMETIMES" />
+                                    </rowConstraints>
+                                    <children>
+                                        <Label text="Nombre Perro:" style="-fx-text-fill:black"><font><Font name="System Bold" size="14.0" /></font></Label>
+                                        <Label fx:id="lblNombrePerroAdopcion" style="-fx-font-size: 14px;" text="[Nombre Perro]" GridPane.columnIndex="1" />
+
+                                        <Label text="Edad Estimada:" GridPane.rowIndex="1" style="-fx-text-fill:black"><font><Font name="System Bold" size="14.0" /></font></Label>
+                                        <Label fx:id="lblEdadPerroAdopcion" style="-fx-font-size: 14px;" text="[Edad Perro]" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                                        <Label text="Raza:" GridPane.rowIndex="2" style="-fx-text-fill:black"><font><Font name="System Bold" size="14.0" /></font></Label>
+                                        <Label fx:id="lblRazaPerroAdopcion" style="-fx-font-size: 14px;" text="[Raza Perro]" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                                        <Label text="Protectora:" GridPane.rowIndex="3" style="-fx-text-fill:black"><font><Font name="System Bold" size="14.0" /></font></Label>
+                                        <Label fx:id="lblNombreProtectoraAdopcion" style="-fx-font-size: 14px;" text="[Nombre Protectora]" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                    </children>
+                                </GridPane>
+                            </children>
+                        </VBox>
+
+                        <!-- Sección Motivación -->
+                        <VBox spacing="8.0" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #D0D0D0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 1);">
+                            <children>
+                                <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #3E2723;" text="Motivación para la Adopción">
+                                    <VBox.margin><Insets bottom="5.0" /></VBox.margin>
+                                </Label>
+                                <TextArea fx:id="txtAreaMotivacion" prefHeight="120.0" promptText="Describe por qué quieres adoptar a este perrito, cómo es tu hogar, tu experiencia previa con animales, tu estilo de vida, etc." style="-fx-border-color: #A1887F; -fx-border-radius: 5;" wrapText="true" />
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" prefHeight="34.0" prefWidth="650.0" spacing="15.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="20.0" left="40.0" right="40.0" top="10.0" />
+            </padding>
+            <children>
+                <Button fx:id="btnCancelarSolicitud" mnemonicParsing="false" onAction="#handleCancelar" style="-fx-background-color: red; -fx-text-fill: white; -fx-background-radius: 8;" text="Cancelar">
+                    <font><Font name="System Bold" size="14.0" /></font>
+                    <padding><Insets bottom="8.0" left="20.0" right="20.0" top="8.0" /></padding>
+                </Button>
+                <Button fx:id="btnEnviarSolicitud" mnemonicParsing="false" onAction="#handleEnviarSolicitud" style="-fx-background-color: #8FBC8F; -fx-text-fill: white; -fx-background-radius: 8;" text="Enviar Solicitud"> <!-- Color verde adopción -->
+                    <font><Font name="System Bold" size="14.0" /></font>
+                    <padding><Insets bottom="8.0" left="20.0" right="20.0" top="8.0" /></padding>
+                </Button>
+            </children>
+        </HBox>
+    </bottom>
+</BorderPane>

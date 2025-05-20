@@ -10,13 +10,14 @@ import java.util.List;
 public class PeticionAdopcionDao{
 
     public int crearPeticionAdopcion(PeticionAdopcion peticion) throws SQLException {
-        String sqlInsert = "INSERT INTO Peticiones_Adopcion (Fecha, Estado, ID_Cliente, ID_Perro) VALUES (?, ?, ?, ?)";
+        String sqlInsert = "INSERT INTO Peticiones_Adopcion (Fecha, Estado, ID_Cliente, ID_Perro,MENSAJE_PETICION) VALUES (?, ?, ?, ?,?)";
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setDate(1, peticion.getFecha());
             pstmt.setString(2, peticion.getEstado() != null ? peticion.getEstado() : "Pendiente");
             pstmt.setInt(3, peticion.getIdCliente());
             pstmt.setInt(4, peticion.getIdPerro());
+            pstmt.setString(5, peticion.getMensajePeticion());
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) throw new SQLException("No se pudo crear la petición.");
             try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {

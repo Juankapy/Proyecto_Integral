@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="eventosPanelPane" prefHeight="720.0" prefWidth="1200.0" style="-fx-background-color: #FDF5E6;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyectointegral2.Controller.EventosPanelController">
+   <top>
+      <HBox alignment="CENTER_LEFT" prefHeight="70.0" spacing="10.0" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="10.0" left="30.0" right="30.0" top="10.0" />
+         </padding>
+         <children>
+            <ImageView fx:id="logoImageView" fitHeight="76.0" fitWidth="179.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <!-- RUTA CORREGIDA -->
+                  <Image url="@../../../assets/Imagenes/iconos/dogiconlateral.png" />
+               </image>
+            </ImageView>
+            <Region HBox.hgrow="ALWAYS" />
+            <!-- Iconos de la derecha (Bandeja, Usuario) - Decide si son necesarios en la vista de eventos -->
+            <ImageView fx:id="IconBandeja" fitHeight="40.0" fitWidth="40.0" onMouseClicked="#handleIrABandeja" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
+               <image><Image url="@../../../assets/Imagenes/iconos/bandeja-de-entrada-blue.png" /></image>
+               <HBox.margin><Insets right="10.0" /></HBox.margin>
+            </ImageView>
+            <ImageView fx:id="ImgIconUsuario" fitHeight="40.0" fitWidth="40.0" onMouseClicked="#handleIrAPerfil" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
+               <image><Image url="@../../../assets/Imagenes/iconos/usuario-main-blue.png" /></image>
+            </ImageView>
+         </children>
+      </HBox>
+   </top>
+   <center>
+      <VBox alignment="TOP_CENTER" spacing="15.0" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
+         </padding>
+         <children>
+            <!-- Encabezado de la Sección de Eventos -->
+            <HBox alignment="CENTER_LEFT" prefHeight="40.0" spacing="10.0" style="-fx-padding: 0 0 15 0;">
+               <children>
+                  <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #3E2723;" text="Próximos Eventos">
+                     <font>
+                        <Font name="System Bold" size="22.0" />
+                     </font>
+                  </Label>
+                  <Region HBox.hgrow="ALWAYS" />
+                  <!-- Opcional: Botón para que protectoras añadan eventos, si aplica -->
+                  <!-- <Button fx:id="btnNuevoEvento" text="+ Nuevo Evento" style="-fx-background-color: #E67E22; -fx-text-fill: white;"/> -->
+               </children>
+            </HBox>
+
+            <!-- Contenedor Principal para Eventos y Mensaje "No hay eventos" -->
+            <StackPane fx:id="eventosContentStackPane" VBox.vgrow="ALWAYS">
+               <children>
+                  <!-- ScrollPane para las tarjetas de eventos (inicialmente podría estar vacío o no visible) -->
+                  <ScrollPane fx:id="eventosScrollPane" fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent; -fx-background: transparent;" visible="false"> <!-- Inicia no visible -->
+                     <content>
+                        <VBox fx:id="eventosContainerVBox" alignment="TOP_CENTER" spacing="20.0" style="-fx-padding: 10;">
+                           <!-- Las tarjetas de eventos se añadirán aquí dinámicamente -->
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+
+                  <Label fx:id="lblNoEventos" style="-fx-font-size: 28px; -fx-text-fill: #7f8c8d; -fx-font-style: italic;" text="No hay eventos próximos" visible="true"> <!-- Inicia visible -->
+                     <font>
+                        <Font name="System Bold Italic" size="28.0" />
+                     </font>
+                     <StackPane.margin>
+                        <Insets top="50.0" /> <!-- Margen para separarlo un poco del título -->
+                     </StackPane.margin>
+                  </Label>
+               </children>
+            </StackPane>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>
