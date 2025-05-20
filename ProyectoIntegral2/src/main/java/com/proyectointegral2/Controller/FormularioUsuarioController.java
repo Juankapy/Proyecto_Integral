@@ -31,15 +31,15 @@ public class FormularioUsuarioController {
     @FXML private Label lblTituloFormulario;
     @FXML private ImageView imgFotoPerfilEditable;
     @FXML private Button btnCambiarFoto;
-    @FXML private TextField txtNombre;
-    @FXML private TextField txtApellidos;
-    @FXML private TextField txtEmail;
-    @FXML private TextField txtTelefono;
-    @FXML private TextField txtDireccion;
-    @FXML private PasswordField txtPassword;
-    @FXML private PasswordField txtConfirmPassword;
-    @FXML private Button btnCancelar;
-    @FXML private Button btnGuardar;
+    @FXML private TextField TxtNombre;
+    @FXML private TextField TxtApellidos;
+    @FXML private TextField TxtEmail;
+    @FXML private TextField TxtTelefono;
+    @FXML private TextField TxtDireccion;
+    @FXML private PasswordField TxtPassword;
+    @FXML private PasswordField TxtConfirmPassword;
+    @FXML private Button BtnCancelar;
+    @FXML private Button BtnGuardar;
 
     private UsuarioDao usuarioDAO;
     private Usuario usuarioAEditar;
@@ -61,7 +61,7 @@ public class FormularioUsuarioController {
         this.usuarioAEditar = usuario;
         this.modoEdicion = true;
         lblTituloFormulario.setText("Editar Perfil");
-        btnGuardar.setText("Guardar Cambios");
+        BtnGuardar.setText("Guardar Cambios");
         poblarCamposConDatosUsuario();
     }
 
@@ -73,13 +73,13 @@ public class FormularioUsuarioController {
     }
 
     private void limpiarCampos() {
-        txtNombre.clear();
-        txtApellidos.clear();
-        txtEmail.clear();
-        txtTelefono.clear();
-        txtDireccion.clear();
-        txtPassword.clear();
-        txtConfirmPassword.clear();
+        TxtNombre.clear();
+        TxtApellidos.clear();
+        TxtEmail.clear();
+        TxtTelefono.clear();
+        TxtDireccion.clear();
+        TxtPassword.clear();
+        TxtConfirmPassword.clear();
         nuevaFotoSeleccionada = null;
         rutaRelativaNuevaFoto = null;
         cargarImagenPlaceholder();
@@ -121,13 +121,13 @@ public class FormularioUsuarioController {
 
     @FXML
     void Guardar(ActionEvent event) {
-        String nombre = txtNombre.getText().trim();
-        String apellidos = txtApellidos.getText().trim();
-        String email = txtEmail.getText().trim();
-        String telefono = txtTelefono.getText().trim();
-        String direccion = txtDireccion.getText().trim();
-        String password = txtPassword.getText();
-        String confirmPassword = txtConfirmPassword.getText();
+        String nombre = TxtNombre.getText().trim();
+        String apellidos = TxtApellidos.getText().trim();
+        String email = TxtEmail.getText().trim();
+        String telefono = TxtTelefono.getText().trim();
+        String direccion = TxtDireccion.getText().trim();
+        String password = TxtPassword.getText();
+        String confirmPassword = TxtConfirmPassword.getText();
 
         if (nombre.isEmpty() || apellidos.isEmpty() || email.isEmpty()) {
             UtilidadesVentana.mostrarAlertaError("Campos Vacíos", "Nombre, apellidos y email son obligatorios.");

@@ -48,7 +48,6 @@
                             </children>
                         </VBox>
 
-                        <!-- Campos del Formulario -->
                         <GridPane hgap="10.0" vgap="12.0">
                             <columnConstraints>
                                 <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="120.0" />
@@ -108,7 +107,7 @@
                     <font><Font name="System Bold" size="14.0" /></font>
                     <padding><Insets bottom="8.0" left="20.0" right="20.0" top="8.0" /></padding>
                 </Button>
-                <Button fx:id="bBnGuardar" mnemonicParsing="false" onAction="#Guardar" style="-fx-background-color: #6596ed; -fx-text-fill: white; -fx-background-radius: 8;" text="Guardar Cambios">
+                <Button fx:id="BtnGuardar" mnemonicParsing="false" onAction="#Guardar" style="-fx-background-color: #6596ed; -fx-text-fill: white; -fx-background-radius: 8;" text="Guardar Cambios">
                     <font><Font name="System Bold" size="14.0" /></font>
                     <padding><Insets bottom="8.0" left="20.0" right="20.0" top="8.0" /></padding>
                 </Button>

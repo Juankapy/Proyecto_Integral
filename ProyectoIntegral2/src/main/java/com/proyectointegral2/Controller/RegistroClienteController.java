@@ -59,23 +59,42 @@ public class RegistroClienteController implements Initializable {
         String ciudad = TxtCiudad.getText().trim();
         String telefono = TxtTel.getText().trim();
         LocalDate fechaNacimientoLocal = DpFechaNacimiento.getValue();
-        String email = TxtCorreo.getText().trim();
+        String emailCliente = TxtCorreo.getText().trim();
         String contrasena = TxtContra.getText();
         String confirmarContrasena = TxtConfirmarContra.getText();
 
-        if (nombre.isEmpty() || apellidos.isEmpty() || nombreUsuario.isEmpty() || email.isEmpty() || contrasena.isEmpty()) {
-            UtilidadesVentana.mostrarAlertaError("Campos Incompletos", "Rellena los campos obligatorios.");
-            return;
-        }
-        if (!contrasena.equals(confirmarContrasena)) {
-            UtilidadesVentana.mostrarAlertaError("Error de Contraseña", "Las contraseñas no coinciden.");
+        if (nombre.isEmpty() || apellidos.isEmpty() || nombreUsuario.isEmpty() || emailCliente.isEmpty() ||
+                nif.isEmpty() || calle.isEmpty() || provincia.isEmpty() || ciudad.isEmpty() || cp.isEmpty() ||
+                telefono.isEmpty() || fechaNacimientoLocal == null || contrasena.isEmpty() || confirmarContrasena.isEmpty()) {
+            UtilidadesVentana.mostrarAlertaError("Campos Incompletos", "Por favor, rellena todos los campos.");
             return;
         }
 
+        if (!contrasena.equals(confirmarContrasena)) {
+            UtilidadesVentana.mostrarAlertaError("Error de Contraseña", "Las contraseñas no coinciden.");
+            TxtContra.clear();
+            TxtConfirmarContra.clear();
+            TxtContra.requestFocus();
+            return;
+        }
+
+
         try {
             if (usuarioDAO.obtenerUsuarioPorNombreUsuario(nombreUsuario) != null) {
-                UtilidadesVentana.mostrarAlertaError("Usuario Existente", "El nombre de usuario '" + nombreUsuario + "' ya está en uso.");
+                UtilidadesVentana.mostrarAlertaError("Usuario Existente", "El nombre de usuario '" + nombreUsuario + "' ya está en uso. Por favor, elige otro.");
                 TxtNombreUsuario.requestFocus();
+                return;
+            }
+
+            if (clienteDAO.obtenerClientePorNIF(nif) != null) {
+                UtilidadesVentana.mostrarAlertaError("NIF Existente", "El NIF '" + nif + "' ya está registrado.");
+                TxtNIF.requestFocus();
+                return;
+            }
+
+            if (clienteDAO.obtenerClientePorEmail(emailCliente) != null) {
+                UtilidadesVentana.mostrarAlertaError("Email Existente", "El email '" + emailCliente + "' ya está registrado para otro cliente.");
+                TxtCorreo.requestFocus();
                 return;
             }
 
@@ -88,34 +107,32 @@ public class RegistroClienteController implements Initializable {
 
             if (idUsuarioCreado != -1) {
                 Cliente nuevoCliente = new Cliente();
+                nuevoCliente.setIdCliente(0);
                 nuevoCliente.setNif(nif);
                 nuevoCliente.setNombre(nombre);
                 nuevoCliente.setApellidos(apellidos);
-                if (fechaNacimientoLocal != null) {
-                    nuevoCliente.setFechaNacimiento(fechaNacimientoLocal);
-                }
+                nuevoCliente.setFechaNacimiento(fechaNacimientoLocal);
                 nuevoCliente.setProvincia(provincia);
                 nuevoCliente.setCiudad(ciudad);
                 nuevoCliente.setCalle(calle);
                 nuevoCliente.setCodigoPostal(cp);
                 nuevoCliente.setTelefono(telefono);
-                nuevoCliente.setEmail(email);
+                nuevoCliente.setEmail(emailCliente);
                 nuevoCliente.setIdUsuario(idUsuarioCreado);
-
                 int idClienteCreado = clienteDAO.crearCliente(nuevoCliente);
 
                 if (idClienteCreado != -1) {
-                    UtilidadesVentana.mostrarAlertaInformacion("Registro Exitoso", "¡Cliente registrado correctamente!");
+                    UtilidadesVentana.mostrarAlertaInformacion("Registro Exitoso", "¡Te has registrado correctamente como cliente!");
                     Volver(null);
                 } else {
-                    UtilidadesVentana.mostrarAlertaError("Error de Registro", "No se pudo crear el perfil del cliente.");
+                    UtilidadesVentana.mostrarAlertaError("Error de Registro", "No se pudo crear el perfil del cliente en la base de datos. Por favor, contacta con soporte.");
                 }
             } else {
-                UtilidadesVentana.mostrarAlertaError("Error de Registro", "No se pudo crear la cuenta de usuario.");
+                UtilidadesVentana.mostrarAlertaError("Error de Registro", "No se pudo crear la cuenta de usuario. El nombre de usuario o el email podrían ya estar en uso para una cuenta.");
             }
 
         } catch (SQLException e) {
-            UtilidadesExcepciones.mostrarError(e, "Error de Base de Datos", "Ocurrió un error al registrar el cliente.");
+            UtilidadesExcepciones.mostrarError(e, "Error de Base de Datos", "Ocurrió un error al procesar el registro.");
             e.printStackTrace();
         } catch (Exception e) {
             UtilidadesExcepciones.mostrarError(e, "Error Inesperado", "Ocurrió un error general durante el registro.");

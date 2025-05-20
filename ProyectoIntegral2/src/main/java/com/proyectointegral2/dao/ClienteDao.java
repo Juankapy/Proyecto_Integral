@@ -166,6 +166,21 @@ public class ClienteDao {
         }
     }
 
+    public Cliente obtenerClientePorEmail(String email) throws SQLException {
+        String sql = "SELECT * FROM CLIENTE WHERE EMAIL = ?";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, email);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToCliente(rs);
+                }
+            }
+        }
+        return null;
+    }
+
+
     public boolean eliminarCliente(int idCliente) throws SQLException {
         String sql = "DELETE FROM CLIENTE WHERE ID_CLIENTE = ?";
         try (Connection conn = ConexionDB.getConnection();
