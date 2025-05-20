@@ -398,9 +398,25 @@ public class MainClienteController {
         }
     }
 
-    @FXML void Reservar(ActionEvent event) { System.out.println("Botón Reservar presionado"); }
-    @FXML void Adopciones(ActionEvent event) { System.out.println("Botón Adopciones presionado"); }
-    @FXML void Eventos(ActionEvent event) { System.out.println("Botón Eventos presionado"); }
+    @FXML void Reservar(ActionEvent event) {
+        System.out.println("Botón Reservar para volver a main perros presionado");
+        String reservarFxml = "/com/proyectointegral2/Vista/Main.fxml";
+        String reservartitulo = "Panel de Main";
+        UtilidadesVentana.cambiarEscena(reservarFxml, reservartitulo, true);
+         }
+    @FXML void Adopciones(ActionEvent event) {
+        System.out.println("Botón Adopciones presionado");
+        String AdopcionesFxml = "/com/proyectointegral2/Vista/AdopcionesPanel.fxml";
+        String Adopcionestitulo = "Panel de Adopciones";
+        UtilidadesVentana.cambiarEscena(AdopcionesFxml, Adopcionestitulo, true);
+    }
+
+    @FXML void Eventos(ActionEvent event) {
+            System.out.println("Botón Eventos presionado");
+            String eventosFxml = "/com/proyectointegral2/Vista/EventosPanel.fxml";
+            String eventostitulo = "Panel de Eventos";
+            UtilidadesVentana.cambiarEscena(eventosFxml, eventostitulo, true);
+    }
 
     @FXML
     void Bandeja(MouseEvent event) {

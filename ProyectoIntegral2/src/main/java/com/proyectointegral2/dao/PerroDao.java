@@ -122,7 +122,6 @@ public class PerroDao {
     }
 
     public boolean actualizarPerro(Perro perro) throws SQLException {
-        // ELIMINADO DESCRIPCION_PERRO de la query y de los parámetros
         String sql = "UPDATE PERROS SET NOMBRE = ?, SEXO = ?, FECHA_NACIMIENTO = ?, ADOPTADO = ?, FOTO = ?, ID_PROTECTORA = ?, ID_RAZA = ? WHERE ID_PERRO = ?";
 
         try (Connection conn = ConexionDB.getConnection();
@@ -141,11 +140,10 @@ public class PerroDao {
             if (perro.getRaza() != null && perro.getRaza().getIdRaza() > 0) {
                 pstmt.setInt(7, perro.getRaza().getIdRaza());
             } else {
-                pstmt.setNull(7, Types.NUMERIC); // O lanzar error si raza es obligatoria
+                pstmt.setNull(7, Types.NUMERIC);
                 System.err.println("Advertencia al actualizar perro: ID_Raza es nulo o inválido para el perro ID: " + perro.getIdPerro());
             }
-            // ELIMINADO: pstmt.setString(8, perro.getDescripcionPerro());
-            pstmt.setInt(8, perro.getIdPerro()); // El índice ahora es 8 para ID_PERRO
+            pstmt.setInt(8, perro.getIdPerro());
 
             return pstmt.executeUpdate() > 0;
         }
@@ -172,14 +170,34 @@ public class PerroDao {
         perro.setAdoptado(rs.getString("ADOPTADO"));
         perro.setFoto(rs.getString("FOTO"));
         perro.setIdProtectora(rs.getInt("ID_PROTECTORA"));
-        // ELIMINADO: perro.setDescripcionPerro(rs.getString("DESCRIPCION_PERRO"));
 
         Raza raza = new Raza();
         raza.setIdRaza(rs.getInt("ID_RAZA"));
-        // Si tu query SELECT ya hace JOIN y trae NOMBRE_RAZA (como las actualizadas arriba)
         raza.setNombreRaza(rs.getString("NOMBRE_RAZA"));
         perro.setRaza(raza);
 
         return perro;
+    }
+
+    public List<Perro> obtenerTodosLosPerrosNoAdoptados() throws SQLException {
+        List<Perro> perrosNoAdoptados = new ArrayList<>();
+        String sql = "SELECT P.*, R.NOMBRE_RAZA " +
+                "FROM PERROS P " +
+                "JOIN RAZA R ON P.ID_RAZA = R.ID_RAZA " +
+                "WHERE P.ADOPTADO = 'N' " +
+                "ORDER BY P.NOMBRE";
+
+        try (Connection conn = ConexionDB.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                perrosNoAdoptados.add(mapResultSetToPerroConRaza(rs));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error SQL al obtener todos los perros no adoptados: " + e.getMessage());
+            throw e;
+        }
+        return perrosNoAdoptados;
     }
 }

@@ -8,6 +8,7 @@ import com.proyectointegral2.utils.UtilidadesVentana; // Para navegación si es 
 import com.proyectointegral2.Model.SesionUsuario; // Para saber quién está logueado
 import com.proyectointegral2.Model.Usuario;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -56,7 +57,6 @@ public class EventosPanelController {
 
         this.usuarioLogueado = SesionUsuario.getUsuarioLogueado();
 
-        // Inicialmente, el scrollpane está oculto y el label de "no eventos" visible
         eventosScrollPane.setVisible(false);
         lblNoEventos.setVisible(true);
         lblNoEventos.setText("Cargando eventos..."); // Mensaje inicial
@@ -81,7 +81,6 @@ public class EventosPanelController {
 
         String perfilFxml;
         String titulo;
-        // Esta lógica asume que el perfil es diferente para Cliente y Protectora
         if ("CLIENTE".equalsIgnoreCase(usuarioLogueado.getRol())) {
             perfilFxml = "/com/proyectointegral2/Vista/PerfilUsuario.fxml";
             titulo = "Mi Perfil (" + usuarioLogueado.getNombreUsu() + ")";
@@ -113,5 +112,25 @@ public class EventosPanelController {
         } else {
             UtilidadesVentana.mostrarAlertaError("Error Rol", "Rol de usuario no reconocido para ver perfil.");
         }
+    }
+
+    @FXML void Reservar(ActionEvent event) {
+        System.out.println("Botón Reservar para volver a main perros presionado");
+        String reservarFxml = "/com/proyectointegral2/Vista/Main.fxml";
+        String reservartitulo = "Panel de Main";
+        UtilidadesVentana.cambiarEscena(reservarFxml, reservartitulo, true);
+    }
+    @FXML void Adopciones(ActionEvent event) {
+        System.out.println("Botón Adopciones presionado");
+        String AdopcionesFxml = "/com/proyectointegral2/Vista/AdopcionesPanel.fxml";
+        String Adopcionestitulo = "Panel de Adopciones";
+        UtilidadesVentana.cambiarEscena(AdopcionesFxml, Adopcionestitulo, true);
+    }
+
+    @FXML void Eventos(ActionEvent event) {
+        System.out.println("Botón Eventos presionado");
+        String eventosFxml = "/com/proyectointegral2/Vista/EventosPanel.fxml";
+        String eventostitulo = "Panel de Eventos";
+        UtilidadesVentana.cambiarEscena(eventosFxml, eventostitulo, true);
     }
 }
