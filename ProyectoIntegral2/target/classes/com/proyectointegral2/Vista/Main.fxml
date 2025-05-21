@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
@@ -65,15 +66,6 @@
                         <Insets right="5.0" />
                      </HBox.margin>
                   </ComboBox>
-
-                  <ImageView fx:id="ImgIconBuscar" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#onSearchIconClicked" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
-                     <image>
-                        <Image url="@../../../assets/Imagenes/iconos/buscar.png" />
-                     </image>
-                     <HBox.margin>
-                        <Insets right="5.0" />
-                     </HBox.margin>
-                  </ImageView>
                   <TextField fx:id="searchTextField" onAction="#onSearchTextFieldAction" prefHeight="31.0" prefWidth="220.0" promptText="Buscar..." style="-fx-background-color: #fdf5e6; -fx-background-radius: 15; -fx-border-radius: 15; -fx-border-color: #B0B0B0; -fx-padding: 5 10 5 10; -fx-border-color: #6495ed;" />
                </children>
             </HBox>

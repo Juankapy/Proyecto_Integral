@@ -1,9 +1,11 @@
 package com.proyectointegral2.dao;
 
 import com.proyectointegral2.Model.PeticionAdopcion;
+import com.proyectointegral2.Model.RegistroAdopcionInfo;
 import com.proyectointegral2.utils.ConexionDB;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,99 +32,40 @@ public class PeticionAdopcionDao{
         }
     }
 
-    public PeticionAdopcion obtenerPeticionAdopcionPorId(int idPeticion) throws SQLException {
-        String sql = "SELECT * FROM Peticiones_Adopcion WHERE ID_Peticion = ?";
-        try (Connection conn = ConexionDB.getConnection() ;
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, idPeticion);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return mapResultSetToPeticionAdopcion(rs);
-                }
-            }
-        }
-        return null;
-    }
-
-    public List<PeticionAdopcion> obtenerPeticionesPorCliente(int idCliente) throws SQLException {
-        List<PeticionAdopcion> peticiones = new ArrayList<>();
-        String sql = "SELECT * FROM Peticiones_Adopcion WHERE ID_Cliente = ? ORDER BY Fecha DESC";
-        try (Connection conn = ConexionDB.getConnection() ;
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, idCliente);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    peticiones.add(mapResultSetToPeticionAdopcion(rs));
-                }
-            }
-        }
-        return peticiones;
-    }
-
-    public List<PeticionAdopcion> obtenerPeticionesPorPerro(int idPerro) throws SQLException {
-        List<PeticionAdopcion> peticiones = new ArrayList<>();
-        String sql = "SELECT * FROM Peticiones_Adopcion WHERE ID_Perro = ? ORDER BY Fecha DESC";
-        try (Connection conn = ConexionDB.getConnection() ;
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, idPerro);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    peticiones.add(mapResultSetToPeticionAdopcion(rs));
-                }
-            }
-        }
-        return peticiones;
-    }
-
-    public List<PeticionAdopcion> obtenerPeticionesPorEstado(String estado) throws SQLException {
-        List<PeticionAdopcion> peticiones = new ArrayList<>();
-        String sql = "SELECT * FROM Peticiones_Adopcion WHERE Estado = ? ORDER BY Fecha DESC";
-        try (Connection conn = ConexionDB.getConnection() ;
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, estado);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    peticiones.add(mapResultSetToPeticionAdopcion(rs));
-                }
-            }
-        }
-        return peticiones;
-    }
-
-    public List<PeticionAdopcion> obtenerPeticionesPorProtectora(int idProtectora) throws SQLException {
-        List<PeticionAdopcion> peticiones = new ArrayList<>();
-        String sql = "SELECT pa.* FROM Peticiones_Adopcion pa " +
-                "JOIN Perros p ON pa.ID_Perro = p.ID_Perro " +
-                "WHERE p.ID_Protectora = ? ORDER BY pa.Fecha DESC";
-        try (Connection conn = ConexionDB.getConnection() ;
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+    public List<RegistroAdopcionInfo> obtenerAdopcionesAceptadasParaTabla(int idProtectora) throws SQLException {
+        List<RegistroAdopcionInfo> registros = new ArrayList<>();
+        String sql = "SELECT pa.ID_PETICION, p.NOMBRE AS NOMBRE_PERRO, pa.FECHA AS FECHA_ADOPCION, " +
+                "c.NOMBRE || ' ' || c.APELLIDOS AS NOMBRE_ADOPTANTE, c.EMAIL AS CONTACTO_ADOPTANTE " +
+                // " 'N/A' AS HORA_ADOPCION " + // Si no tienes hora específica de adopción
+                "FROM PETICIONES_ADOPCION pa " +
+                "JOIN PERROS p ON pa.ID_PERRO = p.ID_PERRO " +
+                "JOIN CLIENTE c ON pa.ID_CLIENTE = c.ID_CLIENTE " +
+                "WHERE p.ID_PROTECTORA = ? AND pa.ESTADO = 'Aceptada' " + // Solo las aceptadas
+                "ORDER BY pa.FECHA DESC, p.NOMBRE ASC";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            conn = ConexionDB.getConnection(); // Tu clase de conexión
+            pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, idProtectora);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    peticiones.add(mapResultSetToPeticionAdopcion(rs));
-                }
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                int idPeticion = rs.getInt("ID_PETICION");
+                String nombrePerro = rs.getString("NOMBRE_PERRO");
+                LocalDate fechaAdopcion = rs.getDate("FECHA_ADOPCION").toLocalDate();
+                String horaAdopcion = "N/A"; // Si tuvieras una columna de hora en PETICIONES_ADOPCION, la leerías aquí
+                String nombreAdoptante = rs.getString("NOMBRE_ADOPTANTE");
+                String contactoAdoptante = rs.getString("CONTACTO_ADOPTANTE"); // Podrías preferir el teléfono: c.TELEFONO
+
+                registros.add(new RegistroAdopcionInfo(idPeticion, nombrePerro, fechaAdopcion, horaAdopcion, nombreAdoptante, contactoAdoptante));
             }
+        } finally {
+            if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+            if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { e.printStackTrace(); }
+            if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
         }
-        return peticiones;
-    }
-
-    public boolean actualizarEstadoPeticion(int idPeticion, String nuevoEstado) throws SQLException {
-        String sql = "UPDATE Peticiones_Adopcion SET Estado = ? WHERE ID_Peticion = ?";
-        try (Connection conn = ConexionDB.getConnection() ;
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, nuevoEstado);
-            pstmt.setInt(2, idPeticion);
-            return pstmt.executeUpdate() > 0;
-        }
-    }
-
-    public boolean eliminarPeticionAdopcion(int idPeticion) throws SQLException {
-        String sql = "DELETE FROM Peticiones_Adopcion WHERE ID_Peticion = ?";
-        try (Connection conn = ConexionDB.getConnection() ;
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, idPeticion);
-            return pstmt.executeUpdate() > 0;
-        }
+        return registros;
     }
 
     private PeticionAdopcion mapResultSetToPeticionAdopcion(ResultSet rs) throws SQLException {

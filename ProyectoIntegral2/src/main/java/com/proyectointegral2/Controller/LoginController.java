@@ -1,10 +1,10 @@
 package com.proyectointegral2.Controller;
 
-import com.proyectointegral2.Model.Cliente; // Importar Cliente
-import com.proyectointegral2.Model.Protectora; // Importar Protectora
+import com.proyectointegral2.Model.Cliente;
+import com.proyectointegral2.Model.Protectora;
 import com.proyectointegral2.Model.Usuario;
-import com.proyectointegral2.dao.ClienteDao; // Importar ClienteDao
-import com.proyectointegral2.dao.ProtectoraDao; // Importar ProtectoraDao
+import com.proyectointegral2.dao.ClienteDao;
+import com.proyectointegral2.dao.ProtectoraDao;
 import com.proyectointegral2.dao.UsuarioDao;
 import com.proyectointegral2.Model.SesionUsuario;
 import com.proyectointegral2.utils.UtilidadesExcepciones;
@@ -31,14 +31,14 @@ public class LoginController {
     @FXML private Hyperlink HyRegistrarse;
 
     private UsuarioDao usuarioDao;
-    private ClienteDao clienteDao;         // Añadir instancia
-    private ProtectoraDao protectoraDao;   // Añadir instancia
+    private ClienteDao clienteDao;
+    private ProtectoraDao protectoraDao;
 
     @FXML
     public void initialize() {
         this.usuarioDao = new UsuarioDao();
-        this.clienteDao = new ClienteDao();         // Inicializar
-        this.protectoraDao = new ProtectoraDao();   // Inicializar
+        this.clienteDao = new ClienteDao();
+        this.protectoraDao = new ProtectoraDao();
     }
 
     @FXML
@@ -85,15 +85,16 @@ public class LoginController {
                 String vistaARedirigir;
                 String tituloVista;
 
-                if ("CLIENTE".equalsIgnoreCase(usuario.getRol())) {
+                if ("CLIENTE".equalsIgnoreCase(usuario.getRol().trim())) {
                     vistaARedirigir = "/com/proyectointegral2/Vista/Main.fxml";
                     tituloVista = "Panel Cliente - Dogpuccino";
-                } else if ("PROTECTORA".equalsIgnoreCase(usuario.getRol())) {
+                } else if ("PROTECTORA".equalsIgnoreCase(usuario.getRol().trim())) {
                     vistaARedirigir = "/com/proyectointegral2/Vista/MainProtectora.fxml";
                     tituloVista = "Panel Protectora - Dogpuccino";
                 } else {
-                    UtilidadesExcepciones.mostrarAdvertencia("Rol de usuario no reconocido.", "Error de rol", "El rol '" + usuario.getRol() + "' no es válido.");
+                    UtilidadesExcepciones.mostrarAdvertencia("Rol de usuario no reconocido.", "Error de rol", "El rol " + usuario.getRol() + " no es válido.");
                     SesionUsuario.cerrarSesion();
+                    System.out.println("Rol detectado: '" + usuario.getRol().trim() + "'");
                     return;
                 }
                 UtilidadesVentana.cambiarEscena(vistaARedirigir, tituloVista, true);
