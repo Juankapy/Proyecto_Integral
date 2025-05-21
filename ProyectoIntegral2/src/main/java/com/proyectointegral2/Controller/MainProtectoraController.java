@@ -2,14 +2,13 @@ package com.proyectointegral2.Controller;
 
 import com.proyectointegral2.Model.Perro;
 import com.proyectointegral2.Model.Protectora;
-// import com.proyectointegral2.Model.Raza; // No se usa directamente aquí
 import com.proyectointegral2.Model.Usuario;
 import com.proyectointegral2.Model.RegistroAdopcionInfo;
 import com.proyectointegral2.Model.RegistroPerroInfo;
 import com.proyectointegral2.Model.SesionUsuario;
 import com.proyectointegral2.dao.PerroDao;
 import com.proyectointegral2.dao.ProtectoraDao;
-import com.proyectointegral2.dao.PeticionAdopcionDao; // Asegúrate que este DAO existe y está instanciado
+import com.proyectointegral2.dao.PeticionAdopcionDao;
 import com.proyectointegral2.utils.UtilidadesVentana;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -75,6 +74,7 @@ public class MainProtectoraController {
 
     @FXML private Label lblNoPerrosEnGrid;
 
+    private static final String RUTA_BASE_IMAGENES_PERROS_RESOURCES = "/assets/Imagenes/Perros/";
     private final String RUTA_IMAGEN_PLACEHOLDER_PERRO = "/assets/Imagenes/iconos/placeholder_dog.png";
     private static final double HEADER_HEIGHT_ESTIMADA = 70.0;
     private static final double TARJETA_IMG_AREA_WIDTH = 160.0;
@@ -102,7 +102,7 @@ public class MainProtectoraController {
         try {
             this.perroDao = new PerroDao();
             this.protectoraDao = new ProtectoraDao();
-            this.peticionAdopcionDao = new PeticionAdopcionDao(); // Inicializar
+            this.peticionAdopcionDao = new PeticionAdopcionDao();
         } catch (Exception e) {
             e.printStackTrace();
             UtilidadesVentana.mostrarAlertaError("Error Crítico DAO", "No se pudo inicializar el acceso a datos: " + e.getMessage());
@@ -116,17 +116,7 @@ public class MainProtectoraController {
         if (this.usuarioCuentaLogueada == null || this.idProtectoraActual <= 0 ||
                 !"PROTECTORA".equalsIgnoreCase(this.usuarioCuentaLogueada.getRol())) {
             UtilidadesVentana.mostrarAlertaError("Error Crítico de Sesión", "No hay información de protectora válida. Volviendo al login.");
-            if (mainBorderPane != null && mainBorderPane.getScene() != null && mainBorderPane.getScene().getWindow() != null) {
-                UtilidadesVentana.cambiarEscena(mainBorderPane, "/com/proyectointegral2/Vista/Login.fxml", "Inicio de Sesión", false);
-            } else {
-                Platform.runLater(() -> {
-                    Stage tempStage = new Stage();
-                    UtilidadesVentana.cambiarEscena(tempStage, "/com/proyectointegral2/Vista/Login.fxml", "Inicio de Sesión", false);
-                    if (mainBorderPane != null && mainBorderPane.getScene() != null && mainBorderPane.getScene().getWindow() != null) {
-                        ((Stage)mainBorderPane.getScene().getWindow()).close();
-                    }
-                });
-            }
+            UtilidadesVentana.cambiarEscena("/com/proyectointegral2/Vista/Login.fxml", "Inicio de Sesión", false);
             return;
         }
 
@@ -135,13 +125,13 @@ public class MainProtectoraController {
             if (protectora != null) this.nombreProtectoraActual = protectora.getNombre();
             else {
                 UtilidadesVentana.mostrarAlertaError("Error de Datos", "No se pudo cargar la información de la protectora ID: " + this.idProtectoraActual);
-                if (mainBorderPane.getScene() != null) UtilidadesVentana.cambiarEscena(mainBorderPane, "/com/proyectointegral2/Vista/Login.fxml", "Inicio de Sesión", false);
+                UtilidadesVentana.cambiarEscena("/com/proyectointegral2/Vista/Login.fxml", "Inicio de Sesión", false);
                 return;
             }
         } catch (SQLException e) {
             e.printStackTrace();
             UtilidadesVentana.mostrarAlertaError("Error Base de Datos", "No se pudo cargar info de protectora: " + e.getMessage());
-            if (mainBorderPane.getScene() != null) UtilidadesVentana.cambiarEscena(mainBorderPane, "/com/proyectointegral2/Vista/Login.fxml", "Inicio de Sesión", false);
+            UtilidadesVentana.cambiarEscena("/com/proyectointegral2/Vista/Login.fxml", "Inicio de Sesión", false);
             return;
         }
 
@@ -412,7 +402,7 @@ public class MainProtectoraController {
         }
     }
 
-    @FXML
+
     void NuevoPerro(ActionEvent event) {
         if (this.usuarioCuentaLogueada == null || this.usuarioCuentaLogueada.getIdUsuario() <= 0) { UtilidadesVentana.mostrarAlertaError("Error Sesión", "Inicie sesión para añadir perro."); return; }
         String fxml = "/com/proyectointegral2/Vista/FormularioPerro.fxml";
@@ -430,7 +420,7 @@ public class MainProtectoraController {
     }
 
     @FXML void IrABandeja(MouseEvent event) { UtilidadesVentana.mostrarAlertaInformacion("Próximamente", "Bandeja no implementada."); }
-    @FXML void IrAPerfilUsuario(MouseEvent event) { UtilidadesVentana.mostrarAlertaInformacion("Próximamente", "Perfil no implementado."); }
+    @FXML void IrAPerfilUsuario(MouseEvent event) {UtilidadesVentana.mostrarAlertaInformacion("Próximamente", "Perfil no implementado."); }
 
     @FXML
     void RegistroAdopciones(ActionEvent event) {

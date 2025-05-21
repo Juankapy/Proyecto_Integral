@@ -160,6 +160,7 @@ public class DetallesPerroController {
     private void cargarDatosPatologias() {
         try {
             List<IdentificacionPatologia> identificaciones = identificacionPatologiaDao.obtenerPatologiasPorPerro(perroActual.getIdPerro());
+            System.out.println();
             if (identificaciones != null && !identificaciones.isEmpty()) {
                 List<String> nombresPatologias = identificaciones.stream()
                         .map(ident -> {
