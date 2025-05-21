@@ -11,6 +11,7 @@ DROP TABLE RAZA CASCADE CONSTRAINTS;
 DROP TABLE PROTECTORA CASCADE CONSTRAINTS;
 DROP TABLE CLIENTE CASCADE CONSTRAINTS;
 DROP TABLE USUARIO CASCADE CONSTRAINTS;
+DROP TABLE CITAS_CANCELADAS_AUDITORIA;
 
 DROP SEQUENCE SEQ_USUARIO_ID;
 DROP SEQUENCE SEQ_CLIENTE_ID;
@@ -43,7 +44,7 @@ CREATE TABLE USUARIO (
     ID_USUARIO NUMBER DEFAULT SEQ_USUARIO_ID.NEXTVAL PRIMARY KEY,
     NOMBRE_USU VARCHAR2(50) NOT NULL UNIQUE,
     CONTRASENA VARCHAR2(100) NOT NULL,
-    Rol Char(10) DEFAULT 'Cliente' NOT NULL CHECK (Rol IN ('Cliente','Protectora'),
+    Rol Char(10) DEFAULT 'Cliente' NOT NULL CHECK (Rol IN ('Cliente','Protectora')))
     ;
 
 CREATE TABLE CLIENTE (
@@ -114,7 +115,6 @@ CREATE TABLE RESERVAS_CITAS (
     ID_RESERVA_CITA NUMBER DEFAULT SEQ_RESERVA_CITA_ID.NEXTVAL PRIMARY KEY,
     FECHA DATE NOT NULL,
     HORA VARCHAR2(8) NOT NULL,
-    MOTIVO VARCHAR2(255),
     ID_CLIENTE NUMBER NOT NULL,
     ID_PERRO NUMBER,
     ID_PROTECTORA NUMBER NOT NULL,
@@ -127,7 +127,7 @@ CREATE TABLE RESERVAS_CITAS (
 CREATE TABLE PETICIONES_ADOPCION (
     ID_PETICION NUMBER DEFAULT SEQ_PETICION_ID.NEXTVAL PRIMARY KEY,
     FECHA DATE DEFAULT SYSDATE NOT NULL,
-    ESTADO VARCHAR2(20) DEFAULT 'Pendiente' NOT NULL CHECK (ESTADO IN ('Pendiente', 'Aceptada', 'Rechazada', 'En Proceso')),
+    ESTADO VARCHAR2(20) DEFAULT 'Pendiente' NOT NULL CHECK (ESTADO IN ('Pendiente', 'Aceptada', 'Rechazada')),
     ID_CLIENTE NUMBER NOT NULL,
     ID_PERRO NUMBER NOT NULL,
     MENSAJE_PETICION VARCHAR2(500),
@@ -164,8 +164,6 @@ CREATE TABLE REDES_SOCIALES (
     CONSTRAINT FK_REDSOCIAL_PROTECTORA FOREIGN KEY (ID_PROTECTORA) REFERENCES PROTECTORA(ID_PROTECTORA) ON DELETE CASCADE
 );
 
-
-ALTER TABLE USUARIO ADD ROL VARCHAR2(20) DEFAULT 'CLIENTE' NOT NULL CHECK (ROL IN ('CLIENTE', 'PROTECTORA'));
 ALTER TABLE CLIENTE ADD RUTA_FOTO_PERFIL VARCHAR2(255);
 
 -- ========= FUNCIÓN: Obtener ID de usuario desde ID de protectora asociada a un perro =========
@@ -305,39 +303,99 @@ BEGIN
 END;
 /
 
--- Asumir que ya tienes insertados:
--- Protectora con ID_Protectora = 1 (ej. 'Amigos Peludos')
--- Raza con ID_Raza = 1 (ej. 'Labrador Retriever')
--- Patologia con ID_Patologia = 1 (ej. 'Alergia al Pollo')
--- Perro con ID_Perro = 101 (Buddy, el Labrador)
+-- 1. USUARIOS
+-- (El ROL ya no se inserta aquí porque lo añadiste con ALTER TABLE después)
+INSERT INTO USUARIO (ID_USUARIO, NOMBRE_USU, CONTRASENA, ROL) 
+VALUES (SEQ_USUARIO_ID.NEXTVAL, 'cliente_ana', 'securepass1', 'Cliente'); -- ID_USUARIO será 1 (asumiendo que la secuencia empieza en 1)
 
--- (1) Inserta una protectora si no existe una con ID=1
--- Comprueba primero si existe: SELECT * FROM Protectora WHERE ID_Protectora = 1;
--- Si no existe:
-INSERT INTO Protectora (ID_Protectora, Nombre, Telefono, Email, Provincia, Ciudad, Calle, CP, ID_Usuario)
-VALUES (1, 'Amigos Peludos', '911223344', 'info@amigospeludos.org', 'Madrid', 'Madrid', 'Calle de los Animales 10', '28010', NULL); -- Asume que no está ligada a un usuario específico de login
+INSERT INTO USUARIO (ID_USUARIO, NOMBRE_USU, CONTRASENA, ROL)
+VALUES (SEQ_USUARIO_ID.NEXTVAL, 'protectora_happy', 'protpass1', 'Protectora'); -- ID_USUARIO será 2
 
--- (2) Inserta una raza si no existe una con ID=1
--- Comprueba primero: SELECT * FROM Raza WHERE ID_Raza = 1;
--- Si no existe:
-INSERT INTO Raza (ID_Raza, Nombre_Raza) VALUES (1, 'Labrador Retriever');
+INSERT INTO USUARIO (ID_USUARIO, NOMBRE_USU, CONTRASENA, ROL)
+VALUES (SEQ_USUARIO_ID.NEXTVAL, 'cliente_carlos', 'securepass2', 'Cliente'); -- ID_USUARIO será 3
 
--- (3) Inserta una patología si no existe una con ID=1
--- Comprueba primero: SELECT * FROM Patologia WHERE ID_Patologia = 1;
--- Si no existe:
-INSERT INTO Patologia (ID_Patologia, Nombre) VALUES (1, 'Alergia al Pollo');
+INSERT INTO USUARIO (ID_USUARIO, NOMBRE_USU, CONTRASENA, ROL)
+VALUES (SEQ_USUARIO_ID.NEXTVAL, 'admin_general', 'adminpass', 'Protectora'); -- Ejemplo de otro rol si lo tuvieras, o ajusta a 'Protectora'
 
--- (4) Inserta el perro Buddy (ID=101) si no lo has hecho con la Foto correcta
--- Si ya lo insertaste con la ruta, está bien. Si no:
-DELETE FROM Perros WHERE ID_Perro = 101; -- Borrar si ya existe para reinsertar
-INSERT INTO Perros (ID_Perro, Nombre, Sexo, FechaNacimiento, Adoptado, Foto, ID_Protectora, ID_Raza)
-VALUES (101, 'Buddy', 'Macho', TO_DATE('2022-03-15', 'YYYY-MM-DD'), 'N', '/assets/Imagenes/perros/buddy_labrador.jpg', 1, 1);
 
--- (5) Asocia la patología 'Alergia al Pollo' (ID 1) al perro 'Buddy' (ID 101)
-INSERT INTO Identificacion_Patologias (ID_Perro, ID_Patologia)
-VALUES (101, 1);
+-- 2. CLIENTES
+-- Asumimos que el ID_USUARIO 1 corresponde a 'cliente_ana'
+INSERT INTO CLIENTE (ID_CLIENTE, NIF, NOMBRE, APELLIDOS, FECHA_NACIMIENTO, PROVINCIA, CIUDAD, CALLE, CP, TELEFONO, EMAIL, ID_USUARIO, RUTA_FOTO_PERFIL)
+VALUES (SEQ_CLIENTE_ID.NEXTVAL, '12345678A', 'Ana', 'García López', TO_DATE('1990-07-15', 'YYYY-MM-DD'), 'Madrid', 'Madrid', 'Calle Sol 8', '28013', '600112233', 'ana.garcia@email.com', 1, 'fotos/ana_perfil.jpg'); -- ID_CLIENTE será 1
 
-COMMIT;
-ALTER TABLE Cliente ADD (FECHA_NACIMIENTO DATE);
-ALTER TABLE Protectora ADD (CIF VARCHAR2(9) UNIQUE);
-ALTER TABLE Patologia ADD (Descripcion VARCHAR2(255));
+-- Asumimos que el ID_USUARIO 3 corresponde a 'cliente_carlos'
+INSERT INTO CLIENTE (ID_CLIENTE, NIF, NOMBRE, APELLIDOS, FECHA_NACIMIENTO, PROVINCIA, CIUDAD, CALLE, CP, TELEFONO, EMAIL, ID_USUARIO, RUTA_FOTO_PERFIL)
+VALUES (SEQ_CLIENTE_ID.NEXTVAL, '87654321B', 'Carlos', 'Martínez Ruiz', TO_DATE('1985-03-22', 'YYYY-MM-DD'), 'Barcelona', 'Barcelona', 'Avenida Diagonal 100', '08018', '600998877', 'carlos.martinez@email.com', 3, NULL); -- ID_CLIENTE será 2
+
+
+-- 3. PROTECTORAS
+-- Asumimos que el ID_USUARIO 2 corresponde a 'protectora_happy'
+INSERT INTO PROTECTORA (ID_PROTECTORA, CIF, NOMBRE, TELEFONO, EMAIL, PROVINCIA, CIUDAD, CALLE, CP, ID_USUARIO)
+VALUES (SEQ_PROTECTORA_ID.NEXTVAL, 'A12345670', 'Happy Paws Shelter', '911223344', 'info@happypaws.org', 'Madrid', 'Getafe', 'Calle de la Alegría 5', '28905', 2); -- ID_PROTECTORA será 1
+
+-- Asumimos que el ID_USUARIO 4 (admin_general) también es una 'Protectora'
+INSERT INTO PROTECTORA (ID_PROTECTORA, CIF, NOMBRE, TELEFONO, EMAIL, PROVINCIA, CIUDAD, CALLE, CP, ID_USUARIO)
+VALUES (SEQ_PROTECTORA_ID.NEXTVAL, 'B09876543', 'Refugio Animalia', '933445566', 'contacto@animalia.es', 'Valencia', 'Valencia', 'Camino de la Esperanza 12', '46020', 4); -- ID_PROTECTORA será 2
+
+
+-- 4. RAZAS
+INSERT INTO RAZA (ID_RAZA, NOMBRE_RAZA) VALUES (SEQ_RAZA_ID.NEXTVAL, 'Labrador Retriever'); -- ID_RAZA será 1
+INSERT INTO RAZA (ID_RAZA, NOMBRE_RAZA) VALUES (SEQ_RAZA_ID.NEXTVAL, 'Bulldog Francés'); -- ID_RAZA será 2
+INSERT INTO RAZA (ID_RAZA, NOMBRE_RAZA) VALUES (SEQ_RAZA_ID.NEXTVAL, 'Mestizo Mediano'); -- ID_RAZA será 3
+
+
+-- 5. PERROS
+-- Perros de la protectora Happy Paws Shelter (ID_PROTECTORA = 1)
+INSERT INTO PERROS (ID_PERRO, NOMBRE, SEXO, FECHA_NACIMIENTO, ADOPTADO, FOTO, ID_PROTECTORA, ID_RAZA, DESCRIPCION_PERRO)
+VALUES (SEQ_PERRO_ID.NEXTVAL, 'Max', 'Macho', TO_DATE('2022-01-15', 'YYYY-MM-DD'), 'N', '/assets/Imagenes/perros/max_labrador.jpg', 1, 1, 'Juguetón y muy cariñoso, ideal para familias.'); -- ID_PERRO será 1
+
+INSERT INTO PERROS (ID_PERRO, NOMBRE, SEXO, FECHA_NACIMIENTO, ADOPTADO, FOTO, ID_PROTECTORA, ID_RAZA, DESCRIPCION_PERRO)
+VALUES (SEQ_PERRO_ID.NEXTVAL, 'Bella', 'Hembra', TO_DATE('2021-11-01', 'YYYY-MM-DD'), 'N', '/assets/Imagenes/perros/bella_bulldog.jpg', 1, 2, 'Tranquila y leal, le encantan los mimos.'); -- ID_PERRO será 2
+
+-- Perro de la protectora Refugio Animalia (ID_PROTECTORA = 2)
+INSERT INTO PERROS (ID_PERRO, NOMBRE, SEXO, FECHA_NACIMIENTO, ADOPTADO, FOTO, ID_PROTECTORA, ID_RAZA, DESCRIPCION_PERRO)
+VALUES (SEQ_PERRO_ID.NEXTVAL, 'Cooper', 'Macho', TO_DATE('2023-03-01', 'YYYY-MM-DD'), 'S', '/assets/Imagenes/perros/cooper_mestizo.jpg', 2, 3, 'Un poco tímido al principio, pero muy dulce. Ya adoptado.'); -- ID_PERRO será 3
+
+
+-- 6. PATOLOGIAS
+INSERT INTO PATOLOGIA (ID_PATOLOGIA, NOMBRE, DESCRIPCION_PATOLOGIA)
+VALUES (SEQ_PATOLOGIA_ID.NEXTVAL, 'Alergia al Polvo', 'Sensibilidad a los ácaros del polvo.'); -- ID_PATOLOGIA será 1
+INSERT INTO PATOLOGIA (ID_PATOLOGIA, NOMBRE, DESCRIPCION_PATOLOGIA)
+VALUES (SEQ_PATOLOGIA_ID.NEXTVAL, 'Otitis Crónica', 'Inflamación recurrente del oído.'); -- ID_PATOLOGIA será 2
+
+
+-- 7. IDENTIFICACION_PATOLOGIAS
+-- Max (ID_PERRO = 1) tiene Alergia al Polvo (ID_PATOLOGIA = 1)
+INSERT INTO IDENTIFICACION_PATOLOGIAS (ID_PERRO, ID_PATOLOGIA, NOTAS_ESPECIFICAS)
+VALUES (1, 1, 'Necesita limpieza frecuente de su cama y entorno.');
+
+
+-- 8. RESERVAS_CITAS
+-- Ana (ID_CLIENTE = 1) reserva cita con Max (ID_PERRO = 1) de la protectora Happy Paws (ID_PROTECTORA = 1)
+INSERT INTO RESERVAS_CITAS (ID_RESERVA_CITA, FECHA, HORA, ID_CLIENTE, ID_PERRO, ID_PROTECTORA, ESTADO_CITA)
+VALUES (SEQ_RESERVA_CITA_ID.NEXTVAL, TO_DATE('2024-08-20', 'YYYY-MM-DD'), '11:00:00', 1, 1, 1, 'Pendiente');
+
+
+-- 9. PETICIONES_ADOPCION
+-- Carlos (ID_CLIENTE = 2) solicita adoptar a Bella (ID_PERRO = 2)
+INSERT INTO PETICIONES_ADOPCION (ID_PETICION, FECHA, ESTADO, ID_CLIENTE, ID_PERRO, MENSAJE_PETICION)
+VALUES (SEQ_PETICION_ID.NEXTVAL, SYSDATE, 'Pendiente', 2, 2, 'Bella parece la compañera perfecta para mi hogar.');
+
+
+-- 10. NOTIFICACION (Ejemplo, podría ser creada por triggers)
+INSERT INTO NOTIFICACION (ID_NOTIFICACION, FECHA_GENERACION, MENSAJE, TIPO_NOTIFICACION, ID_ENTIDAD_RELACIONADA, ENTIDAD_TIPO)
+VALUES (SEQ_NOTIFICACION_ID.NEXTVAL, SYSTIMESTAMP, 'Nueva reserva de cita para Max', 'NUEVA_CITA', 1, 'RESERVAS_CITAS'); -- Asume ID_RESERVA_CITA = 1
+
+
+-- 11. NOTIFICACIONES_RECIBIDAS
+-- La notificación anterior (ID_NOTIFICACION = 1) es para el usuario de la protectora Happy Paws (ID_USUARIO = 2)
+INSERT INTO NOTIFICACIONES_RECIBIDAS (ID_USUARIO, ID_NOTIFICACION, LEIDA, FECHA_LEIDA)
+VALUES (2, 1, 'N', NULL);
+
+
+-- 12. REDES_SOCIALES
+-- Para Happy Paws Shelter (ID_PROTECTORA = 1)
+INSERT INTO REDES_SOCIALES (ID_RED_SOCIAL, PLATAFORMA, URL, ID_PROTECTORA)
+VALUES (SEQ_RED_SOCIAL_ID.NEXTVAL, 'Instagram', 'https://instagram.com/happypaws', 1);
+INSERT INTO REDES_SOCIALES (ID_RED_SOCIAL, PLATAFORMA, URL, ID_PROTECTORA)
+VALUES (SEQ_RED_SOCIAL_ID.NEXTVAL, 'Facebook', 'https://facebook.com/happypaws', 1);

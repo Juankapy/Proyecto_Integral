@@ -77,7 +77,7 @@ public class RegistroProtectoraController implements Initializable {
             Usuario nuevaCuentaUsuario = new Usuario();
             nuevaCuentaUsuario.setNombreUsu(nombreUsuarioLogin);
             nuevaCuentaUsuario.setContrasena(contrasenaLogin);
-            nuevaCuentaUsuario.setRol("PROTECTORA");
+            nuevaCuentaUsuario.setRol("Protectora");
 
             int idUsuarioCreado = usuarioDAO.crearUsuario(nuevaCuentaUsuario);
 
