@@ -40,7 +40,7 @@ public class LoginController {
     // --- Componentes FXML ---
     @FXML private ImageView ImgUsuario;
     @FXML private ImageView ImgLateralLogin;
-    @FXML private Button BtnConfirmar; // Aunque no se usa directamente, ConfirmarInicio usa su evento
+    @FXML private Button BtnConfirmar;
     @FXML private ImageView ImgIconoDog;
     @FXML private PasswordField TxtContra;
     @FXML private TextField TxtNombreUsuario;

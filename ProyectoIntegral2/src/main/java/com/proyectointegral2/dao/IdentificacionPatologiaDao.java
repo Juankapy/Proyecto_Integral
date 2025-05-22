@@ -7,7 +7,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IdentificacionPatologiaDao  {
+public class IdentificacionPatologiaDao {
 
     public boolean asignarPatologiaAPerro(int idPerro, int idPatologia, String descripcion) throws SQLException {
         String sql = "INSERT INTO Identificacion_Patologias (ID_Perro, ID_Patologia, NOTAS_ESPECIFICAS) VALUES (?, ?, ?)";
@@ -92,5 +92,16 @@ public class IdentificacionPatologiaDao  {
         ip.setIdPatologia(rs.getInt("ID_Patologia"));
         ip.setDescripcion(rs.getString("Descripcion"));
         return ip;
+    }
+
+    public void eliminarPatologiasPorPerro(int idPerro) {
+        String sql = "DELETE FROM Identificacion_Patologias WHERE ID_Perro = ?";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, idPerro);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
