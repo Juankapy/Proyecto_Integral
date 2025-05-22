@@ -32,7 +32,7 @@ public class FormularioProtectoraController {
 
     @FXML private ImageView imgIconoVolver;
     @FXML private Label lblTituloFormulario;
-    @FXML private ImageView imgFotoProtectoraEditable; // Declarado correctamente
+    @FXML private ImageView imgFotoProtectoraEditable;
     @FXML private Button btnCambiarFotoProtectora;
     @FXML private TextField txtNombreProtectora;
     @FXML private TextField txtCIF;

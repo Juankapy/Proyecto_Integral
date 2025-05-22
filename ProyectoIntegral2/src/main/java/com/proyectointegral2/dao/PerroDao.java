@@ -222,4 +222,25 @@ public class PerroDao {
         }
         return perrosNoAdoptados;
     }
+
+    public Perro obtenerPerroPorId(int idPerro) {
+        Perro perro = null;
+        String sql = "SELECT P.*, R.NOMBRE_RAZA " +
+                "FROM PERROS P " +
+                "JOIN RAZA R ON P.ID_RAZA = R.ID_RAZA " +
+                "WHERE P.ID_PERRO = ?";
+
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, idPerro);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    perro = mapResultSetToPerroConRaza(rs);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error SQL al obtener perro por ID: " + e.getMessage());
+        }
+        return perro;
+    }
 }

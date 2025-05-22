@@ -218,6 +218,6 @@ public class LoginController {
      */
     @FXML
     void IrARegistro(ActionEvent event) {
-        UtilidadesVentana.cambiarEscena("com/proyectointegral2/Vista/InicioChoose.fxml", "Pantalla de Registro", false);
+        UtilidadesVentana.cambiarEscena("/com/proyectointegral2/Vista/InicioChoose.fxml", "Pantalla de Registro", false);
     }
 }
