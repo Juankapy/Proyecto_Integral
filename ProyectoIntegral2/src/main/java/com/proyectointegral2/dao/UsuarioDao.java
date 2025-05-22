@@ -1,7 +1,7 @@
 package com.proyectointegral2.dao;
 
 import com.proyectointegral2.Model.Usuario;
-import com.proyectointegral2.utils.ConexionDB; // Asegúrate que el nombre del método de conexión sea el correcto aquí
+import com.proyectointegral2.utils.ConexionDB;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -64,56 +64,6 @@ public class UsuarioDao {
         return -1;
     }
 
-
-    public int obtenerIdUsuario(String nombreUsu) {
-        String sql = "SELECT ID_USUARIO FROM USUARIO WHERE NOMBRE_USU = ?";
-        try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, nombreUsu);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("ID_USUARIO");
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Error al obtener ID de usuario por nombre: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return -1;
-    }
-
-    public int obtenerIdEntidadEspecifica(int idUsuario, String rol) throws SQLException {
-        String sql;
-        String columnaIdEntidad;
-
-        if ("Cliente".equalsIgnoreCase(rol)) {
-            sql = "SELECT ID_CLIENTE FROM CLIENTE WHERE ID_USUARIO = ?";
-            columnaIdEntidad = "ID_CLIENTE";
-        } else if ("Protectora".equalsIgnoreCase(rol)) {
-            sql = "SELECT ID_PROTECTORA FROM PROTECTORA WHERE ID_USUARIO = ?";
-            columnaIdEntidad = "ID_PROTECTORA";
-        } else {
-            System.err.println("Rol no válido para obtener entidad específica: " + rol);
-            return 0;
-        }
-
-        try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, idUsuario);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(columnaIdEntidad);
-                } else {
-                    System.err.println("No se encontró entidad específica (" + rol + ") para el ID_USUARIO: " + idUsuario);
-                    return 0;
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Error al obtener ID de entidad específica para rol " + rol + " y usuario " + idUsuario + ": " + e.getMessage());
-            throw e;
-        }
-    }
-
     public Usuario obtenerUsuarioPorNombreUsuario(String nombreUsuario) throws SQLException {
         String sql = "SELECT ID_USUARIO, NOMBRE_USU, CONTRASENA, ROL FROM USUARIO WHERE NOMBRE_USU = ?";
         try (Connection conn = ConexionDB.getConnection();
@@ -160,16 +110,6 @@ public class UsuarioDao {
             pstmt.setString(2, usuario.getContrasena());
             pstmt.setString(3, usuario.getRol());
             pstmt.setInt(4, usuario.getIdUsuario());
-            int filasAfectadas = pstmt.executeUpdate();
-            return filasAfectadas > 0;
-        }
-    }
-
-    public boolean eliminarUsuario(int idUsuario) throws SQLException {
-        String sql = "DELETE FROM USUARIO WHERE ID_USUARIO = ?";
-        try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, idUsuario);
             int filasAfectadas = pstmt.executeUpdate();
             return filasAfectadas > 0;
         }

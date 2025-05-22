@@ -196,7 +196,6 @@ public class ReservaCitaDao {
         reserva.setIdReserva(rs.getInt(COL_ID_RESERVA_CITA));
         reserva.setFecha(rs.getDate(COL_FECHA).toLocalDate());
         reserva.setHora(rs.getTime(COL_HORA).toLocalTime());
-        // MOTIVO ELIMINADO del mapeo
         reserva.setIdCliente(rs.getInt(COL_ID_CLIENTE));
         reserva.setIdPerro(rs.getInt(COL_ID_PERRO));
         reserva.setIdProtectora(rs.getInt(COL_ID_PROTECTORA));

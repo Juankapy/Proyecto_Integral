@@ -28,7 +28,6 @@ import java.util.regex.Pattern;
 public class RegistroProtectoraController implements Initializable {
 
     // --- Componentes FXML ---
-    // Estos campos deben tener un fx:id coincidente en el archivo FXML.
     @FXML private TextField TxtNombreProtectora;
     @FXML private TextField TxtCIF;
     @FXML private TextField TxtDireccionProtectora;
@@ -67,8 +66,7 @@ public class RegistroProtectoraController implements Initializable {
         } catch (Exception e) {
             System.err.println("Error crítico al inicializar DAOs en RegistroProtectoraController: " + e.getMessage());
             e.printStackTrace();
-            UtilidadesVentana.mostrarAlertaError("Error Crítico de Sistema",
-                    "No se pudo inicializar el acceso a la base de datos. El registro no funcionará.");
+            UtilidadesVentana.mostrarAlertaError("Error Crítico de Sistema", "No se pudo inicializar el acceso a la base de datos. El registro no funcionará.");
             if (BtnConfirmar != null) BtnConfirmar.setDisable(true);
         }
     }
@@ -104,8 +102,7 @@ public class RegistroProtectoraController implements Initializable {
         // 3. Lógica de creación de usuario y protectora.
         try {
             if (usuarioDAO.obtenerUsuarioPorNombreUsuario(nombreUsuarioLogin) != null) {
-                UtilidadesVentana.mostrarAlertaError("Usuario Existente",
-                        "El nombre de usuario '" + nombreUsuarioLogin + "' ya está en uso. Por favor, elija otro.");
+                UtilidadesVentana.mostrarAlertaError("Usuario Existente", "El nombre de usuario '" + nombreUsuarioLogin + "' ya está en uso. Por favor, elija otro.");
                 TxtNombreUsuarioCuenta.requestFocus();
                 return;
             }
@@ -156,8 +153,7 @@ public class RegistroProtectoraController implements Initializable {
             }
             e.printStackTrace();
         } catch (Exception e) {
-            UtilidadesExcepciones.mostrarError(e, "Error Inesperado",
-                    "Ocurrió un error general durante el proceso de registro: " + e.getMessage());
+            UtilidadesExcepciones.mostrarError(e, "Error Inesperado", "Ocurrió un error general durante el proceso de registro: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -177,7 +173,7 @@ public class RegistroProtectoraController implements Initializable {
             return false;
         }
 
-        if (!cif.matches("^[A-HJNP-SUVW][0-9]{7}[0-9A-J]$")) { // Patrón muy básico, ajustar
+        if (!cif.matches("^[A-HJNP-SUVW][0-9]{7}[0-9A-J]$")) {
             UtilidadesVentana.mostrarAlertaError("Formato Inválido", "El formato del CIF no es válido.");
             TxtCIF.requestFocus();
             return false;

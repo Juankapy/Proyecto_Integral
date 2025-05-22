@@ -3,14 +3,13 @@ package com.proyectointegral2.Controller;
 import com.proyectointegral2.Model.Perro;
 import com.proyectointegral2.Model.Protectora;
 import com.proyectointegral2.Model.Usuario;
-// Modelos para las TableView (necesitarás crear/ajustar estas clases)
-import com.proyectointegral2.Model.RegistroAdopcionInfo; // Para TablaRegistroAdopciones
-import com.proyectointegral2.Model.RegistroCitaInfo;   // Para TablaRegistroCitas (antes RegistroPerroInfo)
+import com.proyectointegral2.Model.RegistroAdopcionInfo;
+import com.proyectointegral2.Model.RegistroCitaInfo;
 import com.proyectointegral2.Model.SesionUsuario;
 import com.proyectointegral2.dao.PerroDao;
 import com.proyectointegral2.dao.ProtectoraDao;
 import com.proyectointegral2.dao.PeticionAdopcionDao;
-import com.proyectointegral2.dao.ReservaCitaDao; // Necesario para cargar datos de citas
+import com.proyectointegral2.dao.ReservaCitaDao;
 import com.proyectointegral2.utils.UtilidadesVentana;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -24,22 +23,22 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane; // Usado en el FXML
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*; // Importar VBox, HBox, etc. explícitamente
-import javafx.stage.Modality; // Para diálogos
+import javafx.scene.layout.*;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalTime; // Para RegistroAdopcionInfo si tiene hora
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -54,15 +53,15 @@ public class MainProtectoraController {
 
     // --- Componentes FXML ---
     @FXML private BorderPane mainBorderPane;
-    @FXML private ImageView logoImageView; // Decorativo
-    @FXML private ImageView ImgIconBandeja; // Para ir a la bandeja de notificaciones/citas
-    @FXML private ImageView ImgIconUsuario; // Para ir al perfil de la protectora
-    @FXML private Button BtnNuevoPerro; // Para abrir el formulario de añadir perro
-    @FXML private GridPane dogGrid; // Contenedor para las tarjetas de los perros
-    @FXML private Label lblNoPerrosEnGrid; // Mensaje si no hay perros
-    @FXML private Label lblRegistroTitulo; // Título dinámico para la sección de tablas
-    @FXML private Button BtnToggleRegistro; // Botón para cambiar entre tabla de citas y adopciones
-    @FXML private StackPane tablasStackPane; // Contenedor para las dos TableView
+    @FXML private ImageView logoImageView;
+    @FXML private ImageView ImgIconBandeja;
+    @FXML private ImageView ImgIconUsuario;
+    @FXML private Button BtnNuevoPerro;
+    @FXML private GridPane dogGrid;
+    @FXML private Label lblNoPerrosEnGrid;
+    @FXML private Label lblRegistroTitulo;
+    @FXML private Button BtnToggleRegistro;
+    @FXML private StackPane tablasStackPane;
 
     // Tabla para Citas
     @FXML private TableView<RegistroCitaInfo> TablaRegistroCitas;
@@ -241,8 +240,7 @@ public class MainProtectoraController {
             TablaRegistroAdopciones.setItems(observableDatosAdopciones);
         } catch (SQLException e) {
             e.printStackTrace();
-            UtilidadesVentana.mostrarAlertaError("Error de Base de Datos",
-                    "No se pudieron cargar los registros de adopciones: " + e.getMessage());
+            UtilidadesVentana.mostrarAlertaError("Error de Base de Datos", "No se pudieron cargar los registros de adopciones: " + e.getMessage());
         }
     }
 
@@ -662,7 +660,6 @@ public class MainProtectoraController {
      */
     @FXML
     void IrABandeja(MouseEvent event) {
-        // TODO: Implementar navegación a la bandeja de notificaciones/citas de la protectora
         UtilidadesVentana.mostrarAlertaInformacion("Próximamente", "La bandeja de entrada para protectoras aún no está implementada.");
     }
 

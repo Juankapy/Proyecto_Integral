@@ -43,20 +43,6 @@ public class RazaDao {
         }
     }
 
-    public Raza obtenerRazaPorId(int idRaza) throws SQLException {
-        String sql = "SELECT ID_RAZA, NOMBRE_RAZA FROM RAZA WHERE ID_RAZA = ?";
-        try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, idRaza);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return mapResultSetToRaza(rs);
-                }
-            }
-        }
-        return null;
-    }
-
     public Raza obtenerRazaPorNombre(String nombreRaza) throws SQLException {
         String sql = "SELECT ID_RAZA, NOMBRE_RAZA FROM RAZA WHERE UPPER(NOMBRE_RAZA) = UPPER(?)";
         try (Connection conn = ConexionDB.getConnection();
