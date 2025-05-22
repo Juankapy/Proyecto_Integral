@@ -1,5 +1,6 @@
 package com.proyectointegral2.dao;
 
+import com.proyectointegral2.Model.RegistroCitaInfo;
 import com.proyectointegral2.Model.ReservaCita;
 import com.proyectointegral2.utils.ConexionDB;
 
@@ -207,4 +208,36 @@ public class ReservaCitaDao {
         // Implementación de ejemplo, debe ser reemplazada por la lógica real
         return new ArrayList<>();
     }
+
+    public List<RegistroCitaInfo> obtenerCitasParaTablaProtectora(int idProtectoraActual) {
+        List<RegistroCitaInfo> citas = new ArrayList<>();
+        String sql = "SELECT rc.*, p.Nombre AS NombrePerro, c.Nombre AS NombreCliente " +
+                "FROM Reservas_Citas rc " +
+                "JOIN Perros p ON rc.ID_Perro = p.ID_Perro " +
+                "JOIN Cliente c ON rc.ID_Cliente = c.ID_Cliente " +
+                "WHERE rc.ID_Protectora = ?";
+
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idProtectoraActual);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    RegistroCitaInfo cita = new RegistroCitaInfo(
+                            rs.getString("NombreCliente"),
+                            rs.getString("NombrePerro"),
+                            rs.getDate(COL_FECHA).toString(),
+                            rs.getTime(COL_HORA).toString(),
+                            rs.getString("TipoServicio"),
+                            rs.getString("Veterinario")
+                    );
+                    citas.add(cita);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return citas;
+    }
+
 }

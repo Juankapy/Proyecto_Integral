@@ -40,7 +40,7 @@ public class MainClienteController {
     private static final String CRITERIO_BUSQUEDA_NOMBRE = "Nombre";
     private static final String CRITERIO_BUSQUEDA_RAZA = "Raza";
 
-    // Rutas FXML (considerar centralizarlas en UtilidadesVentana si se usan en múltiples sitios)
+    // Rutas FXML
     private static final String FXML_LOGIN = "/com/proyectointegral2/Vista/Login.fxml";
     private static final String FXML_DETALLES_PERRO = "/com/proyectointegral2/Vista/DetallesPerro.fxml";
     private static final String FXML_ADOPCIONES_PANEL = "/com/proyectointegral2/Vista/AdopcionesPanel.fxml";
@@ -102,7 +102,6 @@ public class MainClienteController {
         configurarPlaceholderSearchTextField();
         configurarAccionIconoBusqueda();
 
-        // Adaptación inicial de la UI una vez la escena esté lista.
         Platform.runLater(() -> {
             if (mainBorderPane.getScene() != null && mainBorderPane.getScene().getWindow() != null) {
                 Stage stage = (Stage) mainBorderPane.getScene().getWindow();
@@ -145,13 +144,11 @@ public class MainClienteController {
         if (comboCriterioBusqueda != null) {
             comboCriterioBusqueda.getItems().setAll(CRITERIO_BUSQUEDA_NOMBRE, CRITERIO_BUSQUEDA_RAZA);
             comboCriterioBusqueda.getSelectionModel().selectFirst(); // Seleccionar "Nombre" por defecto
-            comboCriterioBusqueda.valueProperty().addListener((obs, oldVal, newVal) ->
-                    aplicarFiltrosActuales()
+            comboCriterioBusqueda.valueProperty().addListener((obs, oldVal, newVal) -> aplicarFiltrosActuales()
             );
         }
         if (searchTextField != null) {
-            searchTextField.textProperty().addListener((obs, oldVal, newVal) ->
-                    aplicarFiltrosActuales()
+            searchTextField.textProperty().addListener((obs, oldVal, newVal) -> aplicarFiltrosActuales()
             );
         }
     }
@@ -169,7 +166,7 @@ public class MainClienteController {
         } catch (SQLException e) {
             System.err.println("Error al cargar perros desde la base de datos: " + e.getMessage());
             e.printStackTrace();
-            this.listaDePerrosOriginal = new ArrayList<>(); // Asegurar que no sea null
+            this.listaDePerrosOriginal = new ArrayList<>();
             UtilidadesVentana.mostrarAlertaError("Error de Base de Datos", "No se pudieron cargar los perros: " + e.getMessage());
         }
     }
@@ -181,7 +178,6 @@ public class MainClienteController {
      */
     private void actualizarPerrosMostrados(List<Perro> nuevaListaDePerros) {
         this.perrosMostradosActuales = (nuevaListaDePerros != null) ? new ArrayList<>(nuevaListaDePerros) : new ArrayList<>();
-        // Intenta repopular usando el ancho actual de la ventana si está disponible
         if (mainBorderPane.getScene() != null && mainBorderPane.getScene().getWindow() != null && mainBorderPane.getScene().getWindow().getWidth() > 0) {
             adaptarContenidoAlAnchoYPopular(mainBorderPane.getScene().getWindow().getWidth());
         } else {
@@ -201,9 +197,7 @@ public class MainClienteController {
 
         String textoBusqueda = (searchTextField != null) ? searchTextField.getText() : "";
         String textoBusquedaTrim = textoBusqueda.trim().toLowerCase();
-        String criterio = (comboCriterioBusqueda != null && comboCriterioBusqueda.getValue() != null)
-                ? comboCriterioBusqueda.getValue()
-                : CRITERIO_BUSQUEDA_NOMBRE;
+        String criterio = (comboCriterioBusqueda != null && comboCriterioBusqueda.getValue() != null) ? comboCriterioBusqueda.getValue() : CRITERIO_BUSQUEDA_NOMBRE;
 
         List<Perro> perrosFiltrados;
         if (textoBusquedaTrim.isEmpty()) {
@@ -213,12 +207,10 @@ public class MainClienteController {
                 if (perro == null) return false;
                 switch (criterio) {
                     case CRITERIO_BUSQUEDA_RAZA:
-                        return perro.getRaza() != null && perro.getRaza().getNombreRaza() != null &&
-                                perro.getRaza().getNombreRaza().toLowerCase().startsWith(textoBusquedaTrim);
+                        return perro.getRaza() != null && perro.getRaza().getNombreRaza() != null && perro.getRaza().getNombreRaza().toLowerCase().startsWith(textoBusquedaTrim);
                     case CRITERIO_BUSQUEDA_NOMBRE:
                     default:
-                        return perro.getNombre() != null &&
-                                perro.getNombre().toLowerCase().startsWith(textoBusquedaTrim);
+                        return perro.getNombre() != null && perro.getNombre().toLowerCase().startsWith(textoBusquedaTrim);
                 }
             }).collect(Collectors.toList());
         }
@@ -234,20 +226,19 @@ public class MainClienteController {
     private void configurarListenersDeVentana() {
         if (mainBorderPane == null) return;
 
-        // Listener para cuando la escena o la ventana cambian (necesario si la vista se carga dinámicamente)
         mainBorderPane.sceneProperty().addListener((obsScene, oldScene, newScene) -> {
             if (newScene != null) {
                 newScene.windowProperty().addListener((obsWindow, oldWindow, newWindow) -> {
                     if (newWindow instanceof Stage) {
                         Stage stage = (Stage) newWindow;
-                        // Asegurar que la adaptación ocurra si la ventana ya está mostrada
+
                         if (stage.isShowing()) {
                             Platform.runLater(() -> adaptarUIAlTamanoVentana(stage));
                         } else {
-                            // O cuando se muestre por primera vez
+
                             stage.setOnShown(event -> Platform.runLater(() -> adaptarUIAlTamanoVentana(stage)));
                         }
-                        // Listeners para cambios de tamaño y estado
+
                         stage.widthProperty().addListener((obs, o, n) -> Platform.runLater(() -> adaptarUIAlTamanoVentana(stage)));
                         stage.heightProperty().addListener((obs, o, n) -> Platform.runLater(() -> adaptarUIAlTamanoVentana(stage)));
                         stage.maximizedProperty().addListener((obs, o, n) -> Platform.runLater(() -> adaptarUIAlTamanoVentana(stage)));
@@ -280,21 +271,18 @@ public class MainClienteController {
     private void adaptarContenidoAlAnchoYPopular(double anchoVentana) {
         if (dogGrid == null || mainBorderPane == null) return;
 
-        // Calcular el ancho disponible para el contenido del GridPane
         double paddingLateralTotalVBox = 0;
-        if (mainBorderPane.getCenter() instanceof VBox) { // Asumiendo que el centro es un VBox según el FXML
+        if (mainBorderPane.getCenter() instanceof VBox) {
             VBox centerVBox = (VBox) mainBorderPane.getCenter();
             paddingLateralTotalVBox = centerVBox.getPadding().getLeft() + centerVBox.getPadding().getRight();
-        } else { // O directamente el ScrollPane si no hay VBox intermedio (ajustar según FXML)
+        } else {
             paddingLateralTotalVBox = mainBorderPane.getPadding().getLeft() + mainBorderPane.getPadding().getRight();
         }
 
         double paddingLateralScrollPane = (dogScrollPane != null && dogScrollPane.getPadding() != null)
                 ? dogScrollPane.getPadding().getLeft() + dogScrollPane.getPadding().getRight() : 0;
-        double paddingLateralGrid = (dogGrid.getPadding() != null)
-                ? dogGrid.getPadding().getLeft() + dogGrid.getPadding().getRight() : 0;
+        double paddingLateralGrid = (dogGrid.getPadding() != null) ? dogGrid.getPadding().getLeft() + dogGrid.getPadding().getRight() : 0;
 
-        // Espacio extra para barras de scroll si aparecen, o márgenes
         double espacioAdicionalConsiderado = 20.0;
 
         double anchoDisponibleParaGrid = anchoVentana - paddingLateralTotalVBox - paddingLateralScrollPane - paddingLateralGrid - espacioAdicionalConsiderado;
@@ -308,7 +296,7 @@ public class MainClienteController {
                 dogGrid.getColumnConstraints().clear();
                 for (int i = 0; i < nuevasColumnas; i++) {
                     ColumnConstraints colConst = new ColumnConstraints();
-                    colConst.setPercentWidth(100.0 / nuevasColumnas); // Distribuir equitativamente
+                    colConst.setPercentWidth(100.0 / nuevasColumnas);
                     colConst.setHgrow(Priority.SOMETIMES);
                     dogGrid.getColumnConstraints().add(colConst);
                 }
@@ -323,10 +311,10 @@ public class MainClienteController {
      * @return El número de columnas, entre 1 y MAX_COLUMNAS_GRID.
      */
     private int calcularColumnasSegunAncho(double anchoGridDisponible) {
-        if (anchoGridDisponible <= 0) return 1; // Mínimo una columna
-        double anchoTarjetaEstimado = TARJETA_PREF_WIDTH + CARD_HORIZONTAL_GAP; // Ancho de tarjeta + espaciado
+        if (anchoGridDisponible <= 0) return 1;
+        double anchoTarjetaEstimado = TARJETA_PREF_WIDTH + CARD_HORIZONTAL_GAP;
         int numColumnas = Math.max(1, (int) (anchoGridDisponible / anchoTarjetaEstimado));
-        return Math.min(numColumnas, MAX_COLUMNAS_GRID); // Limitar al máximo definido
+        return Math.min(numColumnas, MAX_COLUMNAS_GRID);
     }
 
     /**
@@ -339,8 +327,8 @@ public class MainClienteController {
         }
 
         Node topNode = mainBorderPane.getTop();
-        VBox centerVBox = (VBox) mainBorderPane.getCenter(); // Asumiendo VBox en el centro
-        Node bottomNode = mainBorderPane.getBottom(); // Si existe
+        VBox centerVBox = (VBox) mainBorderPane.getCenter();
+        Node bottomNode = mainBorderPane.getBottom();
 
         double topHeight = (topNode != null && topNode.getBoundsInParent().getHeight() > 0)
                 ? topNode.getBoundsInParent().getHeight() : HEADER_HEIGHT_ESTIMADA;
@@ -351,11 +339,10 @@ public class MainClienteController {
         double vBoxSpacing = centerVBox.getSpacing();
 
         double alturaOtrosElementosEnVBox = 0;
-        // Sumar altura de otros elementos dentro del VBox que no sean el ScrollPane
         for (Node child : centerVBox.getChildren()) {
             if (child != dogScrollPane && child.isVisible()) {
                 alturaOtrosElementosEnVBox += child.getBoundsInParent().getHeight();
-                if (centerVBox.getChildren().indexOf(child) < centerVBox.getChildren().size() -1) { // Si no es el último, añadir espaciado
+                if (centerVBox.getChildren().indexOf(child) < centerVBox.getChildren().size() -1) {
                     alturaOtrosElementosEnVBox += vBoxSpacing;
                 }
             }
@@ -376,7 +363,7 @@ public class MainClienteController {
             return;
         }
         dogGrid.getChildren().clear();
-        int numColumnas = Math.max(1, dogGrid.getColumnConstraints().size()); // Asegurar al menos una columna
+        int numColumnas = Math.max(1, dogGrid.getColumnConstraints().size());
         int columnaActual = 0;
         int filaActual = 0;
 
@@ -398,7 +385,7 @@ public class MainClienteController {
      * @return Un VBox configurado como una tarjeta de perro.
      */
     private VBox crearTarjetaPerro(Perro perro) {
-        VBox card = new VBox(5); // Espaciado entre elementos de la tarjeta
+        VBox card = new VBox(5);
         card.setPrefWidth(TARJETA_PREF_WIDTH);
         card.setMaxWidth(TARJETA_PREF_WIDTH);
         card.setMinWidth(TARJETA_PREF_WIDTH);
@@ -409,13 +396,13 @@ public class MainClienteController {
                         "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2); " +
                         "-fx-padding: %f;", CARD_INTERNAL_PADDING
         ));
-        card.setMinHeight(240); // Altura mínima para consistencia
+        card.setMinHeight(240);
 
         // Contenedor para la imagen
         StackPane imageContainer = new StackPane();
         imageContainer.setPrefSize(TARJETA_IMG_AREA_WIDTH, TARJETA_IMG_AREA_HEIGHT);
-        imageContainer.setMinSize(TARJETA_IMG_AREA_WIDTH, TARJETA_IMG_AREA_HEIGHT); // Para evitar que se encoja
-        imageContainer.setMaxSize(TARJETA_IMG_AREA_WIDTH, TARJETA_IMG_AREA_HEIGHT); // Para evitar que crezca
+        imageContainer.setMinSize(TARJETA_IMG_AREA_WIDTH, TARJETA_IMG_AREA_HEIGHT);
+        imageContainer.setMaxSize(TARJETA_IMG_AREA_WIDTH, TARJETA_IMG_AREA_HEIGHT);
 
         ImageView imgView = new ImageView();
         cargarImagenPerroConPlaceholder(imgView, perro);
@@ -434,9 +421,7 @@ public class MainClienteController {
 
         // Nombre del perro
         Label lblNombrePerro = new Label(perro.getNombre() != null ? perro.getNombre() : "Sin Nombre");
-        lblNombrePerro.setStyle(
-                "-fx-background-color: #C8E6C9; -fx-padding: 5 10 5 10; " +
-                        "-fx-background-radius: 5; -fx-font-weight: bold; -fx-font-size: 14px;"
+        lblNombrePerro.setStyle("-fx-background-color: #C8E6C9; -fx-padding: 5 10 5 10; " + "-fx-background-radius: 5; -fx-font-weight: bold; -fx-font-size: 14px;"
         );
         lblNombrePerro.setAlignment(Pos.CENTER);
         lblNombrePerro.setWrapText(false); // Evitar múltiples líneas

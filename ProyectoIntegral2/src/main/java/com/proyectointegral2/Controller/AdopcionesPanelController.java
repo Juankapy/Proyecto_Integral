@@ -215,9 +215,9 @@ public class AdopcionesPanelController {
         FormularioSolicitudAdopcionController formController =
                 UtilidadesVentana.mostrarVentanaPopup(formularioFxml, titulo, true, ownerStage);
 
-        if (formController != null) {
-            formController.initData(perro);
-        }
+//        if (formController != null) {
+//            formController.initData(perro);
+//        }
     }
 
     private void configurarListenersDeVentana() {  }

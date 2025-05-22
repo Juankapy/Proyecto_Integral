@@ -59,7 +59,7 @@ public class EventosPanelController {
 
         eventosScrollPane.setVisible(false);
         lblNoEventos.setVisible(true);
-        lblNoEventos.setText("Cargando eventos..."); // Mensaje inicial
+        lblNoEventos.setText("Cargando eventos...");
 
     }
 

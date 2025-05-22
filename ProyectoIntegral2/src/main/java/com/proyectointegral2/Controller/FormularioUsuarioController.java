@@ -568,8 +568,7 @@ public class FormularioUsuarioController implements Initializable {
      */
     private void navegarAlPerfilUsuario() {
         if (cuentaUsuarioAEditar == null || cuentaUsuarioAEditar.getIdUsuario() <= 0) {
-            UtilidadesVentana.mostrarAlertaError("Error de Navegación",
-                    "No se puede volver al perfil porque la información del usuario no está disponible.");
+            UtilidadesVentana.mostrarAlertaError("Error de Navegación", "No se puede volver al perfil porque la información del usuario no está disponible.");
             UtilidadesVentana.cambiarEscena(RUTA_FXML_MAIN_CLIENTE, TITULO_MAIN_CLIENTE, true);
             return;
         }
