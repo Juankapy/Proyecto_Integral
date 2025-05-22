@@ -3,8 +3,8 @@ package com.proyectointegral2.Controller;
 import com.proyectointegral2.Model.Perro;
 import com.proyectointegral2.Model.ReservaCita;
 import com.proyectointegral2.Model.Usuario;
-import com.proyectointegral2.dao.ReservaCitaDao;
 import com.proyectointegral2.Model.SesionUsuario;
+import com.proyectointegral2.dao.ReservaCitaDao;
 import com.proyectointegral2.utils.UtilidadesVentana;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -16,21 +16,35 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.sql.SQLException;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter; // IMPORTADO
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List; // Para obtener las citas del DAO
+import java.util.Locale;
 
+/**
+ * Controlador para el formulario de solicitud de cita con un perro.
+ * Permite al usuario seleccionar una fecha, hora y especificar una donación.
+ * Incluye restricciones de fecha y límite de citas por usuario.
+ */
 public class FormularioSolicitudCitaController {
 
+    // --- Constantes ---
+    private static final double DONACION_MINIMA_REQUERIDA = 3.00;
+    private static final String ESTADO_CITA_POR_DEFECTO = "Pendiente";
+    private static final DateTimeFormatter FORMATO_FECHA_USUARIO = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter FORMATO_HORA_USUARIO = DateTimeFormatter.ofPattern("HH:mm");
+    private static final int MAX_CITAS_POR_USUARIO = 3;
+    private static final int MAX_DIAS_ANTICIPACION_CITA = 14;
+
+    // --- Componentes FXML ---
     @FXML private ImageView imgIconoCalendario;
     @FXML private Label lblTituloFormulario;
     @FXML private Label lblNombrePerro;
@@ -40,174 +54,330 @@ public class FormularioSolicitudCitaController {
     @FXML private Button btnCancelarSolicitud;
     @FXML private Button btnConfirmarSolicitud;
 
+    // --- Estado del Controlador ---
     private Perro perroParaCita;
     private Usuario clienteLogueado;
+
+    // --- DAOs ---
     private ReservaCitaDao reservaCitaDao;
 
-    private final double DONACION_MINIMA = 3.00;
-
-    // DECLARAR LOS FORMATEADORES COMO CAMPOS DE INSTANCIA
-    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm"); // Formato para parsear la hora del ComboBox
-
+    /**
+     * Método de inicialización del controlador.
+     */
     @FXML
     public void initialize() {
         this.reservaCitaDao = new ReservaCitaDao();
         this.clienteLogueado = SesionUsuario.getUsuarioLogueado();
 
         if (this.clienteLogueado == null) {
-            UtilidadesVentana.mostrarAlertaError("Error de Sesión", "No se pudo identificar al usuario...");
-            Platform.runLater(() -> {
-                if (lblTituloFormulario != null && lblTituloFormulario.getScene() != null && lblTituloFormulario.getScene().getWindow() != null) {
-                    ((Stage) lblTituloFormulario.getScene().getWindow()).close();
-                }
-            });
+            manejarErrorSesion();
             return;
         }
 
         configurarDatePicker();
         poblarComboBoxHoras();
-        txtImporteDonacion.setPromptText("Mínimo " + String.format("%.2f", DONACION_MINIMA) + " €");
+        txtImporteDonacion.setPromptText(String.format(Locale.US, "Mínimo %.2f €", DONACION_MINIMA_REQUERIDA));
 
+        if (btnConfirmarSolicitud != null) {
+            btnConfirmarSolicitud.setDisable(true);
+        }
+
+        if (lblTituloFormulario == null) System.err.println("ERROR FXML: lblTituloFormulario es null en initialize()");
+        if (lblNombrePerro == null) System.err.println("ERROR FXML: lblNombrePerro es null en initialize()");
     }
 
+    /**
+     * Maneja la situación donde no hay un usuario logueado.
+     */
+    private void manejarErrorSesion() {
+        UtilidadesVentana.mostrarAlertaError("Error de Sesión",
+                "No se pudo identificar al usuario. Por favor, inicie sesión nuevamente.");
+        cerrarVentanaAsync();
+    }
+
+    /**
+     * Cierra la ventana del formulario de forma asíncrona.
+     */
+    private void cerrarVentanaAsync() {
+        Platform.runLater(this::cerrarVentana);
+    }
+
+    /**
+     * Inicializa la vista con los datos del perro.
+     * @param perro El objeto Perro.
+     */
     public void initData(Perro perro) {
-        System.out.println("FormularioSolicitudCitaController.initData() llamado.");
+        System.out.println("FormularioSolicitudCitaController.initData() llamado con perro: " + (perro != null ? perro.getNombre() : "null"));
         this.perroParaCita = perro;
 
-        if (this.perroParaCita != null && this.perroParaCita.getNombre() != null) {
-            System.out.println("Perro recibido en FormularioSolicitudCita: ID=" + this.perroParaCita.getIdPerro() + ", Nombre=" + this.perroParaCita.getNombre());
+        if (this.perroParaCita == null || this.perroParaCita.getNombre() == null || this.perroParaCita.getNombre().trim().isEmpty()) {
+            manejarErrorDatosPerro();
+            return;
+        }
 
-            // Asegurarse de que los FXML Labels no sean null antes de usarlos
-            if (lblTituloFormulario != null) {
-                lblTituloFormulario.setText("Solicitar Cita con " + this.perroParaCita.getNombre());
-            } else {
-                System.err.println("FormularioSolicitudCitaController: ERROR - lblTituloFormulario es null.");
-            }
+        System.out.println("Perro recibido en FormularioSolicitudCita: ID=" + this.perroParaCita.getIdPerro() +
+                ", Nombre=" + this.perroParaCita.getNombre());
 
-            if (lblNombrePerro != null) {
-                String nombreRazaInfo = "";
-                if (this.perroParaCita.getRaza() != null && this.perroParaCita.getRaza().getNombreRaza() != null && !this.perroParaCita.getRaza().getNombreRaza().isEmpty()) {
-                    nombreRazaInfo = " (" + this.perroParaCita.getRaza().getNombreRaza() + ")";
-                }
-                lblNombrePerro.setText(this.perroParaCita.getNombre() + nombreRazaInfo);
-                System.out.println("FormularioSolicitudCitaController: Nombre de perro establecido en Label: " + lblNombrePerro.getText());
-            } else {
-                System.err.println("FormularioSolicitudCitaController: ERROR - lblNombrePerro es null.");
-            }
-
-            if (btnConfirmarSolicitud != null) btnConfirmarSolicitud.setDisable(false);
-
-        } else {
-            System.err.println("FormularioSolicitudCitaController: initData recibió un objeto Perro null o sin nombre.");
-            UtilidadesVentana.mostrarAlertaError("Error de Datos", "No se pudo obtener la información del perro para la cita.");
-            if (lblTituloFormulario != null) lblTituloFormulario.setText("Error Cargando Perro");
-            if (lblNombrePerro != null) lblNombrePerro.setText("[Error: Perro no disponible]");
-            if (btnConfirmarSolicitud != null) btnConfirmarSolicitud.setDisable(true);
+        actualizarEtiquetasConDatosPerro();
+        if (btnConfirmarSolicitud != null) {
+            btnConfirmarSolicitud.setDisable(false);
         }
     }
 
+    /**
+     * Maneja errores si los datos del perro no son válidos.
+     */
+    private void manejarErrorDatosPerro() {
+        System.err.println("FormularioSolicitudCitaController: initData recibió un objeto Perro null o sin nombre válido.");
+        UtilidadesVentana.mostrarAlertaError("Error de Datos",
+                "No se pudo obtener la información del perro para la cita.");
+        if (lblTituloFormulario != null) {
+            lblTituloFormulario.setText("Error Cargando Perro");
+        } else {
+            System.err.println("ERROR: lblTituloFormulario es null en manejarErrorDatosPerro");
+        }
+        if (lblNombrePerro != null) {
+            lblNombrePerro.setText("[Perro no disponible]");
+        } else {
+            System.err.println("ERROR: lblNombrePerro es null en manejarErrorDatosPerro");
+        }
+        if (btnConfirmarSolicitud != null) {
+            btnConfirmarSolicitud.setDisable(true);
+        }
+    }
+
+    /**
+     * Actualiza las etiquetas de la UI con el nombre y raza del perro.
+     */
+    private void actualizarEtiquetasConDatosPerro() {
+        if (this.perroParaCita == null || this.perroParaCita.getNombre() == null) {
+            System.err.println("ERROR: Intento de actualizar etiquetas con perroParaCita null o sin nombre.");
+            return;
+        }
+
+        if (lblTituloFormulario != null) {
+            lblTituloFormulario.setText("Solicitar Cita con " + this.perroParaCita.getNombre());
+        } else {
+            System.err.println("ERROR FXML: lblTituloFormulario sigue siendo null al actualizar etiquetas.");
+        }
+
+        if (lblNombrePerro != null) {
+            String infoRaza = "";
+            if (this.perroParaCita.getRaza() != null &&
+                    this.perroParaCita.getRaza().getNombreRaza() != null &&
+                    !this.perroParaCita.getRaza().getNombreRaza().trim().isEmpty()) {
+                infoRaza = " (" + this.perroParaCita.getRaza().getNombreRaza() + ")";
+            }
+            // Este es el punto crítico para tu bug:
+            lblNombrePerro.setText(this.perroParaCita.getNombre() + infoRaza);
+            System.out.println("FormularioSolicitudCitaController: Nombre de perro establecido en Label: " + lblNombrePerro.getText());
+        } else {
+            System.err.println("ERROR FXML: lblNombrePerro sigue siendo null al actualizar etiquetas.");
+        }
+    }
+
+    /**
+     * Configura el DatePicker.
+     */
     private void configurarDatePicker() {
+        if (dpFechaCita == null) return;
+        final LocalDate hoy = LocalDate.now();
+        final LocalDate fechaMinima = hoy.plusDays(1);
+        final LocalDate fechaMaxima = hoy.plusDays(MAX_DIAS_ANTICIPACION_CITA);
+
         final Callback<DatePicker, DateCell> dayCellFactory = datePicker -> new DateCell() {
             @Override
             public void updateItem(LocalDate item, boolean empty) {
                 super.updateItem(item, empty);
-                if (item.isBefore(LocalDate.now().plusDays(1))) {
+                if (item.isBefore(fechaMinima) || item.isAfter(fechaMaxima)) {
                     setDisable(true);
                     setStyle("-fx-background-color: #ffc0cb;");
                 }
             }
         };
         dpFechaCita.setDayCellFactory(dayCellFactory);
-        dpFechaCita.setValue(LocalDate.now().plusDays(1));
+        dpFechaCita.setValue(fechaMinima); // Fecha por defecto: mañana
     }
 
+    /**
+     * Puebla el ComboBox de horas.
+     */
     private void poblarComboBoxHoras() {
-        ObservableList<String> horas = FXCollections.observableArrayList();
-        for (int h = 9; h <= 17; h++) {
-            horas.add(String.format("%02d:00", h));
-            if (h < 17) {
-                horas.add(String.format("%02d:30", h));
-            }
+        if (cmbHoraCita == null) return;
+        ObservableList<String> horasDisponibles = FXCollections.observableArrayList();
+        LocalTime horaInicio = LocalTime.of(9, 0);
+        LocalTime horaFin = LocalTime.of(17, 0); // Hasta las 17:00 inclusive
+
+        LocalTime horaActual = horaInicio;
+        while (!horaActual.isAfter(horaFin)) {
+            horasDisponibles.add(horaActual.format(FORMATO_HORA_USUARIO));
+            horaActual = horaActual.plusMinutes(30);
         }
-        cmbHoraCita.setItems(horas);
+        cmbHoraCita.setItems(horasDisponibles);
+        if (!horasDisponibles.isEmpty()) {
+            cmbHoraCita.getSelectionModel().selectFirst();
+        }
     }
 
+    /**
+     * Valida los campos del formulario.
+     * @return true si todos los campos son válidos, false en caso contrario.
+     */
+    private boolean validarCampos(LocalDate fecha, String horaStr, String importeStr) {
+        if (fecha == null) {
+            UtilidadesVentana.mostrarAlertaError("Campo Requerido", "Por favor, seleccione una fecha para la cita.");
+            dpFechaCita.requestFocus();
+            return false;
+        }
+
+        if (fecha.isAfter(LocalDate.now().plusDays(MAX_DIAS_ANTICIPACION_CITA))) {
+            UtilidadesVentana.mostrarAlertaError("Fecha Inválida",
+                    "No puedes solicitar citas con más de " + MAX_DIAS_ANTICIPACION_CITA + " días de anticipación.");
+            dpFechaCita.requestFocus();
+            return false;
+        }
+
+
+        if (horaStr == null || horaStr.trim().isEmpty()) {
+            UtilidadesVentana.mostrarAlertaError("Campo Requerido", "Por favor, seleccione una hora para la cita.");
+            cmbHoraCita.requestFocus();
+            return false;
+        }
+
+        try {
+            double importeDonacion = Double.parseDouble(importeStr.replace(',', '.'));
+            if (importeDonacion < DONACION_MINIMA_REQUERIDA) {
+                UtilidadesVentana.mostrarAlertaError("Importe Inválido",
+                        String.format(Locale.US, "La donación mínima es de %.2f €.", DONACION_MINIMA_REQUERIDA));
+                txtImporteDonacion.requestFocus();
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            UtilidadesVentana.mostrarAlertaError("Importe Inválido",
+                    "Por favor, ingrese un número válido para la donación (ej: 3.50).");
+            txtImporteDonacion.requestFocus();
+            return false;
+        }
+
+        try {
+            LocalTime.parse(horaStr, FORMATO_HORA_USUARIO);
+        } catch (DateTimeParseException e) {
+            UtilidadesVentana.mostrarAlertaError("Hora Inválida",
+                    "El formato de hora seleccionado ('" + horaStr + "') no es válido.");
+            cmbHoraCita.requestFocus();
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Verifica si el cliente ha alcanzado el límite máximo de citas activas.
+     * @return true si el cliente puede solicitar una nueva cita, false si ha alcanzado el límite.
+     */
+    private boolean verificarLimiteDeCitas() {
+        if (clienteLogueado == null) return false;
+        try {
+
+            List<ReservaCita> citasDelCliente = reservaCitaDao.obtenerReservasPorCliente(clienteLogueado.getIdUsuario());
+
+            long citasActivas = citasDelCliente.stream()
+                    .filter(cita -> "Pendiente".equalsIgnoreCase(cita.getEstadoCita()) ||
+                            "Confirmada".equalsIgnoreCase(cita.getEstadoCita()))
+                    .count();
+
+            if (citasActivas >= MAX_CITAS_POR_USUARIO) {
+                UtilidadesVentana.mostrarAlertaError("Límite Alcanzado",
+                        "Has alcanzado el máximo de " + MAX_CITAS_POR_USUARIO + " citas activas. " +
+                                "Por favor, espera a que alguna de tus citas actuales se complete o cancélala si es necesario.");
+                return false;
+            }
+        } catch (SQLException e) {
+            UtilidadesVentana.mostrarAlertaError("Error de Base de Datos",
+                    "No se pudo verificar el número de citas existentes: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Maneja el evento de clic en el botón "Confirmar Solicitud".
+     */
     @FXML
     void handleConfirmarSolicitud(ActionEvent event) {
         if (perroParaCita == null || clienteLogueado == null) {
-            UtilidadesVentana.mostrarAlertaError("Error", "Faltan datos del perro o del cliente.");
+            UtilidadesVentana.mostrarAlertaError("Error Interno",
+                    "Faltan datos del perro o del cliente. No se puede procesar la solicitud.");
             return;
         }
 
+        // 1. Verificar límite de citas
+        if (!verificarLimiteDeCitas()) {
+            return;
+        }
+
+        // 2. Obtener y validar campos
         LocalDate fechaSeleccionada = dpFechaCita.getValue();
         String horaSeleccionadaStr = cmbHoraCita.getValue();
-        String importeStr = txtImporteDonacion.getText().trim().replace(",", ".");
+        String importeStr = txtImporteDonacion.getText().trim();
 
-        if (fechaSeleccionada == null) {
-            UtilidadesVentana.mostrarAlertaError("Campo Requerido", "Por favor, seleccione una fecha para la cita.");
-            return;
-        }
-        if (horaSeleccionadaStr == null || horaSeleccionadaStr.isEmpty()) {
-            UtilidadesVentana.mostrarAlertaError("Campo Requerido", "Por favor, seleccione una hora para la cita.");
-            return;
-        }
-        double importeDonacion;
-        try {
-            importeDonacion = Double.parseDouble(importeStr);
-            if (importeDonacion < DONACION_MINIMA) {
-                UtilidadesVentana.mostrarAlertaError("Importe Inválido", "La donación mínima es de " + String.format("%.2f", DONACION_MINIMA) + " €.");
-                return;
-            }
-        } catch (NumberFormatException e) {
-            UtilidadesVentana.mostrarAlertaError("Importe Inválido", "Por favor, ingrese un número válido para el importe.");
+        if (!validarCampos(fechaSeleccionada, horaSeleccionadaStr, importeStr)) {
             return;
         }
 
-        LocalTime horaSeleccionada;
-        try {
-            // Usar el timeFormatter declarado en la clase
-            horaSeleccionada = LocalTime.parse(horaSeleccionadaStr, this.timeFormatter);
-        } catch (DateTimeParseException e) {
-            UtilidadesVentana.mostrarAlertaError("Hora Inválida", "El formato de hora seleccionado no es válido (" + horaSeleccionadaStr + ").");
-            return;
-        }
+        // 3. Parsear datos validados
+        LocalTime horaSeleccionada = LocalTime.parse(horaSeleccionadaStr, FORMATO_HORA_USUARIO);
+        double importeDonacion = Double.parseDouble(importeStr.replace(',', '.'));
 
+        // 4. Crear objeto ReservaCita
         ReservaCita nuevaReserva = new ReservaCita();
         nuevaReserva.setFecha(fechaSeleccionada);
         nuevaReserva.setHora(horaSeleccionada);
         nuevaReserva.setIdCliente(clienteLogueado.getIdUsuario());
         nuevaReserva.setIdPerro(perroParaCita.getIdPerro());
         nuevaReserva.setIdProtectora(perroParaCita.getIdProtectora());
-        // nuevaReserva.setEstadoCita("Pendiente"); // El DDL ya tiene DEFAULT 'Pendiente'
+        nuevaReserva.setEstadoCita(ESTADO_CITA_POR_DEFECTO);
 
         try {
             int idReservaCreada = reservaCitaDao.crearReservaCita(nuevaReserva);
             if (idReservaCreada != -1) {
-                UtilidadesVentana.mostrarAlertaInformacion("Solicitud Enviada",
-                        "Tu solicitud de cita para " + perroParaCita.getNombre() + " el " +
-                                fechaSeleccionada.format(this.dateFormatter) + // Usar el dateFormatter declarado
-                                " a las " + horaSeleccionada.format(this.timeFormatter) + // Formatear la hora también
-                                " ha sido enviada. La protectora se pondrá en contacto contigo.");
+                String mensajeExito = String.format(
+                        "Tu solicitud de cita para %s el %s a las %s ha sido enviada. " +
+                                "La protectora se pondrá en contacto contigo. Donación registrada: %.2f €.",
+                        perroParaCita.getNombre(),
+                        fechaSeleccionada.format(FORMATO_FECHA_USUARIO),
+                        horaSeleccionada.format(FORMATO_HORA_USUARIO),
+                        importeDonacion);
+                UtilidadesVentana.mostrarAlertaInformacion("Solicitud Enviada", mensajeExito);
                 cerrarVentana();
             } else {
-                UtilidadesVentana.mostrarAlertaError("Error al Solicitar", "No se pudo registrar la solicitud de cita.");
+                UtilidadesVentana.mostrarAlertaError("Error al Solicitar",
+                        "No se pudo registrar la solicitud de cita en la base de datos.");
             }
         } catch (SQLException e) {
-            UtilidadesVentana.mostrarAlertaError("Error de Base de Datos", "Ocurrió un error al procesar tu solicitud: " + e.getMessage());
+            UtilidadesVentana.mostrarAlertaError("Error de Base de Datos",
+                    "Ocurrió un problema al procesar tu solicitud: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
+    /**
+     * Maneja el evento de clic en el botón "Cancelar".
+     */
     @FXML
     void handleCancelar(ActionEvent event) {
         cerrarVentana();
     }
 
+    /**
+     * Cierra la ventana actual del formulario.
+     */
     private void cerrarVentana() {
         if (btnCancelarSolicitud != null && btnCancelarSolicitud.getScene() != null && btnCancelarSolicitud.getScene().getWindow() != null) {
             Stage stage = (Stage) btnCancelarSolicitud.getScene().getWindow();
             stage.close();
+        } else {
+            System.err.println("No se pudo obtener la referencia a la ventana para cerrarla (posiblemente el nodo no está en la escena).");
         }
     }
 }

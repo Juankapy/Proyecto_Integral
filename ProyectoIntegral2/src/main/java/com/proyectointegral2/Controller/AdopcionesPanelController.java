@@ -65,7 +65,6 @@ public class AdopcionesPanelController {
     private static final double TARJETA_PREF_WIDTH = 200;
     private static final double TARJETA_IMG_AREA_WIDTH = 180;
     private static final double TARJETA_IMG_AREA_HEIGHT = 180;
-    private static final double CARD_HORIZONTAL_GAP = 20;
     private static final double CARD_INTERNAL_PADDING = 10;
 
 

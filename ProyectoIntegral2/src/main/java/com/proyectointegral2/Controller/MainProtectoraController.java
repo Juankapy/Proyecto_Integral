@@ -402,25 +402,8 @@ public class MainProtectoraController {
         }
     }
 
-
-    void NuevoPerro(ActionEvent event) {
-        if (this.usuarioCuentaLogueada == null || this.usuarioCuentaLogueada.getIdUsuario() <= 0) { UtilidadesVentana.mostrarAlertaError("Error Sesión", "Inicie sesión para añadir perro."); return; }
-        String fxml = "/com/proyectointegral2/Vista/FormularioPerro.fxml";
-        Stage owner = (mainBorderPane.getScene() != null) ? (Stage) mainBorderPane.getScene().getWindow() : null;
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
-            if (loader.getLocation() == null) { UtilidadesVentana.mostrarAlertaError("Error", "FXML no encontrado: " + fxml); return; }
-            Parent root = loader.load();
-            FormularioPerroController formCtrl = loader.getController();
-            if (formCtrl != null) formCtrl.initDataParaNuevoPerro(this.usuarioCuentaLogueada.getIdUsuario());
-            else { UtilidadesVentana.mostrarAlertaError("Error", "Controlador FormularioPerro no hallado."); return; }
-            UtilidadesVentana.mostrarVentanaComoDialogo(root, "Añadir Nuevo Perro a " + this.nombreProtectoraActual, owner);
-            cargarYMostrarPerrosDeProtectora();
-        } catch (IOException e) { e.printStackTrace(); UtilidadesVentana.mostrarAlertaError("Error Navegación", "No se pudo abrir formulario: " + e.getMessage()); }
-    }
-
     @FXML void IrABandeja(MouseEvent event) { UtilidadesVentana.mostrarAlertaInformacion("Próximamente", "Bandeja no implementada."); }
-    @FXML void IrAPerfilUsuario(MouseEvent event) {UtilidadesVentana.mostrarAlertaInformacion("Próximamente", "Perfil no implementado."); }
+    @FXML void IrAPerfilUsuario(MouseEvent event) {UtilidadesVentana.cambiarEscena("/com/proyectointegral2/Vista/FormularioUsuario.fxml", "Perfil de Usuario", true); }
 
     @FXML
     void RegistroAdopciones(ActionEvent event) {

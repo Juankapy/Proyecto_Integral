@@ -153,7 +153,8 @@ public class PerfilUsuarioController {
             if (citas != null && !citas.isEmpty()) {
                 for (ReservaCita rc : citas) {
 
-                    String perroInfo = rc.getMotivo();
+                    String perroInfo = "Perro ID: " + rc.getIdPerro() + " - " +
+                            (rc.getEstadoCita().equals("CANCELADA") ? "Cita Cancelada" : "Cita Programada");
 
                     historialItems.add(rc.getFecha().format(dateFormatter) + " - " + perroInfo);
                 }

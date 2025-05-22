@@ -104,7 +104,6 @@ public class BandejaCitasController {
 
         HBox fechaHBox = crearFilaDetalle("Fecha:", cita.getFecha().format(dateFormatter));
         HBox horaHBox = crearFilaDetalle("Hora:", cita.getHora().format(timeFormatter));
-        HBox lugarHBox = crearFilaDetalle("Lugar:", Objects.requireNonNullElse(cita.getMotivo(), "No especificado"));
 
         HBox protectoraHBox = null;
         if (!nombreProtectora.equals("Protectora Desconocida") && !nombreProtectora.isEmpty()) {
@@ -127,7 +126,7 @@ public class BandejaCitasController {
         botonesHBox.getChildren().addAll(btnModificar, btnCancelarCita);
 
         tarjetaVBox.getChildren().add(lblNombrePerroRaza);
-        tarjetaVBox.getChildren().addAll(fechaHBox, horaHBox, lugarHBox);
+        tarjetaVBox.getChildren().add(fechaHBox);
         if (protectoraHBox != null) {
             tarjetaVBox.getChildren().add(protectoraHBox);
         }
@@ -149,7 +148,7 @@ public class BandejaCitasController {
     }
 
     private void handleModificarCita(ReservaCita cita) {
-        System.out.println("Modificar cita ID: " + cita.getIdReserva() + " con motivo: " + cita.getMotivo());
+        System.out.println("Modificar cita ID: " + cita.getIdReserva() + " con motivo: " + cita.getEstadoCita());
         // Lógica para abrir ventana de modificación
         UtilidadesVentana.mostrarAlertaInformacion("Modificar Cita", "Funcionalidad para modificar cita no implementada.");
     }
