@@ -2,21 +2,22 @@ package com.proyectointegral2.Controller;
 
 import com.proyectointegral2.Model.Cliente;
 import com.proyectointegral2.Model.Usuario;
+import com.proyectointegral2.Model.SesionUsuario;
 import com.proyectointegral2.dao.ClienteDao;
 import com.proyectointegral2.dao.UsuarioDao;
-import com.proyectointegral2.Model.SesionUsuario; // Para actualizar sesión si cambia nombre de usuario
+import com.proyectointegral2.utils.UtilidadesExcepciones;
 import com.proyectointegral2.utils.UtilidadesVentana;
-import com.proyectointegral2.utils.UtilidadesExcepciones; // Si lo usas para manejo de excepciones
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable; // Si necesitas initialize con URL y ResourceBundle
+import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.control.DatePicker; // Para Fecha de Nacimiento del cliente
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -24,26 +25,37 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL; // Para Initializable
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
+/**
+ * Controlador para el formulario de edición del perfil de un usuario cliente.
+ * Permite al usuario modificar sus datos personales (tabla Cliente) y los datos
+ * de su cuenta (tabla Usuario), incluyendo nombre de usuario, contraseña y foto de perfil.
+ */
 public class FormularioUsuarioController implements Initializable {
 
+    // --- Componentes FXML ---
     @FXML private ImageView imgIconoVolver;
     @FXML private Label lblTituloFormulario;
     @FXML private ImageView imgFotoPerfilEditable;
     @FXML private Button btnCambiarFoto;
 
+    // Campos para datos del Cliente
     @FXML private TextField TxtNombre;
     @FXML private TextField TxtApellido;
     @FXML private TextField TxtNIF;
@@ -55,6 +67,7 @@ public class FormularioUsuarioController implements Initializable {
     @FXML private TextField TxtTelefono;
     @FXML private TextField TxtEmail;
 
+    // Campos para datos del Usuario (cuenta)
     @FXML private TextField TxtNombreUsuario;
     @FXML private PasswordField TxtPassword;
     @FXML private PasswordField TxtConfirmPassword;
@@ -62,46 +75,93 @@ public class FormularioUsuarioController implements Initializable {
     @FXML private Button BtnCancelar;
     @FXML private Button BtnGuardar;
 
+    // --- DAOs ---
     private ClienteDao clienteDAO;
     private UsuarioDao usuarioDAO;
 
+    // --- Estado del Controlador ---
     private Cliente clienteAEditar;
     private Usuario cuentaUsuarioAEditar;
     private File nuevaFotoSeleccionada;
 
-    private final String RUTA_PLACEHOLDER_USUARIO = "/assets/Imagenes/iconos/sinusuario.jpg";
-    private final String CARPETA_FOTOS_PERFIL_USUARIOS = "src/main/resources/assets/Imagenes/perfiles_usuarios/";
+    // --- Constantes ---
+    private static final String RUTA_PLACEHOLDER_FOTO_PERFIL_USUARIO = "/assets/Imagenes/iconos/sinusuario.jpg";
+    private static final String DIRECTORIO_BASE_FOTOS_PERFIL_FILESYSTEM = "src/main/resources/assets/Imagenes/perfiles_usuarios/";
+    private static final String RUTA_BASE_FOTOS_PERFIL_CLASSPATH = "/assets/Imagenes/perfiles_usuarios/";
+
+    private static final String RUTA_FXML_PERFIL_USUARIO = "/com/proyectointegral2/Vista/PerfilUsuario.fxml";
+    private static final String RUTA_FXML_MAIN_CLIENTE = "/com/proyectointegral2/Vista/Main.fxml";
+    private static final String TITULO_PERFIL_USUARIO = "Mi Perfil";
+    private static final String TITULO_MAIN_CLIENTE = "Panel Principal";
+
+    // Patrones de validación
+    private static final Pattern NIF_PATTERN = Pattern.compile("^[0-9]{8}[A-Z]$");
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern CP_PATTERN = Pattern.compile("\\d{5}");
+    private static final Pattern TELEFONO_PATTERN = Pattern.compile("\\d{9}");
 
 
+    /**
+     * Método de inicialización llamado por JavaFX.
+     * @param url La ubicación utilizada para resolver rutas relativas.
+     * @param resourceBundle Los recursos utilizados para localizar el objeto raíz.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        this.clienteDAO = new ClienteDao();
-        this.usuarioDAO = new UsuarioDao();
-        if (lblTituloFormulario != null) lblTituloFormulario.setText("Editar Perfil");
+        try {
+            this.clienteDAO = new ClienteDao();
+            this.usuarioDAO = new UsuarioDao();
+        } catch (Exception e) {
+            System.err.println("Error crítico al inicializar DAOs en FormularioUsuarioController: " + e.getMessage());
+            e.printStackTrace();
+            UtilidadesVentana.mostrarAlertaError("Error Crítico de Sistema",
+                    "No se pudo inicializar el acceso a la base de datos. El formulario no funcionará correctamente.");
+            if (BtnGuardar != null) BtnGuardar.setDisable(true);
+            if (btnCambiarFoto != null) btnCambiarFoto.setDisable(true);
+        }
+        if (lblTituloFormulario != null) lblTituloFormulario.setText("Editar Perfil de Usuario");
         if (BtnGuardar != null) BtnGuardar.setText("Guardar Cambios");
         cargarImagenPlaceholder();
     }
 
+    /**
+     * Prepara el formulario con los datos del cliente y usuario que se van a editar.
+     * Este método debe ser llamado desde el controlador que abre este formulario.
+     * @param cliente El objeto {@link Cliente} con los datos personales a editar.
+     * @param cuentaUsuario El objeto {@link Usuario} con los datos de la cuenta a editar.
+     */
     public void initDataParaEdicion(Cliente cliente, Usuario cuentaUsuario) {
         this.clienteAEditar = cliente;
         this.cuentaUsuarioAEditar = cuentaUsuario;
 
-        if (lblTituloFormulario != null && cliente != null) {
-            lblTituloFormulario.setText("Editar Perfil de " + Objects.requireNonNullElse(cliente.getNombre(), "Usuario"));
+        if (this.clienteAEditar == null || this.cuentaUsuarioAEditar == null) {
+            UtilidadesVentana.mostrarAlertaError("Error de Datos",
+                    "No se recibió la información completa del usuario para editar. El formulario se cerrará.");
+            limpiarYDeshabilitarFormulario();
+            if (BtnGuardar != null) BtnGuardar.setDisable(true);
+            return;
+        }
+
+        if (lblTituloFormulario != null) {
+            lblTituloFormulario.setText("Editar Perfil de " +
+                    Objects.requireNonNullElse(this.clienteAEditar.getNombre(), "Usuario"));
         }
         if (BtnGuardar != null) {
             BtnGuardar.setText("Guardar Cambios");
         }
-        poblarCamposConDatos();
+        poblarCamposConDatosExistentes();
     }
 
-
-    private void poblarCamposConDatos() {
+    /**
+     * Puebla los campos del formulario con los datos del cliente y usuario que se están editando.
+     */
+    private void poblarCamposConDatosExistentes() {
+        // Poblar datos del Cliente
         if (clienteAEditar != null) {
             TxtNombre.setText(Objects.requireNonNullElse(clienteAEditar.getNombre(), ""));
             TxtApellido.setText(Objects.requireNonNullElse(clienteAEditar.getApellidos(), ""));
             TxtNIF.setText(Objects.requireNonNullElse(clienteAEditar.getNif(), ""));
-            DpFechaNacimiento.setValue(clienteAEditar.getFechaNacimiento()); // Asume que Cliente tiene getFechaNacimiento() que devuelve LocalDate
+            if (DpFechaNacimiento != null) DpFechaNacimiento.setValue(clienteAEditar.getFechaNacimiento());
             TxtDireccion.setText(Objects.requireNonNullElse(clienteAEditar.getCalle(), ""));
             TxtProvincia.setText(Objects.requireNonNullElse(clienteAEditar.getProvincia(), ""));
             TxtCiudad.setText(Objects.requireNonNullElse(clienteAEditar.getCiudad(), ""));
@@ -109,104 +169,221 @@ public class FormularioUsuarioController implements Initializable {
             TxtTelefono.setText(Objects.requireNonNullElse(clienteAEditar.getTelefono(), ""));
             TxtEmail.setText(Objects.requireNonNullElse(clienteAEditar.getEmail(), ""));
 
-            String rutaFoto = clienteAEditar.getRutaFotoPerfil();
-            cargarFotoActual(rutaFoto);
+            cargarFotoPerfilActual(clienteAEditar.getRutaFotoPerfil());
         } else {
-            limpiarCampos();
+            limpiarCamposCliente();
             cargarImagenPlaceholder();
         }
 
+        // Poblar datos del Usuario (cuenta)
         if (cuentaUsuarioAEditar != null) {
             TxtNombreUsuario.setText(Objects.requireNonNullElse(cuentaUsuarioAEditar.getNombreUsu(), ""));
         } else {
             if(TxtNombreUsuario != null) TxtNombreUsuario.clear();
         }
-        if(TxtPassword != null) TxtPassword.setPromptText("Dejar en blanco para no cambiar");
-        if(TxtConfirmPassword != null) TxtConfirmPassword.setPromptText("Confirmar si cambia");
+
+        // Configurar campos de contraseña para indicar que son opcionales.
+        if(TxtPassword != null) TxtPassword.setPromptText("Dejar vacío para no cambiar");
+        if(TxtConfirmPassword != null) TxtConfirmPassword.setPromptText("Confirmar nueva contraseña");
     }
 
-    private void limpiarCampos() {
+    /**
+     * Limpia los campos relacionados con los datos del Cliente.
+     */
+    private void limpiarCamposCliente() {
         if(TxtNombre != null) TxtNombre.clear();
         if(TxtApellido != null) TxtApellido.clear();
-        if(TxtNIF != null) TxtNIF.clear();
-        if(DpFechaNacimiento != null) DpFechaNacimiento.setValue(null);
-        if(TxtDireccion != null) TxtDireccion.clear();
-        if(TxtProvincia != null) TxtProvincia.clear();
-        if(TxtCiudad != null) TxtCiudad.clear();
-        if(TxtCP != null) TxtCP.clear();
-        if(TxtTelefono != null) TxtTelefono.clear();
         if(TxtEmail != null) TxtEmail.clear();
-        if(TxtNombreUsuario != null) TxtNombreUsuario.clear();
-        if(TxtPassword != null) TxtPassword.clear();
-        if(TxtConfirmPassword != null) TxtConfirmPassword.clear();
-        nuevaFotoSeleccionada = null;
-        cargarImagenPlaceholder();
     }
 
-    private void cargarFotoActual(String rutaFotoRelativa) {
+    /**
+     * Limpia todos los campos del formulario y los deshabilita.
+     * Usado si hay un error crítico al iniciar con datos.
+     */
+    private void limpiarYDeshabilitarFormulario() {
+        limpiarCamposCliente();
+        if(TxtNombreUsuario != null) TxtNombreUsuario.clear();
+        if(TxtPassword != null) { TxtPassword.clear(); TxtPassword.setDisable(true); }
+        if(TxtConfirmPassword != null) { TxtConfirmPassword.clear(); TxtConfirmPassword.setDisable(true); }
+        nuevaFotoSeleccionada = null;
+        cargarImagenPlaceholder();
+        if(btnCambiarFoto != null) btnCambiarFoto.setDisable(true);
+        for (TextField tf : Arrays.asList(TxtNombre, TxtApellido, TxtNIF, TxtDireccion, TxtProvincia, TxtCiudad, TxtCP, TxtTelefono, TxtEmail, TxtNombreUsuario)) {
+            if (tf != null) tf.setDisable(true);
+        }
+        if (DpFechaNacimiento != null) DpFechaNacimiento.setDisable(true);
+    }
+
+
+    /**
+     * Carga la foto de perfil actual del usuario en el ImageView.
+     * Si no hay foto o hay un error, carga una imagen placeholder.
+     * @param rutaFotoRelativaAlClasspath La ruta de la foto, relativa a la carpeta 'resources'.
+     */
+    private void cargarFotoPerfilActual(String rutaFotoRelativaAlClasspath) {
         if (imgFotoPerfilEditable == null) return;
-        if (rutaFotoRelativa != null && !rutaFotoRelativa.trim().isEmpty()) {
-            String pathCorregido = rutaFotoRelativa;
-            if (!pathCorregido.startsWith("\\")) pathCorregido = "\\" + pathCorregido;
-            try (InputStream stream = getClass().getResourceAsStream(pathCorregido)) {
-                if (stream != null) {
-                    imgFotoPerfilEditable.setImage(new Image(stream));
-                    return;
-                } else System.err.println("WARN: Foto de perfil no encontrada en classpath: " + pathCorregido);
+        String pathNormalizado = null;
+
+        if (rutaFotoRelativaAlClasspath != null && !rutaFotoRelativaAlClasspath.trim().isEmpty()) {
+            try {
+                pathNormalizado = rutaFotoRelativaAlClasspath.startsWith("/")
+                        ? rutaFotoRelativaAlClasspath
+                        : "/" + rutaFotoRelativaAlClasspath.replace("\\", "/");
+
+                try (InputStream stream = getClass().getResourceAsStream(pathNormalizado)) {
+                    if (stream != null) {
+                        imgFotoPerfilEditable.setImage(new Image(stream));
+                        return; // Foto cargada exitosamente.
+                    } else {
+                        System.err.println("WARN: Foto de perfil no encontrada en classpath: " + pathNormalizado);
+                    }
+                }
             } catch (Exception e) {
-                System.err.println("Excepción al cargar foto de perfil: " + e.getMessage());
+                System.err.println("ERROR: Excepción al cargar foto de perfil desde '" +
+                        (pathNormalizado != null ? pathNormalizado : rutaFotoRelativaAlClasspath) + "': " + e.getMessage());
+                e.printStackTrace();
             }
         }
         cargarImagenPlaceholder();
     }
 
+    /**
+     * Carga la imagen de placeholder en el ImageView de la foto de perfil.
+     */
     private void cargarImagenPlaceholder() {
         if (imgFotoPerfilEditable == null) return;
-        try (InputStream placeholderStream = getClass().getResourceAsStream(RUTA_PLACEHOLDER_USUARIO)) {
+        try (InputStream placeholderStream = getClass().getResourceAsStream(RUTA_PLACEHOLDER_FOTO_PERFIL_USUARIO)) {
             if (placeholderStream != null) {
                 imgFotoPerfilEditable.setImage(new Image(placeholderStream));
             } else {
-                System.err.println("Error: Placeholder de usuario no encontrado: " + RUTA_PLACEHOLDER_USUARIO);
+                System.err.println("Error Crítico: Placeholder de foto de perfil de usuario no encontrado en: " + RUTA_PLACEHOLDER_FOTO_PERFIL_USUARIO);
                 imgFotoPerfilEditable.setImage(null);
             }
         } catch (Exception e) {
-            System.err.println("Excepción crítica cargando placeholder de usuario: " + e.getMessage());
+            System.err.println("Excepción crítica al cargar imagen placeholder de usuario: " + e.getMessage());
+            e.printStackTrace();
+            imgFotoPerfilEditable.setImage(null);
         }
     }
 
+    /**
+     * Maneja el evento del botón "Cambiar Foto".
+     * Abre un FileChooser para que el usuario seleccione una nueva imagen de perfil.
+     * Muestra una vista previa de la imagen seleccionada.
+     * @param event El evento de acción.
+     */
     @FXML
     void CambiarFoto(ActionEvent event) {
-        if (imgFotoPerfilEditable == null || btnCambiarFoto == null) return;
+        if (imgFotoPerfilEditable == null || btnCambiarFoto == null) {
+            System.err.println("Error: Componentes UI para cambiar foto no disponibles.");
+            return;
+        }
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Seleccionar Foto de Perfil");
+        fileChooser.setTitle("Seleccionar Nueva Foto de Perfil");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Imágenes", "*.png", "*.jpg", "*.jpeg", "*.gif")
         );
-        Stage stage = (Stage) btnCambiarFoto.getScene().getWindow();
-        File archivo = fileChooser.showOpenDialog(stage);
-        if (archivo != null) {
-            this.nuevaFotoSeleccionada = archivo;
+
+        Node sourceNode = (Node) event.getSource();
+        Stage stage = (Stage) sourceNode.getScene().getWindow();
+        File archivoSeleccionado = fileChooser.showOpenDialog(stage);
+
+        if (archivoSeleccionado != null) {
+            this.nuevaFotoSeleccionada = archivoSeleccionado;
             try {
-                Image image = new Image(archivo.toURI().toURL().toString());
+                Image image = new Image(archivoSeleccionado.toURI().toURL().toString());
                 imgFotoPerfilEditable.setImage(image);
             } catch (MalformedURLException e) {
-                UtilidadesVentana.mostrarAlertaError("Error de Imagen", "No se pudo previsualizar la imagen: " + e.getMessage());
+                UtilidadesVentana.mostrarAlertaError("Error al Previsualizar Imagen",
+                        "No se pudo previsualizar la imagen seleccionada: " + e.getMessage());
+                e.printStackTrace();
+                this.nuevaFotoSeleccionada = null;
             }
         }
     }
 
+    /**
+     * Valida los datos de entrada del formulario de edición de perfil.
+     * @return true si los datos son válidos, false en caso contrario.
+     */
+    private boolean validarEntradasFormulario(String nombre, String apellidos, String nif, LocalDate fechaNac, String email, String nombreUsuario, String nuevaPassword, String confirmarNuevaPassword) {
+
+        if (nombre.isEmpty() || apellidos.isEmpty() || nif.isEmpty() || email.isEmpty() || nombreUsuario.isEmpty()) {
+            UtilidadesVentana.mostrarAlertaError("Campos Obligatorios",
+                    "Nombre, apellidos, NIF, email del cliente y nombre de usuario son obligatorios.");
+            return false;
+        }
+        // Validar NIF
+        if (!NIF_PATTERN.matcher(nif.toUpperCase()).matches()) {
+            UtilidadesVentana.mostrarAlertaError("Formato Inválido", "El formato del NIF no es válido (ej: 12345678A).");
+            TxtNIF.requestFocus();
+            return false;
+        }
+        // Validar Email
+        if (!EMAIL_PATTERN.matcher(email).matches()) {
+            UtilidadesVentana.mostrarAlertaError("Formato Inválido", "El formato del correo electrónico no es válido.");
+            TxtEmail.requestFocus();
+            return false;
+        }
+        // Validar Fecha de Nacimiento
+        if (fechaNac != null && fechaNac.isAfter(LocalDate.now())) {
+            UtilidadesVentana.mostrarAlertaError("Fecha Inválida", "La fecha de nacimiento no puede ser futura.");
+            DpFechaNacimiento.requestFocus();
+            return false;
+        }
+        // Validar Código Postal
+        String cp = TxtCP.getText().trim();
+        if (!cp.isEmpty() && !CP_PATTERN.matcher(cp).matches()) {
+            UtilidadesVentana.mostrarAlertaError("Formato Inválido", "El Código Postal debe tener 5 dígitos si se especifica.");
+            TxtCP.requestFocus();
+            return false;
+        }
+        // Validar Teléfono
+        String telefono = TxtTelefono.getText().trim();
+        if (!telefono.isEmpty() && !TELEFONO_PATTERN.matcher(telefono).matches()) {
+            UtilidadesVentana.mostrarAlertaError("Formato Inválido", "El Teléfono debe tener 9 dígitos si se especifica.");
+            TxtTelefono.requestFocus();
+            return false;
+        }
+
+
+        // Validaciones de Contraseña
+        if (!nuevaPassword.isEmpty()) {
+            if (nuevaPassword.length() < 6) { // Mínimo 6 caracteres
+                UtilidadesVentana.mostrarAlertaError("Contraseña Débil", "La nueva contraseña debe tener al menos 6 caracteres.");
+                TxtPassword.requestFocus();
+                return false;
+            }
+            if (!nuevaPassword.equals(confirmarNuevaPassword)) {
+                UtilidadesVentana.mostrarAlertaError("Error de Contraseña", "Las nuevas contraseñas no coinciden.");
+                TxtPassword.clear();
+                TxtConfirmPassword.clear();
+                TxtPassword.requestFocus();
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     * Maneja el evento del botón "Guardar Cambios".
+     * Recolecta, valida y guarda los datos actualizados del cliente y su cuenta de usuario.
+     * @param event El evento de acción.
+     */
     @FXML
     void Guardar(ActionEvent event) {
         if (clienteAEditar == null || cuentaUsuarioAEditar == null) {
-            UtilidadesVentana.mostrarAlertaError("Error Interno", "No hay datos de usuario o cliente cargados para guardar.");
+            UtilidadesVentana.mostrarAlertaError("Error Interno del Sistema",
+                    "No hay datos de usuario o cliente cargados para guardar. Por favor, recargue el perfil.");
             return;
         }
 
-        // Recoger datos del formulario
+        // 1. Recolectar datos del formulario.
         String nombre = TxtNombre.getText().trim();
         String apellidos = TxtApellido.getText().trim();
-        String nif = TxtNIF.getText().trim();
-        LocalDate fechaNacimiento = DpFechaNacimiento.getValue();
+        String nif = TxtNIF.getText().trim().toUpperCase();
+        LocalDate fechaNacimiento = (DpFechaNacimiento != null) ? DpFechaNacimiento.getValue() : null;
         String calle = TxtDireccion.getText().trim();
         String provincia = TxtProvincia.getText().trim();
         String ciudad = TxtCiudad.getText().trim();
@@ -218,14 +395,13 @@ public class FormularioUsuarioController implements Initializable {
         String passwordNueva = TxtPassword.getText();
         String confirmPasswordNueva = TxtConfirmPassword.getText();
 
-        if (nombre.isEmpty() || apellidos.isEmpty() || emailCliente.isEmpty() || nombreUsuarioLogin.isEmpty() || nif.isEmpty()) {
-            UtilidadesVentana.mostrarAlertaError("Campos Vacíos", "Nombre, apellidos, NIF, email del cliente y nombre de usuario de cuenta son obligatorios.");
+        // 2. Validar los datos.
+        if (!validarEntradasFormulario(nombre, apellidos, nif, fechaNacimiento, emailCliente,
+                nombreUsuarioLogin, passwordNueva, confirmPasswordNueva)) {
             return;
         }
-        if (!passwordNueva.isEmpty() && !passwordNueva.equals(confirmPasswordNueva)) {
-            UtilidadesVentana.mostrarAlertaError("Contraseña", "Las nuevas contraseñas no coinciden.");
-            return;
-        }
+
+        // 3. Actualizar el objeto Cliente.
         clienteAEditar.setNombre(nombre);
         clienteAEditar.setApellidos(apellidos);
         clienteAEditar.setNif(nif);
@@ -237,131 +413,180 @@ public class FormularioUsuarioController implements Initializable {
         clienteAEditar.setTelefono(telefono);
         clienteAEditar.setEmail(emailCliente);
 
-        boolean cuentaActualizada = false;
-        if (!cuentaUsuarioAEditar.getNombreUsu().equals(nombreUsuarioLogin) || !passwordNueva.isEmpty()) {
+        // 4. Determinar si la cuenta de Usuario necesita actualización.
+        boolean esNecesarioActualizarUsuario = false;
+        if (!cuentaUsuarioAEditar.getNombreUsu().equals(nombreUsuarioLogin)) {
             cuentaUsuarioAEditar.setNombreUsu(nombreUsuarioLogin);
-            if (!passwordNueva.isEmpty()) {
-                cuentaUsuarioAEditar.setContrasena(passwordNueva);
-            }
-            cuentaActualizada = true;
+            esNecesarioActualizarUsuario = true;
+        }
+        if (!passwordNueva.isEmpty()) {
+            // IMPORTANTE: Hashear la nueva contraseña antes de setearla.
+            // cuentaUsuarioAEditar.setContrasena(hashUtils.hashPassword(passwordNueva));
+            cuentaUsuarioAEditar.setContrasena(passwordNueva);
+            esNecesarioActualizarUsuario = true;
         }
 
+        // 5. Procesar nueva foto de perfil si se seleccionó una.
         if (nuevaFotoSeleccionada != null) {
             try {
-                String rutaRelativaFotoGuardada = guardarNuevaFotoDePerfil(nuevaFotoSeleccionada, clienteAEditar.getEmail());
+
+                String identificadorParaFoto = clienteAEditar.getNif() != null ? clienteAEditar.getNif() : clienteAEditar.getEmail();
+                String rutaRelativaFotoGuardada = guardarNuevaFotoDePerfilYObtenerRuta(nuevaFotoSeleccionada, identificadorParaFoto);
                 if (rutaRelativaFotoGuardada != null) {
                     clienteAEditar.setRutaFotoPerfil(rutaRelativaFotoGuardada);
+                } else {
+                    return;
                 }
             } catch (IOException e) {
-                UtilidadesVentana.mostrarAlertaError("Error Foto", "Ocurrió un error al procesar la nueva foto de perfil.");
+                UtilidadesVentana.mostrarAlertaError("Error al Procesar Foto",
+                        "Ocurrió un error al procesar la nueva foto de perfil: " + e.getMessage());
                 e.printStackTrace();
                 return;
             }
         }
 
+        // 6. Guardar los cambios en la base de datos.
         try {
-            boolean exitoCliente = clienteDAO.actualizarCliente(clienteAEditar);
-            boolean exitoUsuario = true;
+            boolean exitoActualizacionCliente = clienteDAO.actualizarCliente(clienteAEditar);
+            boolean exitoActualizacionUsuario = true;
 
-            if (cuentaActualizada) {
-                exitoUsuario = usuarioDAO.actualizarUsuario(cuentaUsuarioAEditar);
+            if (esNecesarioActualizarUsuario) {
+                // Verificar si el nuevo nombre de usuario ya existe
+                if (!cuentaUsuarioAEditar.getNombreUsu().equals(nombreUsuarioLogin) &&
+                        usuarioDAO.obtenerUsuarioPorNombreUsuario(nombreUsuarioLogin) != null) {
+                    UtilidadesVentana.mostrarAlertaError("Usuario Existente", "El nuevo nombre de usuario '" + nombreUsuarioLogin + "' ya está en uso.");
+                    TxtNombreUsuario.requestFocus();
+                    return;
+                }
+                exitoActualizacionUsuario = usuarioDAO.actualizarUsuario(cuentaUsuarioAEditar);
             }
 
-            if (exitoCliente && exitoUsuario) {
+            if (exitoActualizacionCliente && exitoActualizacionUsuario) {
                 UtilidadesVentana.mostrarAlertaInformacion("Perfil Actualizado", "Tus datos se han guardado correctamente.");
-                if (SesionUsuario.getUsuarioLogueado() != null &&
-                        !SesionUsuario.getUsuarioLogueado().getNombreUsu().equals(cuentaUsuarioAEditar.getNombreUsu())) {
-                    SesionUsuario.getUsuarioLogueado().setNombreUsu(cuentaUsuarioAEditar.getNombreUsu());
+
+                Usuario usuarioSesion = SesionUsuario.getUsuarioLogueado();
+                if (usuarioSesion != null && esNecesarioActualizarUsuario &&
+                        !usuarioSesion.getNombreUsu().equals(cuentaUsuarioAEditar.getNombreUsu())) {
+                    usuarioSesion.setNombreUsu(cuentaUsuarioAEditar.getNombreUsu());
                 }
-                Volver(null);
+                navegarAlPerfilUsuario();
             } else {
-                String errorMsg = "";
-                if (!exitoCliente) errorMsg += "No se pudieron guardar los datos del perfil del cliente. ";
-                if (!exitoUsuario && cuentaActualizada) errorMsg += "No se pudieron guardar los cambios en la cuenta de usuario.";
-                UtilidadesVentana.mostrarAlertaError("Error al Guardar", errorMsg.trim().isEmpty() ? "Ocurrió un error desconocido." : errorMsg.trim());
+                StringBuilder errorMsg = new StringBuilder();
+                if (!exitoActualizacionCliente) errorMsg.append("No se pudieron guardar los datos del perfil del cliente. ");
+                if (!exitoActualizacionUsuario && esNecesarioActualizarUsuario) errorMsg.append("No se pudieron guardar los cambios en la cuenta de usuario.");
+                UtilidadesVentana.mostrarAlertaError("Error al Guardar",
+                        errorMsg.toString().trim().isEmpty() ? "Ocurrió un error desconocido al guardar." : errorMsg.toString().trim());
             }
         } catch (SQLException e) {
-            UtilidadesExcepciones.mostrarError(e, "Error de Base de Datos", "Ocurrió un error al guardar los cambios.");
+            UtilidadesExcepciones.mostrarError(e, "Error de Base de Datos",
+                    "Ocurrió un error al intentar guardar los cambios en la base de datos: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    private String guardarNuevaFotoDePerfil(File foto, String identificadorUnico) throws IOException {
-        if (foto == null) return null;
+    /**
+     * Guarda la nueva foto de perfil seleccionada en el sistema de archivos (tanto en 'src/main/resources'
+     * como en 'target/classes' si es posible) y devuelve la ruta relativa al classpath para la base de datos.
+     * @param fotoArchivo El archivo de la foto seleccionada.
+     * @param identificadorUnico Un identificador para ayudar a nombrar el archivo (ej. NIF o email).
+     * @return La ruta relativa al classpath para la base de datos, o null si hay un error.
+     * @throws IOException Si ocurre un error de E/S durante la copia del archivo.
+     */
+    private String guardarNuevaFotoDePerfilYObtenerRuta(File fotoArchivo, String identificadorUnico) throws IOException {
+        if (fotoArchivo == null) return null;
 
-        String nombreOriginal = foto.getName();
+        String nombreOriginal = fotoArchivo.getName();
         String extension = "";
         int i = nombreOriginal.lastIndexOf('.');
-        if (i > 0) extension = nombreOriginal.substring(i);
-        String identificadorLimpio = identificadorUnico.replaceAll("[^a-zA-Z0-9.-]", "_").replace("@", "_at_");
-        String nombreArchivoRelativo = "perfil_" + identificadorLimpio + "_" + System.currentTimeMillis() + extension;
-        String rutaRelativaClasspath = "/assets/Imagenes/perfiles_usuarios/" + nombreArchivoRelativo;
-
-        Path pathFuente = Paths.get("src", "main", "resources", "assets", "Imagenes", "perfiles_usuarios", nombreArchivoRelativo);
-        File carpetaDestinoFuente = pathFuente.getParent().toFile();
-        if (!carpetaDestinoFuente.exists()) {
-            if (!carpetaDestinoFuente.mkdirs()) {
-                System.err.println("No se pudo crear la carpeta de destino en fuentes: " + carpetaDestinoFuente.getAbsolutePath());
-            }
+        if (i > 0 && i < nombreOriginal.length() - 1) {
+            extension = nombreOriginal.substring(i);
+        } else {
+            throw new IOException("El archivo de imagen no tiene una extensión válida.");
         }
 
-        Path pathTarget = null;
+        String identificadorLimpio = (identificadorUnico != null ? identificadorUnico : "usuario").replaceAll("[^a-zA-Z0-9.-]", "_").replace("@", "_at_");
+
+        String nombreArchivoGenerado = "perfil_" + identificadorLimpio + "_" + System.currentTimeMillis() + extension;
+
+        Path rutaDestinoEnSrc = Paths.get(DIRECTORIO_BASE_FOTOS_PERFIL_FILESYSTEM, nombreArchivoGenerado);
+        File carpetaDestinoEnSrc = rutaDestinoEnSrc.getParent().toFile();
+        if (!carpetaDestinoEnSrc.exists()) {
+            if (!carpetaDestinoEnSrc.mkdirs()) {
+                System.err.println("WARN: No se pudo crear la carpeta de destino en 'src': " + carpetaDestinoEnSrc.getAbsolutePath());
+            }
+        }
+        if (carpetaDestinoEnSrc.exists()) {
+            Files.copy(fotoArchivo.toPath(), rutaDestinoEnSrc, StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("INFO: Foto de perfil guardada en (fuentes): " + rutaDestinoEnSrc.toString());
+        }
+
+        Path rutaDestinoEnTarget = null;
         try {
-            URL resourcesUrl = getClass().getResource("/");
-            if (resourcesUrl != null) {
-                File targetResourcesDir = new File(resourcesUrl.toURI());
-                File targetAssetsDir = new File(targetResourcesDir, "assets/Imagenes/perfiles_usuarios");
-                if (!targetAssetsDir.exists()) {
-                    targetAssetsDir.mkdirs();
+            URL urlRaizResources = getClass().getResource("/");
+            if (urlRaizResources != null) {
+                Path pathRaizResources = Paths.get(urlRaizResources.toURI());
+                Path pathCarpetaDestinoTarget = pathRaizResources.resolve(RUTA_BASE_FOTOS_PERFIL_CLASSPATH.substring(1));
+
+                if (!Files.exists(pathCarpetaDestinoTarget)) {
+                    Files.createDirectories(pathCarpetaDestinoTarget);
                 }
-                pathTarget = Paths.get(targetAssetsDir.getAbsolutePath(), nombreArchivoRelativo);
+                rutaDestinoEnTarget = pathCarpetaDestinoTarget.resolve(nombreArchivoGenerado);
+                Files.copy(fotoArchivo.toPath(), rutaDestinoEnTarget, StandardCopyOption.REPLACE_EXISTING);
+                System.out.println("INFO: Foto de perfil copiada a (target/classes): " + rutaDestinoEnTarget.toString());
+            } else {
+                System.err.println("WARN: No se pudo obtener la URL raíz de resources. La imagen podría no ser visible inmediatamente en el 'target'.");
             }
         } catch (Exception e) {
-            System.err.println("WARN: No se pudo determinar la ruta a target/classes/assets. La imagen podría no ser visible inmediatamente. " + e.getMessage());
+            System.err.println("WARN: No se pudo copiar la imagen a 'target/classes'. " + "La imagen se guardó en 'src' pero podría no ser visible inmediatamente: " + e.getMessage());
         }
 
-
-        try {
-            Files.copy(foto.toPath(), pathFuente, StandardCopyOption.REPLACE_EXISTING);
-            System.out.println("Foto guardada en (fuentes): " + pathFuente.toString());
-
-            if (pathTarget != null) {
-                Files.copy(foto.toPath(), pathTarget, StandardCopyOption.REPLACE_EXISTING);
-                System.out.println("Foto copiada a (target): " + pathTarget.toString());
-            }
-
-            return rutaRelativaClasspath;
-
-        } catch (IOException e) {
-            System.err.println("Error al guardar la nueva foto de perfil: " + e.getMessage());
-            throw e;
-        }
+        return RUTA_BASE_FOTOS_PERFIL_CLASSPATH + nombreArchivoGenerado;
     }
 
+
+    /**
+     * Maneja el evento del botón "Cancelar". Vuelve a la pantalla de perfil del usuario.
+     * @param event El evento de acción.
+     */
     @FXML
     void Cancelar(ActionEvent event) {
-        Volver(null);
+        navegarAlPerfilUsuario();
     }
 
+    /**
+     * Maneja el evento del icono "Volver". Vuelve a la pantalla de perfil del usuario.
+     * @param event El evento del ratón.
+     */
     @FXML
     void Volver(MouseEvent event) {
-        String perfilUsuarioFxml = "/com/proyectointegral2/Vista/PerfilUsuario.fxml";
-        String titulo = "Mi Perfil";
+        navegarAlPerfilUsuario();
+    }
 
-        if (cuentaUsuarioAEditar != null) {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource(perfilUsuarioFxml));
-                Parent root = loader.load();
-                PerfilUsuarioController perfilController = loader.getController();
-                if (perfilController != null) {
-                    perfilController.initData(cuentaUsuarioAEditar.getIdUsuario(), cuentaUsuarioAEditar.getNombreUsu());
-                }
-                UtilidadesVentana.cambiarEscenaConRoot(root, titulo, false);
-            } catch (Exception e) {
-                e.printStackTrace();
-                UtilidadesVentana.mostrarAlertaError("Error", "No se pudo volver al perfil: " + e.getMessage());
-                UtilidadesVentana.cambiarEscena("/com/proyectointegral2/Vista/Main.fxml", "Panel Cliente", true);
+    /**
+     * Navega de vuelta a la pantalla de Perfil de Usuario, recargando sus datos.
+     * Requiere que `cuentaUsuarioAEditar` (el objeto Usuario) no sea null.
+     */
+    private void navegarAlPerfilUsuario() {
+        if (cuentaUsuarioAEditar == null || cuentaUsuarioAEditar.getIdUsuario() <= 0) {
+            UtilidadesVentana.mostrarAlertaError("Error de Navegación",
+                    "No se puede volver al perfil porque la información del usuario no está disponible.");
+            UtilidadesVentana.cambiarEscena(RUTA_FXML_MAIN_CLIENTE, TITULO_MAIN_CLIENTE, true);
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(RUTA_FXML_PERFIL_USUARIO));
+            Parent root = loader.load();
+            PerfilUsuarioController perfilControllerDestino = loader.getController();
+
+            if (perfilControllerDestino != null) {
+                perfilControllerDestino.initData(cuentaUsuarioAEditar.getIdUsuario(), cuentaUsuarioAEditar.getNombreUsu());
             }
+            UtilidadesVentana.cambiarEscenaConRoot(root, TITULO_PERFIL_USUARIO, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            UtilidadesVentana.mostrarAlertaError("Error de Navegación", "No se pudo volver a la pantalla de perfil: " + e.getMessage() + "\nSerás redirigido a la pantalla principal.");
+            UtilidadesVentana.cambiarEscena(RUTA_FXML_MAIN_CLIENTE, TITULO_MAIN_CLIENTE, true);
         }
     }
 }

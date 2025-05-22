@@ -420,4 +420,8 @@ public class MainProtectoraController {
             if (tablaRegistroAdopciones != null) { tablaRegistroAdopciones.setVisible(true); cargarDatosParaTablaAdopciones(); }
         }
     }
+
+    @FXML
+    void NuevoPerro(ActionEvent actionEvent) {
+    }
 }
