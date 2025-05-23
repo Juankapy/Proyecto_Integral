@@ -71,11 +71,6 @@ public class LoginController {
     void ConfirmarInicio(MouseEvent event) {
         procesarInicioSesion();
     }
-    // Alternativamente, si el botón es un Button y se usa onAction:
-    // @FXML
-    // void ConfirmarInicio(ActionEvent event) {
-    //     procesarInicioSesion();
-    // }
 
 
     /**
@@ -117,11 +112,11 @@ public class LoginController {
         } catch (SQLException e) {
             UtilidadesExcepciones.mostrarError(e, "Error de Base de Datos", "Ocurrió un problema al intentar iniciar sesión.");
             System.err.println("Error de SQL al iniciar sesión: " + e.getMessage());
-            e.printStackTrace(); // Considerar usar un logger en una aplicación real
+            e.printStackTrace();
         } catch (Exception e) {
             UtilidadesExcepciones.mostrarError(e, "Error Inesperado", "Ocurrió un error inesperado durante el inicio de sesión.");
             System.err.println("Error general al iniciar sesión: " + e.getMessage());
-            e.printStackTrace(); // Considerar usar un logger
+            e.printStackTrace();
         }
     }
 
@@ -157,18 +152,37 @@ public class LoginController {
      * @return El ID de la entidad (Cliente ID o Protectora ID), o 0 si no se encuentra o no aplica.
      * @throws SQLException Si ocurre un error durante la consulta a la base de datos.
      */
+
     private int obtenerEntidadIdPorRol(Usuario usuario) throws SQLException {
-        String rol = usuario.getRol();
-        if (rol == null) return 0; // Protección contra NullPointerException
+        String rol = usuario.getRol() != null ? usuario.getRol().trim() : null; // Asegurar trim aquí también
+        if (rol == null) {
+            System.err.println("ERROR LoginController: Rol de usuario es null en obtenerEntidadIdPorRol.");
+            return 0;
+        }
+
+        System.out.println("DEBUG LoginController.obtenerEntidadIdPorRol: Procesando rol: '" + rol + "' para Usuario ID: " + usuario.getIdUsuario());
 
         if (ROL_CLIENTE.equalsIgnoreCase(rol)) {
             Cliente cliente = clienteDao.obtenerClientePorIdUsuario(usuario.getIdUsuario());
-            return (cliente != null) ? cliente.getIdCliente() : 0;
+            if (cliente != null) {
+                System.out.println("DEBUG LoginController.obtenerEntidadIdPorRol: ClienteDao devolvió cliente con ID_CLIENTE: " + cliente.getIdCliente());
+                return cliente.getIdCliente(); // Devuelve el ID_CLIENTE real
+            } else {
+                System.err.println("ERROR LoginController.obtenerEntidadIdPorRol: clienteDao.obtenerClientePorIdUsuario(" + usuario.getIdUsuario() + ") devolvió NULL.");
+                return 0; // Cliente no encontrado
+            }
         } else if (ROL_PROTECTORA.equalsIgnoreCase(rol)) {
             Protectora protectora = protectoraDao.obtenerProtectoraPorIdUsuario(usuario.getIdUsuario());
-            return (protectora != null) ? protectora.getIdProtectora() : 0;
+            if (protectora != null) {
+                System.out.println("DEBUG LoginController.obtenerEntidadIdPorRol: ProtectoraDao devolvió protectora con ID_PROTECTORA: " + protectora.getIdProtectora());
+                return protectora.getIdProtectora();
+            } else {
+                System.err.println("ERROR LoginController.obtenerEntidadIdPorRol: protectoraDao.obtenerProtectoraPorIdUsuario(" + usuario.getIdUsuario() + ") devolvió NULL.");
+                return 0; // Protectora no encontrada
+            }
         }
-        return 0; // Para roles que no son ni Cliente ni Protectora, o si no se encuentra la entidad.
+        System.err.println("WARN LoginController.obtenerEntidadIdPorRol: Rol no reconocido: '" + rol + "'");
+        return 0; // Rol no reconocido
     }
 
     /**

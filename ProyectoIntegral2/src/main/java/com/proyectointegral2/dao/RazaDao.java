@@ -57,38 +57,6 @@ public class RazaDao {
         return null;
     }
 
-    public List<Raza> obtenerTodasLasRazas() throws SQLException {
-        List<Raza> razas = new ArrayList<>();
-        String sql = "SELECT ID_RAZA, NOMBRE_RAZA FROM RAZA ORDER BY NOMBRE_RAZA";
-        try (Connection conn = ConexionDB.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                razas.add(mapResultSetToRaza(rs));
-            }
-        }
-        return razas;
-    }
-
-    public boolean actualizarRaza(Raza raza) throws SQLException {
-        String sql = "UPDATE RAZA SET NOMBRE_RAZA = ? WHERE ID_RAZA = ?";
-        try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, raza.getNombreRaza());
-            pstmt.setInt(2, raza.getIdRaza());
-            return pstmt.executeUpdate() > 0;
-        }
-    }
-
-    public boolean eliminarRaza(int idRaza) throws SQLException {
-        String sql = "DELETE FROM RAZA WHERE ID_RAZA = ?";
-        try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, idRaza);
-            return pstmt.executeUpdate() > 0;
-        }
-    }
-
     private Raza mapResultSetToRaza(ResultSet rs) throws SQLException {
         Raza raza = new Raza();
         raza.setIdRaza(rs.getInt("ID_RAZA"));

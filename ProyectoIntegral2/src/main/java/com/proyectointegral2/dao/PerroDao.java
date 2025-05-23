@@ -15,7 +15,7 @@ public class PerroDao {
     private RazaDao razaDao;
 
     public PerroDao() {
-        this.razaDao = new RazaDao(); // Asegúrate que RazaDao esté implementado y funcione
+        this.razaDao = new RazaDao();
     }
 
     public int crearPerro(Perro perro) throws SQLException {
@@ -46,7 +46,6 @@ public class PerroDao {
                 pstmt.setNull(7, java.sql.Types.NUMERIC);
                 System.err.println("Advertencia al crear perro: ID_Raza es nulo o inválido para el perro: " + perro.getNombre());
             }
-            // ELIMINADO: pstmt.setString(8, perro.getDescripcionPerro());
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows > 0) {
@@ -75,43 +74,6 @@ public class PerroDao {
         return nuevoIdPerro;
     }
 
-    // En tu PerroDaoImpl.java o como se llame tu implementación
-// ... (otros imports y métodos) ...
-
-    // Añade este método o asegúrate que tu implementación existente haga esto:
-    public List<RegistroPerroInfo> obtenerRegistrosPerrosParaTabla(int idProtectora) throws SQLException {
-        List<RegistroPerroInfo> registros = new ArrayList<>();
-        String sql = "SELECT ID_PERRO, NOMBRE, FECHA_NACIMIENTO, ADOPTADO, DESCRIPCION_PERRO " +
-                "FROM PERROS WHERE ID_PROTECTORA = ? ORDER BY NOMBRE";
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        try {
-            conn = ConexionDB.getConnection(); // Tu clase de conexión
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, idProtectora);
-            rs = pstmt.executeQuery();
-            while (rs.next()) {
-                int idPerro = rs.getInt("ID_PERRO");
-                String nombre = rs.getString("NOMBRE");
-                LocalDate fechaIngreso = null; // Usaremos FECHA_NACIMIENTO como placeholder
-                if (rs.getDate("FECHA_NACIMIENTO") != null) {
-                    fechaIngreso = rs.getDate("FECHA_NACIMIENTO").toLocalDate();
-                }
-                String estado = "S".equalsIgnoreCase(rs.getString("ADOPTADO")) ? "Adoptado" : "En Adopción";
-                String notas = rs.getString("DESCRIPCION_PERRO");
-                if (notas == null || notas.trim().isEmpty()) {
-                    notas = "Sin notas específicas.";
-                }
-                registros.add(new RegistroPerroInfo(idPerro, nombre, fechaIngreso, estado, notas));
-            }
-        } finally {
-            if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
-            if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { e.printStackTrace(); }
-            if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
-        }
-        return registros;
-    }
 
     public List<Perro> obtenerTodosLosPerros() throws SQLException {
         List<Perro> perros = new ArrayList<>();
@@ -180,27 +142,6 @@ public class PerroDao {
         }
     }
 
-    private Perro mapResultSetToPerroConRaza(ResultSet rs) throws SQLException {
-        Perro perro = new Perro();
-        perro.setIdPerro(rs.getInt("ID_PERRO"));
-        perro.setNombre(rs.getString("NOMBRE"));
-        perro.setSexo(rs.getString("SEXO"));
-        Date fechaNacSQL = rs.getDate("FECHA_NACIMIENTO");
-        if (fechaNacSQL != null) {
-            perro.setFechaNacimiento(fechaNacSQL.toLocalDate());
-        }
-        perro.setAdoptado(rs.getString("ADOPTADO"));
-        perro.setFoto(rs.getString("FOTO"));
-        perro.setIdProtectora(rs.getInt("ID_PROTECTORA"));
-
-        Raza raza = new Raza();
-        raza.setIdRaza(rs.getInt("ID_RAZA"));
-        raza.setNombreRaza(rs.getString("NOMBRE_RAZA"));
-        perro.setRaza(raza);
-
-        return perro;
-    }
-
     public List<Perro> obtenerTodosLosPerrosNoAdoptados() throws SQLException {
         List<Perro> perrosNoAdoptados = new ArrayList<>();
         String sql = "SELECT P.*, R.NOMBRE_RAZA " +
@@ -241,6 +182,62 @@ public class PerroDao {
         } catch (SQLException e) {
             System.err.println("Error SQL al obtener perro por ID: " + e.getMessage());
         }
+        return perro;
+    }
+
+    /**
+     * Obtiene una lista de perros con los que un cliente específico ha tenido una cita
+     * (confirmada o completada) y que actualmente no están adoptados.
+     *
+     * @param idCliente El ID del cliente.
+     * @return Una lista de objetos Perro.
+     * @throws SQLException Si ocurre un error de base de datos.
+     */
+    public List<Perro> obtenerPerrosConCitasPreviasPorCliente(int idCliente) throws SQLException {
+        List<Perro> perrosConCitas = new ArrayList<>();
+        String sql = "SELECT DISTINCT P.*, R.NOMBRE_RAZA " +
+                "FROM PERROS P " +
+                "JOIN RAZA R ON P.ID_RAZA = R.ID_RAZA " +
+                "JOIN RESERVAS_CITAS RC ON P.ID_PERRO = RC.ID_PERRO " +
+                "WHERE RC.ID_CLIENTE = ? " +
+                "  AND (RC.ESTADO_CITA = 'Confirmada' OR RC.ESTADO_CITA = 'Completada') " +
+                "  AND (P.ADOPTADO = 'N' OR P.ADOPTADO = 'R' OR P.ADOPTADO = 'A')";
+
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idCliente);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    perrosConCitas.add(mapResultSetToPerroConRaza(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error SQL al obtener perros con citas previas para cliente ID " + idCliente + ": " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return perrosConCitas;
+    }
+
+
+    private Perro mapResultSetToPerroConRaza(ResultSet rs) throws SQLException {
+        Perro perro = new Perro();
+        perro.setIdPerro(rs.getInt("ID_PERRO"));
+        perro.setNombre(rs.getString("NOMBRE"));
+        perro.setSexo(rs.getString("SEXO"));
+        Date fechaNacimientoDB = rs.getDate("FECHA_NACIMIENTO");
+        if (fechaNacimientoDB != null) {
+            perro.setFechaNacimiento(fechaNacimientoDB.toLocalDate());
+        }
+        perro.setAdoptado(rs.getString("ADOPTADO"));
+        perro.setFoto(rs.getString("FOTO"));
+        perro.setIdProtectora(rs.getInt("ID_PROTECTORA"));
+
+        Raza raza = new Raza();
+        raza.setIdRaza(rs.getInt("ID_RAZA"));
+        raza.setNombreRaza(rs.getString("NOMBRE_RAZA"));
+        perro.setRaza(raza);
         return perro;
     }
 }
