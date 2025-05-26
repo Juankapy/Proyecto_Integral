@@ -59,6 +59,8 @@ CREATE TABLE CLIENTE (
     TELEFONO VARCHAR2(15),
     EMAIL VARCHAR2(100) NOT NULL UNIQUE,
     ID_USUARIO NUMBER UNIQUE,
+    FECHA_CREACION DATE,
+    FECHA_MODIFICACION DATE,
     CONSTRAINT FK_CLIENTE_USUARIO FOREIGN KEY (ID_USUARIO) REFERENCES USUARIO(ID_USUARIO) ON DELETE CASCADE
 );
 
@@ -73,6 +75,8 @@ CREATE TABLE PROTECTORA (
     CALLE VARCHAR2(150) NOT NULL,
     CP VARCHAR2(5) NOT NULL,
     ID_USUARIO NUMBER UNIQUE,
+    FECHA_CREACION DATE,
+    FECHA_MODIFICACION DATE,
     CONSTRAINT FK_PROTECTORA_USUARIO FOREIGN KEY (ID_USUARIO) REFERENCES USUARIO(ID_USUARIO) ON DELETE CASCADE
 );
 
@@ -118,9 +122,9 @@ CREATE TABLE RESERVAS_CITAS (
     ID_PERRO NUMBER,
     ID_PROTECTORA NUMBER NOT NULL,
     ESTADO_CITA VARCHAR2(20) DEFAULT 'Pendiente' NOT NULL 
-        CHECK (ESTADO_CITA IN ('Pendiente', 'Confirmada', 'Cancelada', 'Completada')),
+    CHECK (ESTADO_CITA IN ('Pendiente', 'Confirmada', 'Cancelada', 'Completada')),
     CONSTRAINT FK_RESERVA_CLIENTE FOREIGN KEY (ID_CLIENTE) REFERENCES CLIENTE(ID_CLIENTE) ON DELETE CASCADE,
-    CONSTRAINT FK_RESERVA_PERRO FOREIGN KEY (ID_PERRO) REFERENCES PERROS(ID_PERRO) ON DELETE SET NULL,
+    CONSTRAINT FK_RESERVA_PERRO FOREIGN KEY (ID_PERRO) REFERENCES PERROS(ID_PERRO) ON DELETE CASCADE,
     CONSTRAINT FK_RESERVA_PROTECTORA FOREIGN KEY (ID_PROTECTORA) REFERENCES PROTECTORA(ID_PROTECTORA) ON DELETE CASCADE
 );
 
@@ -167,110 +171,84 @@ CREATE TABLE REDES_SOCIALES (
 
 ALTER TABLE CLIENTE ADD RUTA_FOTO_PERFIL VARCHAR2(255);
 
--- ========= FUNCIÓN: Obtener ID de usuario desde ID de protectora asociada a un perro =========
-
-CREATE OR REPLACE FUNCTION usuario_por_perro(id_perro_in NUMBER)
-RETURN NUMBER
+-- ========= FUNCIÓN MEJORADA: Obtener ID de usuario de la protectora a la que pertenece un perro =========
+CREATE OR REPLACE FUNCTION obtener_id_usuario_de_protectora_por_perro( id_perro_especifico IN PERROS.ID_PERRO%TYPE)
+RETURN USUARIO.ID_USUARIO%TYPE
 IS
-    resultado NUMBER;
+    id_usuario_resultado USUARIO.ID_USUARIO%TYPE;
+    
 BEGIN
-    SELECT u.id_usuario
-    INTO resultado
-    FROM perros p
-    JOIN protectora pr ON p.id_protectora = pr.id_protectora
-    JOIN usuario u ON pr.id_usuario = u.id_usuario
-    WHERE p.id_perro = id_perro_in;
+    
+    SELECT protectora_del_perro.ID_USUARIO
+    INTO id_usuario_resultado
+    FROM PERROS perro_buscado
+    JOIN PROTECTORA protectora_del_perro ON perro_buscado.ID_PROTECTORA = protectora_del_perro.ID_PROTECTORA
+    WHERE perro_buscado.ID_PERRO = id_perro_especifico;
 
-    RETURN resultado;
+    RETURN id_usuario_resultado;
+
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
-        RETURN NULL;
-END;
+    DBMS_OUTPUT.PUT_LINE('Error Grave: Ningun usuario de protectora encontrado para el perro con ID: ' || id_perro_especifico);
+    RAISE;
+
+    WHEN TOO_MANY_ROWS THEN
+    DBMS_OUTPUT.PUT_LINE('Error Grave: Múltiples usuarios de protectora encontrados para el perro con ID: ' || id_perro_especifico);
+    RAISE;
+
+    WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('Error inesperado en "obtener_id_usuario_de_protectora_por_perro" para perro ID ' || id_perro_especifico || ': ' || SQLERRM);
+    RAISE; 
+END obtener_id_usuario_de_protectora_por_perro;
 /
 
--- ========= PROCEDIMIENTO: Crear notificación y asignarla a un usuario =========
-
-CREATE OR REPLACE PROCEDURE crear_notificacion(
-    mensaje_in VARCHAR2,
-    tipo_in VARCHAR2,
-    id_entidad NUMBER,
-    tipo_entidad VARCHAR2,
-    id_usuario NUMBER
+-- ========= PROCEDIMIENTO MEJORADO: Registrar una notificación y asignarla a un usuario específico =========
+CREATE OR REPLACE PROCEDURE registrar_y_enviar_notificacion_a_usuario(
+    texto_del_mensaje IN NOTIFICACION.MENSAJE%TYPE,
+    categoria_notificacion IN NOTIFICACION.TIPO_NOTIFICACION%TYPE,
+    id_elemento_relacionado IN NOTIFICACION.ID_ENTIDAD_RELACIONADA%TYPE,
+    tabla_elemento_relacionado IN NOTIFICACION.ENTIDAD_TIPO%TYPE,
+    id_del_usuario_destino IN USUARIO.ID_USUARIO%TYPE
 )
 IS
-    id_notif NUMBER;
+    id_de_la_nueva_notificacion NOTIFICACION.ID_NOTIFICACION%TYPE;
+    existe_usuario_destino NUMBER;                           
+    error_usuario_destino_no_existe EXCEPTION;
+    
+    PRAGMA EXCEPTION_INIT(error_usuario_destino_no_existe, -20003); 
 BEGIN
-    INSERT INTO notificacion (
-        mensaje,
-        tipo_notificacion,
-        id_entidad_relacionada,
-        entidad_tipo
-    ) VALUES (
-        mensaje_in,
-        tipo_in,
-        id_entidad,
-        tipo_entidad
-    )
-    RETURNING id_notificacion INTO id_notif;
+    -- Paso 1: Verificar que el usuario al que queremos notificar realmente existe en la tabla USUARIO.
+    SELECT COUNT(*)
+    INTO existe_usuario_destino
+    FROM USUARIO
+    WHERE ID_USUARIO = id_del_usuario_destino;
 
-    INSERT INTO notificaciones_recibidas (
-        id_usuario,
-        id_notificacion
-    ) VALUES (
-        id_usuario,
-        id_notif
-    );
-END;
-/
-
-
-
--- ========= DISPARADOR: Nueva petición de adopción =========
-
-CREATE OR REPLACE TRIGGER nueva_peticion
-AFTER INSERT ON peticiones_adopcion
-FOR EACH ROW
-DECLARE
-    usuario_destino NUMBER;
-BEGIN
-    usuario_destino := usuario_por_perro(:NEW.id_perro);
-
-    IF usuario_destino IS NOT NULL THEN
-        crear_notificacion(
-            'Se ha creado una nueva petición de adopción.',
-            'Petición',
-            :NEW.id_peticion,
-            'peticiones_adopcion',
-            usuario_destino
-        );
+    IF existe_usuario_destino = 0 THEN
+    RAISE error_usuario_destino_no_existe;
     END IF;
-END;
-/
 
--- ========= DISPARADOR: Nueva reserva de cita =========
+    -- Paso 2: Si el usuario existe, insertamos el registro principal de la notificación.
+    INSERT INTO NOTIFICACION (MENSAJE,TIPO_NOTIFICACION,ID_ENTIDAD_RELACIONADA,ENTIDAD_TIPO) 
+    VALUES (texto_del_mensaje,categoria_notificacion,id_elemento_relacionado,tabla_elemento_relacionado)
+    
+    RETURNING ID_NOTIFICACION INTO id_de_la_nueva_notificacion;
 
-CREATE OR REPLACE TRIGGER nueva_reserva
-AFTER INSERT ON reservas_citas
-FOR EACH ROW
-DECLARE
-    usuario_destino NUMBER;
-BEGIN
-    SELECT u.id_usuario
-    INTO usuario_destino
-    FROM protectora p
-    JOIN usuario u ON p.id_usuario = u.id_usuario
-    WHERE p.id_protectora = :NEW.id_protectora;
+    -- Paso 3: Registramos que esta notificación ha sido recibida por el usuario destino.
+    INSERT INTO NOTIFICACIONES_RECIBIDAS (ID_USUARIO,ID_NOTIFICACION) 
+    VALUES (id_del_usuario_destino,id_de_la_nueva_notificacion);
 
-    IF usuario_destino IS NOT NULL THEN
-        crear_notificacion(
-            'Se ha registrado una nueva reserva de cita.',
-            'Reserva',
-            :NEW.id_reserva_cita,
-            'reservas_citas',
-            usuario_destino
-        );
-    END IF;
-END;
+EXCEPTION
+    WHEN error_usuario_destino_no_existe THEN
+        DBMS_OUTPUT.PUT_LINE('Error al registrar notificación: El usuario destino con ID ' || id_del_usuario_destino || ' no fue encontrado.');
+        RAISE;
+
+    WHEN DUP_VAL_ON_INDEX THEN
+        DBMS_OUTPUT.PUT_LINE('Error al registrar notificación: Se intentó insertar un valor duplicado que viola una restricción de unicidad. Detalles: ' || SQLERRM);
+        RAISE;
+
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error inesperado en "registrar_y_enviar_notificacion_a_usuario". Detalles: ' || SQLERRM);
+        RAISE;
+END registrar_y_enviar_notificacion_a_usuario;
 /
 
 -- ========= DISPARADOR: Cambio de estado en una petición de adopción =========
@@ -289,7 +267,6 @@ BEGIN
     FROM cliente c
     WHERE c.id_cliente = :NEW.id_cliente;
 
-    -- Componer mensaje según nuevo estado
     mensaje_estado := 'El estado de tu petición de adopción ha cambiado a "' || :NEW.estado || '".';
 
     IF usuario_destino IS NOT NULL THEN
@@ -304,65 +281,102 @@ BEGIN
 END;
 /
 
+-- ========= DISPARADOR: Creacion para CLIENTES =========
+CREATE OR REPLACE TRIGGER clientes_creacion
+BEFORE INSERT ON CLIENTES
+FOR EACH ROW
+BEGIN
+    :NEW.FECHA_CREACION := SYSDATE;
+    :NEW.FECHA_MODIFICACION := SYSDATE;
+END;
+/
+
+-- ========= DISPARADOR: Actualizacion para CLIENTES =========
+CREATE OR REPLACE TRIGGER clientes_actualizacion
+BEFORE UPDATE ON CLIENTES
+FOR EACH ROW
+BEGIN
+    :NEW.FECHA_MODIFICACION := SYSDATE;
+END;
+/
+
+-- ========= DISPARADOR: Creacion para PROTECTORAS =========
+CREATE OR REPLACE TRIGGER protectoras_creacion
+BEFORE INSERT ON PROTECTORAS
+FOR EACH ROW
+BEGIN
+    :NEW.FECHA_CREACION := SYSDATE;
+    :NEW.FECHA_MODIFICACION := SYSDATE;
+END;
+/
+
+-- ========= DISPARADOR: Actualizacion para PROTECTORAS =========
+CREATE OR REPLACE TRIGGER protectoras_actualizacion
+BEFORE UPDATE ON PROTECTORAS
+FOR EACH ROW
+BEGIN
+    :NEW.FECHA_MODIFICACION := SYSDATE;
+END;
+/
+
 -- 1. USUARIOS
--- (El ROL ya no se inserta aquí porque lo añadiste con ALTER TABLE después)
 INSERT INTO USUARIO (ID_USUARIO, NOMBRE_USU, CONTRASENA, ROL) 
-VALUES (SEQ_USUARIO_ID.NEXTVAL, 'cliente_ana', 'securepass1', 'CLIENTE'); -- ID_USUARIO será 1 (asumiendo que la secuencia empieza en 1)
+VALUES (SEQ_USUARIO_ID.NEXTVAL, 'cliente_ana', 'securepass1', 'CLIENTE');
 
 INSERT INTO USUARIO (ID_USUARIO, NOMBRE_USU, CONTRASENA, ROL)
-VALUES (SEQ_USUARIO_ID.NEXTVAL, 'protectora_happy', 'protpass1', 'PROTECTORA'); -- ID_USUARIO será 2
+VALUES (SEQ_USUARIO_ID.NEXTVAL, 'protectora_happy', 'protpass1', 'PROTECTORA');
 
 INSERT INTO USUARIO (ID_USUARIO, NOMBRE_USU, CONTRASENA, ROL)
-VALUES (SEQ_USUARIO_ID.NEXTVAL, 'cliente_carlos', 'securepass2', 'CLIENTE'); -- ID_USUARIO será 3
+VALUES (SEQ_USUARIO_ID.NEXTVAL, 'cliente_carlos', 'securepass2', 'CLIENTE');
 
 INSERT INTO USUARIO (ID_USUARIO, NOMBRE_USU, CONTRASENA, ROL)
-VALUES (SEQ_USUARIO_ID.NEXTVAL, 'admin_general', 'adminpass', 'PROTECTORA'); -- Ejemplo de otro rol si lo tuvieras, o ajusta a 'Protectora'
+VALUES (SEQ_USUARIO_ID.NEXTVAL, 'admin_general', 'adminpass', 'PROTECTORA');
 
 
 -- 2. CLIENTES
 -- Asumimos que el ID_USUARIO 1 corresponde a 'cliente_ana'
 INSERT INTO CLIENTE (ID_CLIENTE, NIF, NOMBRE, APELLIDOS, FECHA_NACIMIENTO, PROVINCIA, CIUDAD, CALLE, CP, TELEFONO, EMAIL, ID_USUARIO, RUTA_FOTO_PERFIL)
-VALUES (SEQ_CLIENTE_ID.NEXTVAL, '12345678A', 'Ana', 'García López', TO_DATE('1990-07-15', 'YYYY-MM-DD'), 'Madrid', 'Madrid', 'Calle Sol 8', '28013', '600112233', 'ana.garcia@email.com', 1, 'fotos/ana_perfil.jpg'); -- ID_CLIENTE será 1
+VALUES (SEQ_CLIENTE_ID.NEXTVAL, '12345678A', 'Ana', 'García López', TO_DATE('1990-07-15', 'YYYY-MM-DD'), 'Madrid', 'Madrid', 'Calle Sol 8', '28013', '600112233', 'ana.garcia@email.com', 1, 'fotos/ana_perfil.jpg');
 
 -- Asumimos que el ID_USUARIO 3 corresponde a 'cliente_carlos'
 INSERT INTO CLIENTE (ID_CLIENTE, NIF, NOMBRE, APELLIDOS, FECHA_NACIMIENTO, PROVINCIA, CIUDAD, CALLE, CP, TELEFONO, EMAIL, ID_USUARIO, RUTA_FOTO_PERFIL)
-VALUES (SEQ_CLIENTE_ID.NEXTVAL, '87654321B', 'Carlos', 'Martínez Ruiz', TO_DATE('1985-03-22', 'YYYY-MM-DD'), 'Barcelona', 'Barcelona', 'Avenida Diagonal 100', '08018', '600998877', 'carlos.martinez@email.com', 3, NULL); -- ID_CLIENTE será 2
+VALUES (SEQ_CLIENTE_ID.NEXTVAL, '87654321B', 'Carlos', 'Martínez Ruiz', TO_DATE('1985-03-22', 'YYYY-MM-DD'), 'Barcelona', 'Barcelona', 'Avenida Diagonal 100', '08018', '600998877', 'carlos.martinez@email.com', 3, NULL);
 
 
 -- 3. PROTECTORAS
 -- Asumimos que el ID_USUARIO 2 corresponde a 'protectora_happy'
 INSERT INTO PROTECTORA (ID_PROTECTORA, CIF, NOMBRE, TELEFONO, EMAIL, PROVINCIA, CIUDAD, CALLE, CP, ID_USUARIO)
-VALUES (SEQ_PROTECTORA_ID.NEXTVAL, 'A12345670', 'Happy Paws Shelter', '911223344', 'info@happypaws.org', 'Madrid', 'Getafe', 'Calle de la Alegría 5', '28905', 2); -- ID_PROTECTORA será 1
+VALUES (SEQ_PROTECTORA_ID.NEXTVAL, 'A12345670', 'Happy Paws Shelter', '911223344', 'info@happypaws.org', 'Madrid', 'Getafe', 'Calle de la Alegría 5', '28905', 2);
 
 -- Asumimos que el ID_USUARIO 4 (admin_general) también es una 'Protectora'
 INSERT INTO PROTECTORA (ID_PROTECTORA, CIF, NOMBRE, TELEFONO, EMAIL, PROVINCIA, CIUDAD, CALLE, CP, ID_USUARIO)
-VALUES (SEQ_PROTECTORA_ID.NEXTVAL, 'B09876543', 'Refugio Animalia', '933445566', 'contacto@animalia.es', 'Valencia', 'Valencia', 'Camino de la Esperanza 12', '46020', 4); -- ID_PROTECTORA será 2
+VALUES (SEQ_PROTECTORA_ID.NEXTVAL, 'B09876543', 'Refugio Animalia', '933445566', 'contacto@animalia.es', 'Valencia', 'Valencia', 'Camino de la Esperanza 12', '46020', 4);
 
 
 -- 4. RAZAS
-INSERT INTO RAZA (ID_RAZA, NOMBRE_RAZA) VALUES (SEQ_RAZA_ID.NEXTVAL, 'Labrador Retriever'); -- ID_RAZA será 1
-INSERT INTO RAZA (ID_RAZA, NOMBRE_RAZA) VALUES (SEQ_RAZA_ID.NEXTVAL, 'Bulldog Francés'); -- ID_RAZA será 2
-INSERT INTO RAZA (ID_RAZA, NOMBRE_RAZA) VALUES (SEQ_RAZA_ID.NEXTVAL, 'Mestizo Mediano'); -- ID_RAZA será 3
+INSERT INTO RAZA (ID_RAZA, NOMBRE_RAZA) VALUES (SEQ_RAZA_ID.NEXTVAL, 'Labrador Retriever');
+INSERT INTO RAZA (ID_RAZA, NOMBRE_RAZA) VALUES (SEQ_RAZA_ID.NEXTVAL, 'Bulldog Francés');
+INSERT INTO RAZA (ID_RAZA, NOMBRE_RAZA) VALUES (SEQ_RAZA_ID.NEXTVAL, 'Mestizo Mediano');
 
 
 -- 5. PERROS
 -- Perros de la protectora Happy Paws Shelter (ID_PROTECTORA = 1)
-INSERT INTO PERROS (ID_PERRO, NOMBRE, SEXO, FECHA_NACIMIENTO, ADOPTADO, FOTO, ID_PROTECTORA, ID_RAZA, DESCRIPCION_PERRO)
-VALUES (SEQ_PERRO_ID.NEXTVAL, 'Max', 'Macho', TO_DATE('2022-01-15', 'YYYY-MM-DD'), 'N', '/assets/Imagenes/perros/max_labrador.jpg', 1, 1, 'Juguetón y muy cariñoso, ideal para familias.'); -- ID_PERRO será 1
+INSERT INTO PERROS (ID_PERRO, NOMBRE, SEXO, FECHA_NACIMIENTO, ADOPTADO, FOTO, ID_PROTECTORA, ID_RAZAO)
+VALUES (SEQ_PERRO_ID.NEXTVAL, 'Max', 'Macho', TO_DATE('2022-01-15', 'YYYY-MM-DD'), 'N', '/assets/Imagenes/perros/max_labrador.jpg', 1, 1);
 
-INSERT INTO PERROS (ID_PERRO, NOMBRE, SEXO, FECHA_NACIMIENTO, ADOPTADO, FOTO, ID_PROTECTORA, ID_RAZA, DESCRIPCION_PERRO)
-VALUES (SEQ_PERRO_ID.NEXTVAL, 'Bella', 'Hembra', TO_DATE('2021-11-01', 'YYYY-MM-DD'), 'N', '/assets/Imagenes/perros/bella_bulldog.jpg', 1, 2, 'Tranquila y leal, le encantan los mimos.'); -- ID_PERRO será 2
+INSERT INTO PERROS (ID_PERRO, NOMBRE, SEXO, FECHA_NACIMIENTO, ADOPTADO, FOTO, ID_PROTECTORA, ID_RAZA)
+VALUES (SEQ_PERRO_ID.NEXTVAL, 'Bella', 'Hembra', TO_DATE('2021-11-01', 'YYYY-MM-DD'), 'N', '/assets/Imagenes/perros/bella_bulldog.jpg', 1, 2);
 
 -- Perro de la protectora Refugio Animalia (ID_PROTECTORA = 2)
-INSERT INTO PERROS (ID_PERRO, NOMBRE, SEXO, FECHA_NACIMIENTO, ADOPTADO, FOTO, ID_PROTECTORA, ID_RAZA, DESCRIPCION_PERRO)
-VALUES (SEQ_PERRO_ID.NEXTVAL, 'Cooper', 'Macho', TO_DATE('2023-03-01', 'YYYY-MM-DD'), 'S', '/assets/Imagenes/perros/cooper_mestizo.jpg', 2, 3, 'Un poco tímido al principio, pero muy dulce. Ya adoptado.'); -- ID_PERRO será 3
+INSERT INTO PERROS (ID_PERRO, NOMBRE, SEXO, FECHA_NACIMIENTO, ADOPTADO, FOTO, ID_PROTECTORA, ID_RAZA)
+VALUES (SEQ_PERRO_ID.NEXTVAL, 'Cooper', 'Macho', TO_DATE('2023-03-01', 'YYYY-MM-DD'), 'S', '/assets/Imagenes/perros/cooper_mestizo.jpg', 2, 3);
 
 
 -- 6. PATOLOGIAS
 INSERT INTO PATOLOGIA (ID_PATOLOGIA, NOMBRE, DESCRIPCION_PATOLOGIA)
-VALUES (SEQ_PATOLOGIA_ID.NEXTVAL, 'Alergia al Polvo', 'Sensibilidad a los ácaros del polvo.'); -- ID_PATOLOGIA será 1
+VALUES (SEQ_PATOLOGIA_ID.NEXTVAL, 'Alergia al Polvo', 'Sensibilidad a los ácaros del polvo.');
 INSERT INTO PATOLOGIA (ID_PATOLOGIA, NOMBRE, DESCRIPCION_PATOLOGIA)
-VALUES (SEQ_PATOLOGIA_ID.NEXTVAL, 'Otitis Crónica', 'Inflamación recurrente del oído.'); -- ID_PATOLOGIA será 2
+VALUES (SEQ_PATOLOGIA_ID.NEXTVAL, 'Otitis Crónica', 'Inflamación recurrente del oído.');
 
 
 -- 7. IDENTIFICACION_PATOLOGIAS
@@ -385,7 +399,7 @@ VALUES (SEQ_PETICION_ID.NEXTVAL, SYSDATE, 'Pendiente', 2, 2, 'Bella parece la co
 
 -- 10. NOTIFICACION (Ejemplo, podría ser creada por triggers)
 INSERT INTO NOTIFICACION (ID_NOTIFICACION, FECHA_GENERACION, MENSAJE, TIPO_NOTIFICACION, ID_ENTIDAD_RELACIONADA, ENTIDAD_TIPO)
-VALUES (SEQ_NOTIFICACION_ID.NEXTVAL, SYSTIMESTAMP, 'Nueva reserva de cita para Max', 'NUEVA_CITA', 1, 'RESERVAS_CITAS'); -- Asume ID_RESERVA_CITA = 1
+VALUES (SEQ_NOTIFICACION_ID.NEXTVAL, SYSTIMESTAMP, 'Nueva reserva de cita para Max', 'NUEVA_CITA', 1, 'RESERVAS_CITAS');
 
 
 -- 11. NOTIFICACIONES_RECIBIDAS

@@ -10,7 +10,7 @@ import java.util.List;
 public class RazaDao {
 
     public int crearRaza(Raza raza) throws SQLException {
-        String sql = "BEGIN INSERT INTO RAZA (NOMBRE_RAZA) VALUES (?) RETURNING ID_RAZA INTO ?; END;";
+        String sql = "INSERT INTO RAZA (NOMBRE_RAZA) VALUES (?) RETURNING ID_RAZA INTO ?";
         Connection conn = null;
         CallableStatement cstmt = null;
         int nuevoIdRaza = -1;

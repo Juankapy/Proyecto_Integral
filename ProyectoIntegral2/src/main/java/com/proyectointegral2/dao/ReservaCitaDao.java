@@ -49,20 +49,6 @@ public class ReservaCitaDao {
         }
     }
 
-    public ReservaCita obtenerReservaPorId(int idReserva) throws SQLException {
-        String sql = "SELECT * FROM Reservas_Citas WHERE " + COL_ID_RESERVA_CITA + " = ?";
-        try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, idReserva);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return mapResultSetToReservaCita(rs);
-                }
-            }
-        }
-        return null;
-    }
 
     public List<ReservaCita> obtenerReservasPorCliente(int idCliente) throws SQLException {
         List<ReservaCita> reservas = new ArrayList<>();

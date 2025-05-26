@@ -41,21 +41,6 @@ public class IdentificacionPatologiaDao {
         }
     }
 
-    public IdentificacionPatologia obtenerIdentificacion(int idPerro, int idPatologia) throws SQLException {
-        String sql = "SELECT * FROM Identificacion_Patologias WHERE ID_Perro = ? AND ID_Patologia = ?";
-        try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, idPerro);
-            pstmt.setInt(2, idPatologia);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return mapResultSetToIdentificacionPatologia(rs);
-                }
-            }
-        }
-        return null;
-    }
-
     public List<IdentificacionPatologia> obtenerPatologiasPorPerro(int idPerro) throws SQLException {
         List<IdentificacionPatologia> identificaciones = new ArrayList<>();
         String sql = "SELECT * FROM Identificacion_Patologias WHERE ID_Perro = ?";

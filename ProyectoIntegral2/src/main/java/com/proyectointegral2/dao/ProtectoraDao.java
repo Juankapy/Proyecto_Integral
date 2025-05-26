@@ -11,22 +11,10 @@ import java.util.List;
 
 public class ProtectoraDao{
 
-    public Protectora obtenerProtectoraPorCIF(String cif) throws SQLException {
-        String sql = "SELECT * FROM Protectora WHERE CIF = ?";
-        try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, cif);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return mapResultSetToProtectora(rs);
-                }
-            }
-        }
-        return null;
-    }
-
     public int crearProtectora(Protectora protectora) throws SQLException {
-        String sqlInsert = "INSERT INTO PROTECTORA (CIF, NOMBRE, TELEFONO, EMAIL, PROVINCIA, CIUDAD, CALLE, CP, ID_USUARIO) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sqlInsert = "INSERT INTO PROTECTORA (CIF, NOMBRE, TELEFONO, EMAIL, PROVINCIA, CIUDAD, CALLE, CP, ID_USUARIO) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sqlInsert, new String[]{"ID_PROTECTORA"})) {
 
@@ -83,21 +71,9 @@ public class ProtectoraDao{
         return null;
     }
 
-    public List<Protectora> obtenerTodasLasProtectoras() throws SQLException {
-        List<Protectora> protectoras = new ArrayList<>();
-        String sql = "SELECT * FROM Protectora ORDER BY Nombre";
-        try (Connection conn = ConexionDB.getConnection() ;
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
-            while (rs.next()) {
-                protectoras.add(mapResultSetToProtectora(rs));
-            }
-        }
-        return protectoras;
-    }
-
     public boolean actualizarProtectora(Protectora protectora) throws SQLException {
-        String sql = "UPDATE Protectora SET Nombre = ?, Telefono = ?, Email = ?, Provincia = ?, Ciudad = ?, Calle = ?, CP = ?, ID_Usuario = ? WHERE ID_Protectora = ?";
+        String sql = "UPDATE Protectora SET Nombre = ?, Telefono = ?, Email = ?, Provincia = ?, Ciudad = ?, Calle = ?, CP = ?, ID_Usuario = ? " +
+                "WHERE ID_Protectora = ?";
         try (Connection conn = ConexionDB.getConnection() ;
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, protectora.getNombre());

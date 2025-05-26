@@ -42,7 +42,6 @@ public class ClienteDao {
      * @throws SQLException Si ocurre un error de base de datos durante la operación.
      */
     public int crearCliente(Cliente cliente) throws SQLException {
-        // La secuencia SEQ_CLIENTE_ID se encarga del ID_CLIENTE, pero lo recuperamos con getGeneratedKeys.
         String sqlInsert = "INSERT INTO " + TABLA_CLIENTE + " (" +
                 COL_NIF + ", " + COL_NOMBRE + ", " + COL_APELLIDOS + ", " + COL_FECHA_NACIMIENTO + ", " +
                 COL_PROVINCIA + ", " + COL_CIUDAD + ", " + COL_CALLE + ", " + COL_CP + ", " +
