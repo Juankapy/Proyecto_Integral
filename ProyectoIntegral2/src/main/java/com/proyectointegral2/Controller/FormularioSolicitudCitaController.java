@@ -45,7 +45,6 @@ public class FormularioSolicitudCitaController {
     private static final int MAX_DIAS_ANTICIPACION_CITA = 14;
 
     // --- Componentes FXML ---
-    @FXML private ImageView imgIconoCalendario;
     @FXML private Label lblTituloFormulario;
     @FXML private Label lblNombrePerro;
     @FXML private DatePicker dpFechaCita;
@@ -77,10 +76,6 @@ public class FormularioSolicitudCitaController {
         configurarDatePicker();
         poblarComboBoxHoras();
         txtImporteDonacion.setPromptText(String.format(Locale.US, "Mínimo %.2f €", DONACION_MINIMA_REQUERIDA));
-
-        if (btnConfirmarSolicitud != null) {
-            btnConfirmarSolicitud.setDisable(true);
-        }
 
         if (lblTituloFormulario == null) System.err.println("ERROR FXML: lblTituloFormulario es null en initialize()");
         if (lblNombrePerro == null) System.err.println("ERROR FXML: lblNombrePerro es null en initialize()");
@@ -168,7 +163,7 @@ public class FormularioSolicitudCitaController {
                     !this.perroParaCita.getRaza().getNombreRaza().trim().isEmpty()) {
                 infoRaza = " (" + this.perroParaCita.getRaza().getNombreRaza() + ")";
             }
-            // Este es el punto crítico para tu bug:
+
             lblNombrePerro.setText(this.perroParaCita.getNombre() + infoRaza);
             System.out.println("FormularioSolicitudCitaController: Nombre de perro establecido en Label: " + lblNombrePerro.getText());
         } else {
@@ -196,7 +191,7 @@ public class FormularioSolicitudCitaController {
             }
         };
         dpFechaCita.setDayCellFactory(dayCellFactory);
-        dpFechaCita.setValue(fechaMinima); // Fecha por defecto: mañana
+        dpFechaCita.setValue(fechaMinima);
     }
 
     /**
@@ -206,7 +201,7 @@ public class FormularioSolicitudCitaController {
         if (cmbHoraCita == null) return;
         ObservableList<String> horasDisponibles = FXCollections.observableArrayList();
         LocalTime horaInicio = LocalTime.of(9, 0);
-        LocalTime horaFin = LocalTime.of(17, 0); // Hasta las 17:00 inclusive
+        LocalTime horaFin = LocalTime.of(17, 0);
 
         LocalTime horaActual = horaInicio;
         while (!horaActual.isAfter(horaFin)) {

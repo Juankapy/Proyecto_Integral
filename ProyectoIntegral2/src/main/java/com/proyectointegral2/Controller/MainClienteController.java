@@ -1,7 +1,6 @@
 package com.proyectointegral2.Controller;
 
 import com.proyectointegral2.Model.Perro;
-import com.proyectointegral2.Model.Raza;
 import com.proyectointegral2.Model.SesionUsuario;
 import com.proyectointegral2.Model.Usuario;
 import com.proyectointegral2.dao.PerroDao;
@@ -21,7 +20,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -37,7 +35,8 @@ public class MainClienteController {
 
     private enum ModoVistaPerros {
         PARA_CITAS,
-        PARA_ADOPCION_CON_CITA
+        PARA_ADOPCION_CON_CITA,
+        EVENTOS
     }
 
     // --- Constantes (sin cambios) ---
@@ -160,10 +159,6 @@ public class MainClienteController {
         return true;
     }
 
-    // ... (resto de los métodos como cargarDatosInicialesPerrosParaCitas, cargarPerrosConCitaPreviaParaAdopcion, etc.
-    //      se mantienen igual que en la versión anterior que te proporcioné, ya que el problema
-    //      parece estar en la verificación del rol o en cómo se establece la sesión en LoginController) ...
-
     // --- MÉTODOS QUE NO CAMBIAN (los copio aquí para que tengas el bloque completo) ---
     private void cargarDatosInicialesPerrosParaCitas() {
         if (perroDao == null) {
@@ -179,7 +174,7 @@ public class MainClienteController {
                                 "N".equalsIgnoreCase(p.getAdoptado()) ||
                                         "R".equalsIgnoreCase(p.getAdoptado()) ||
                                         "A".equalsIgnoreCase(p.getAdoptado()) ||
-                                        p.getAdoptado() == null // Considerar null como disponible
+                                        p.getAdoptado() == null
                         ))
                         .collect(Collectors.toList());
             } else {
@@ -395,6 +390,15 @@ public class MainClienteController {
     }
 
     private void popularGridConPerros() {
+        if (dogScrollPane != null && dogGrid != null) {
+            dogScrollPane.setContent(dogGrid);
+        }
+        if (dogGrid == null || perrosFiltradosParaMostrar == null) {
+            System.err.println("ERROR: dogGrid o perrosFiltradosParaMostrar es null en popularGridConPerros.");
+            return;
+        }
+        dogGrid.getChildren().clear();
+
         if (dogGrid == null || perrosFiltradosParaMostrar == null) {
             System.err.println("ERROR: dogGrid o perrosFiltradosParaMostrar es null en popularGridConPerros.");
             return;
@@ -530,7 +534,32 @@ public class MainClienteController {
         actualizarEstilosBotonesFiltroPrincipal();
     }
 
+    @FXML
+    void Eventos(ActionEvent event) {
+        System.out.println("INFO: Botón Eventos presionado. Mostrando mensaje de no disponibilidad.");
+        this.modoVistaActual = ModoVistaPerros.EVENTOS;
+        mostrarEventos();
+        actualizarEstilosBotonesFiltroPrincipal();
+    }
+
+    private void mostrarEventos() {
+        if (dogScrollPane != null) {
+            VBox vbox = new VBox();
+            vbox.setAlignment(Pos.CENTER);
+            vbox.setPrefHeight(300);
+            Label label = new Label("Los eventos aún no están disponibles");
+            label.setStyle("-fx-font-size: 18px; -fx-text-fill: #888; -fx-font-weight: bold;");
+            vbox.getChildren().add(label);
+            dogScrollPane.setContent(vbox);
+        }
+    }
+
     private void actualizarEstilosBotonesFiltroPrincipal() {
+        if (modoVistaActual == ModoVistaPerros.EVENTOS) {
+            mostrarEventos();
+            return;
+        }
+
         String estiloActivo = "-fx-background-color: #FF8C00; -fx-text-fill: white; -fx-background-radius: 20; -fx-font-weight: bold;";
         String estiloInactivoReservar = "-fx-background-color: #D2691E; -fx-text-fill: white; -fx-background-radius: 20; -fx-font-weight: bold;";
         String estiloInactivoAdopciones = "-fx-background-color: #8FBC8F; -fx-text-fill: white; -fx-background-radius: 20; -fx-font-weight: bold;";
@@ -540,12 +569,6 @@ public class MainClienteController {
         } else {
             BtnReservar.setStyle(estiloInactivoReservar); BtnAdopciones.setStyle(estiloActivo);
         }
-    }
-
-    @FXML
-    void Eventos(ActionEvent event) {
-        System.out.println("INFO: Botón Eventos presionado. Navegando a Panel de Eventos.");
-        UtilidadesVentana.cambiarEscena(FXML_EVENTOS_PANEL, "Panel de Eventos", true);
     }
 
     @FXML
