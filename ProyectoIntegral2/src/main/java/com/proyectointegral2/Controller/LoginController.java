@@ -218,7 +218,7 @@ public class LoginController {
             tituloVista = TITLE_MAIN_PROTECTORA;
         } else {
             UtilidadesExcepciones.mostrarAdvertencia("Rol de usuario no reconocido.", "Error de rol", "El rol '" + rol + "' no es válido para la navegación.");
-            SesionUsuario.cerrarSesion(); // Cerrar sesión si el rol no permite navegación
+            SesionUsuario.cerrarSesion();
             System.out.println("Rol no reconocido para redirección: '" + rol.trim() + "'");
             return;
         }
