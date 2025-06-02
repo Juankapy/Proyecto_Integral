@@ -57,7 +57,7 @@ public class MainClienteController {
     private static final double TARJETA_IMG_AREA_WIDTH = 160.0;
     private static final double TARJETA_IMG_AREA_HEIGHT = 160.0;
     private static final double CARD_HORIZONTAL_GAP = 20.0;
-    private static final double CARD_INTERNAL_PADDING = 10.0;
+    public static final double CARD_INTERNAL_PADDING = 10.0;
     private static final int MAX_COLUMNAS_GRID = 5;
 
     // --- Componentes FXML (sin cambios) ---

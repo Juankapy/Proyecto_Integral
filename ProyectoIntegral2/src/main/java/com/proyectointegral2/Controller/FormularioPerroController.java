@@ -463,7 +463,7 @@ public class FormularioPerroController {
 
                     Patologia patologiaExistente = patologiaDao.obtenerPatologiaPorNombre(nombrePatologiaLimpio);
                     int idPatologiaAGuardar;
-                    String descripcionGeneralPatologia = ""; 
+                    String descripcionGeneralPatologia = "";
 
                     if (patologiaExistente == null) {
                         // La patología no existe, preguntar al usuario si quiere crearla y pedir descripción general

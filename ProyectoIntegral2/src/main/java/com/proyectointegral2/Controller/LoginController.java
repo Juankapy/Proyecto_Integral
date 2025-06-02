@@ -11,6 +11,8 @@ import com.proyectointegral2.utils.UtilidadesExcepciones;
 import com.proyectointegral2.utils.UtilidadesVentana;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
@@ -18,6 +20,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 /**
@@ -82,7 +85,7 @@ public class LoginController {
         String contrasena = TxtContra.getText();
 
         if (!validarCampos(nombreUsu, contrasena)) {
-            return; // La validación ya mostró el error
+            return;
         }
 
         try {
@@ -201,28 +204,63 @@ public class LoginController {
      * @param rol El rol del usuario.
      */
     private void redirigirSegunRol(String rol) {
-        if (rol == null) { // Protección adicional
+        if (rol == null) {
             UtilidadesExcepciones.mostrarAdvertencia("Rol de usuario no definido.", "Error de rol", "El usuario no tiene un rol asignado.");
             SesionUsuario.cerrarSesion();
             return;
         }
 
-        String vistaARedirigir;
+        String fxmlFile;
         String tituloVista;
+        boolean esDinamica = true;
 
-        if ("CLIENTE".equalsIgnoreCase(rol.trim())) {
-            vistaARedirigir = FXML_MAIN_CLIENTE;
-            tituloVista = TITLE_MAIN_CLIENTE;
-        } else if ("PROTECTORA".equalsIgnoreCase(rol.trim())) {
-            vistaARedirigir = FXML_MAIN_PROTECTORA;
-            tituloVista = TITLE_MAIN_PROTECTORA;
-        } else {
-            UtilidadesExcepciones.mostrarAdvertencia("Rol de usuario no reconocido.", "Error de rol", "El rol '" + rol + "' no es válido para la navegación.");
-            SesionUsuario.cerrarSesion();
-            System.out.println("Rol no reconocido para redirección: '" + rol.trim() + "'");
+        Usuario usuarioLogueado = SesionUsuario.getUsuarioLogueado(); // Ya tienes el usuario en SesionUsuario
+
+        if (usuarioLogueado == null) { // Verificación extra
+            UtilidadesExcepciones.mostrarAdvertencia("Error de Sesión", "No se pudo recuperar la información del usuario logueado.","");
             return;
         }
-        UtilidadesVentana.cambiarEscena(vistaARedirigir, tituloVista, true);
+
+        if (ROL_CLIENTE.equalsIgnoreCase(rol.trim())) {
+            fxmlFile = FXML_MAIN_CLIENTE;
+            tituloVista = TITLE_MAIN_CLIENTE;
+            System.out.println("Redirigiendo a la vista de Cliente...");
+        } else if (ROL_PROTECTORA.equalsIgnoreCase(rol.trim())) {
+            fxmlFile = FXML_MAIN_PROTECTORA;
+            tituloVista = TITLE_MAIN_PROTECTORA;
+            System.out.println("Redirigiendo a la vista de Protectora...");
+        } else {
+            UtilidadesExcepciones.mostrarAdvertencia("Rol de usuario no reconocido.", "Error de rol", "El rol '" + rol + "' no es válido.");
+            SesionUsuario.cerrarSesion();
+            System.err.println("Rol no reconocido para redirección: '" + rol.trim() + "'");
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
+            Parent root = loader.load();
+
+            // Obtener el controlador de la vista cargada
+            Object controller = loader.getController();
+
+            // YA NO ES NECESARIO LLAMAR A initData EXPLÍCITAMENTE AQUÍ
+            // SI MainProtectoraController.initialize() obtiene los datos de SesionUsuario.
+            if (controller instanceof MainClienteController && ROL_CLIENTE.equalsIgnoreCase(rol.trim())) {
+                System.out.println("DEBUG LoginController: MainClienteController cargado.");
+                // Si MainClienteController también necesita datos de SesionUsuario,
+                // debería obtenerlos en su propio initialize().
+            } else if (controller instanceof MainProtectoraController && ROL_PROTECTORA.equalsIgnoreCase(rol.trim())) {
+                System.out.println("DEBUG LoginController: MainProtectoraController cargado. Su initialize() usará SesionUsuario.");
+            }
+
+            UtilidadesVentana.cambiarEscenaConRoot(root, tituloVista, esDinamica);
+
+        } catch (IOException e) {
+            UtilidadesExcepciones.mostrarError(e, "Error de Navegación", "No se pudo cargar la vista: " + fxmlFile);
+            System.err.println("Error al cambiar de escena: " + e.getMessage());
+            e.printStackTrace();
+            SesionUsuario.cerrarSesion();
+        }
     }
 
     /**
