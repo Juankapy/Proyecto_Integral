@@ -1,11 +1,11 @@
 package com.proyectointegral2.Controller;
 
-import com.proyectointegral2.Model.IdentificacionPatologia;
-import com.proyectointegral2.Model.Patologia;
+import com.proyectointegral2.Model.IdentificacionPatologia; // Importar
+import com.proyectointegral2.Model.Patologia;           // Importar
 import com.proyectointegral2.Model.Perro;
 import com.proyectointegral2.Model.Raza;
-import com.proyectointegral2.dao.IdentificacionPatologiaDao;
-import com.proyectointegral2.dao.PatologiaDao;
+import com.proyectointegral2.dao.IdentificacionPatologiaDao; // Importar
+import com.proyectointegral2.dao.PatologiaDao;               // Importar
 import com.proyectointegral2.dao.PerroDao;
 import com.proyectointegral2.dao.RazaDao;
 import com.proyectointegral2.utils.UtilidadesVentana;
@@ -35,253 +35,169 @@ import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Arrays; // Para split y stream
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-/**
- * Controlador para el formulario de gestión de perros (creación y edición).
- * Permite al usuario ingresar y modificar información detallada sobre un perro,
- * incluyendo su nombre, fecha de nacimiento, sexo, raza, estado de adopción,
- * foto y patologías asociadas.
- * Interactúa con varios DAOs para persistir los datos en la base de datos.
- */
 public class FormularioPerroController {
 
-    // --- Componentes FXML ---
     @FXML private ImageView imgIconoVolver;
     @FXML private TextField TxtNombrePerro;
     @FXML private DatePicker DatePickerFechaNacimiento;
     @FXML private TextField TxtRazaPerro;
     @FXML private ComboBox<String> CmbSexo;
-    @FXML private TextArea TxtAreaPatologia;
+    // @FXML private TextArea TxtAreaDescripcion; // ELIMINADO si no está en Perro.java ni en BD
+    @FXML private TextArea TxtAreaPatologia; // Para ingresar/mostrar nombres de patologías y sus notas
     @FXML private ComboBox<String> CmbEstado;
     @FXML private ImageView ImgPreviewPerro;
     @FXML private Button btnSeleccionarImagen;
     @FXML private Button BtnAnadirPerro;
     @FXML private Button BtnCancelar;
 
-    // --- Estado del Controlador ---
     private Perro perroAEditar;
     private int idProtectoraDelPerro;
     private File archivoFotoSeleccionada;
     private String rutaFotoActualEnModelo;
 
-    // --- DAOs (Data Access Objects) ---
     private PerroDao perroDao;
     private RazaDao razaDao;
-    private PatologiaDao patologiaDao;
-    private IdentificacionPatologiaDao identificacionPatologiaDao;
+    private PatologiaDao patologiaDao; // Añadido
+    private IdentificacionPatologiaDao identificacionPatologiaDao; // Añadido
 
-    // --- Constantes ---
+    private final String RUTA_BASE_IMAGENES_PERROS_RESOURCES = "/assets/Imagenes/perros/";
+    private final String DIRECTORIO_IMAGENES_PERROS_FILESYSTEM = "src/main/resources/assets/Imagenes/perros/";
 
-    private static final String RUTA_BASE_IMAGENES_PERROS_RESOURCES = "/assets/Imagenes/perros/";
-    private static final String DIRECTORIO_IMAGENES_PERROS_FILESYSTEM = "src/main/resources/assets/Imagenes/perros/";
-
-    private static final String ESTADO_EN_ADOPCION = "En Adopción";
-    private static final String ESTADO_ADOPTADO = "Adoptado";
-    private static final String ESTADO_EN_ACOGIDA = "En Acogida";
-    private static final String ESTADO_RESERVADO = "Reservado";
-    private static final List<String> OPCIONES_ESTADO = Arrays.asList(
-            ESTADO_EN_ADOPCION, ESTADO_ADOPTADO, ESTADO_EN_ACOGIDA, ESTADO_RESERVADO
-    );
-    private static final List<String> OPCIONES_SEXO = Arrays.asList("Macho", "Hembra");
-
-
-    /**
-     * Método de inicialización del controlador. Se llama automáticamente después de que
-     * los campos FXML han sido inyectados.
-     * Inicializa los DAOs y configura los componentes UI iniciales.
-     */
     @FXML
     public void initialize() {
+        System.out.println("FormularioPerroController inicializado.");
         try {
             perroDao = new PerroDao();
             razaDao = new RazaDao();
-            patologiaDao = new PatologiaDao();
-            identificacionPatologiaDao = new IdentificacionPatologiaDao();
+            patologiaDao = new PatologiaDao(); // Instanciar
+            identificacionPatologiaDao = new IdentificacionPatologiaDao(); // Instanciar
         } catch (Exception e) {
-            System.err.println("Error crítico al inicializar DAOs: " + e.getMessage());
             e.printStackTrace();
-            UtilidadesVentana.mostrarAlertaError("Error Crítico de Sistema",
-                    "No se pudo inicializar el acceso a la base de datos: " + e.getMessage() + "\nEl formulario no funcionará correctamente. Por favor, contacte a soporte.");
+            UtilidadesVentana.mostrarAlertaError("Error Crítico DAO", "No se pudo inicializar el acceso a datos: " + e.getMessage());
             if (BtnAnadirPerro != null) BtnAnadirPerro.setDisable(true);
         }
         configurarComboBoxesIniciales();
         if (ImgPreviewPerro != null) ImgPreviewPerro.setImage(null);
     }
 
-    /**
-     * Configura los ComboBoxes del formulario (Sexo y Estado) con sus respectivas opciones.
-     */
     private void configurarComboBoxesIniciales() {
         if (CmbSexo != null) {
-            CmbSexo.setItems(FXCollections.observableArrayList(OPCIONES_SEXO));
+            CmbSexo.setItems(FXCollections.observableArrayList("Macho", "Hembra"));
         }
         if (CmbEstado != null) {
-            CmbEstado.setItems(FXCollections.observableArrayList(OPCIONES_ESTADO));
-            CmbEstado.setValue(ESTADO_EN_ADOPCION);
+            CmbEstado.setItems(FXCollections.observableArrayList("En Adopción", "Adoptado", "En Acogida", "Reservado"));
+            CmbEstado.setValue("En Adopción");
         }
     }
 
-    /**
-     * Prepara el formulario para la edición de un perro existente.
-     * Carga los datos del perro en los campos correspondientes.
-     * @param perro El objeto Perro con los datos a editar.
-     * @param idProtectora El ID de la protectora asociada al perro.
-     */
     public void initDataParaEdicion(Perro perro, int idProtectora) {
         this.perroAEditar = perro;
         this.idProtectoraDelPerro = idProtectora;
 
-        if (perro == null) {
-            UtilidadesVentana.mostrarAlertaError("Error de Datos", "No se recibió información del perro para editar. El formulario se cerrará.");
-            cerrarFormulario();
-            return;
-        }
-
         TxtNombrePerro.setText(perro.getNombre());
-        if (DatePickerFechaNacimiento != null) DatePickerFechaNacimiento.setValue(perro.getFechaNacimiento());
-        if (CmbSexo != null) CmbSexo.setValue(perro.getSexo());
+        DatePickerFechaNacimiento.setValue(perro.getFechaNacimiento());
+        CmbSexo.setValue(perro.getSexo());
 
-        if (perro.getRaza() != null && perro.getRaza().getNombreRaza() != null) {
+        if (perro.getRaza() != null) {
             TxtRazaPerro.setText(perro.getRaza().getNombreRaza());
         } else {
             TxtRazaPerro.clear();
         }
 
-        cargarYMostrarPatologiasAsociadas(perro.getIdPerro());
+        // if (TxtAreaDescripcion != null && perro.getDescripcionPerro() != null) { // Si Perro tuviera descripción
+        //     TxtAreaDescripcion.setText(perro.getDescripcionPerro());
+        // } else if (TxtAreaDescripcion != null) {
+        //    TxtAreaDescripcion.clear();
+        // }
 
         if (CmbEstado != null) {
-            String estadoModelo = perro.getAdoptado();
-            if ("S".equalsIgnoreCase(estadoModelo)) CmbEstado.setValue(ESTADO_ADOPTADO);
-            else if ("R".equalsIgnoreCase(estadoModelo)) CmbEstado.setValue(ESTADO_RESERVADO);
-            else if ("A".equalsIgnoreCase(estadoModelo)) CmbEstado.setValue(ESTADO_EN_ACOGIDA);
-            else CmbEstado.setValue(ESTADO_EN_ADOPCION);
+            if (perro.isAdoptado()) CmbEstado.setValue("Adoptado");
+            else CmbEstado.setValue(perro.getAdoptado().equalsIgnoreCase("R") ? "Reservado" : "En Adopción");
         }
 
         this.rutaFotoActualEnModelo = perro.getFoto();
-        cargarImagenPreview(this.rutaFotoActualEnModelo);
+        // ... (lógica de cargar imagen preview) ...
+        if (this.rutaFotoActualEnModelo != null && !this.rutaFotoActualEnModelo.isEmpty()) {
+            try {
+                String pathCompleto = this.rutaFotoActualEnModelo.startsWith("/") ? this.rutaFotoActualEnModelo : "/" + this.rutaFotoActualEnModelo;
+                try (InputStream stream = getClass().getResourceAsStream(pathCompleto)) {
+                    if (stream != null && ImgPreviewPerro != null) ImgPreviewPerro.setImage(new Image(stream));
+                    else if (ImgPreviewPerro != null) ImgPreviewPerro.setImage(null);
+                }
+            } catch (Exception e) { if (ImgPreviewPerro != null) ImgPreviewPerro.setImage(null); }
+        } else {
+            if (ImgPreviewPerro != null) ImgPreviewPerro.setImage(null);
+        }
+
+
+        // --- Cargar y mostrar patologías asociadas ---
+        cargarYMostrarPatologiasAsociadas(perro.getIdPerro());
 
         this.archivoFotoSeleccionada = null;
         if (BtnAnadirPerro != null) BtnAnadirPerro.setText("Guardar Cambios");
     }
 
-    /**
-     * Prepara el formulario para añadir un nuevo perro.
-     * Limpia los campos y establece el texto del botón principal.
-     * @param idProtectora El ID de la protectora a la que se asociará el nuevo perro.
-     */
     public void initDataParaNuevoPerro(int idProtectora) {
         this.perroAEditar = null;
         this.idProtectoraDelPerro = idProtectora;
+        System.out.println("Formulario para nuevo perro de protectora ID: " + this.idProtectoraDelPerro);
         limpiarCamposFormulario();
         if (BtnAnadirPerro != null) BtnAnadirPerro.setText("Añadir Perro");
     }
 
-    /**
-     * Restablece todos los campos del formulario a su estado inicial o vacío.
-     */
     private void limpiarCamposFormulario() {
-        if (TxtNombrePerro != null) TxtNombrePerro.clear();
-        if (DatePickerFechaNacimiento != null) DatePickerFechaNacimiento.setValue(null);
+        TxtNombrePerro.clear();
+        DatePickerFechaNacimiento.setValue(null);
         if (CmbSexo != null) CmbSexo.getSelectionModel().clearSelection();
-        if (TxtRazaPerro != null) TxtRazaPerro.clear();
+        TxtRazaPerro.clear();
+        // if (TxtAreaDescripcion != null) TxtAreaDescripcion.clear();
         if (TxtAreaPatologia != null) TxtAreaPatologia.clear();
-        if (CmbEstado != null) CmbEstado.setValue(ESTADO_EN_ADOPCION);
+        if (CmbEstado != null) CmbEstado.setValue("En Adopción");
         if (ImgPreviewPerro != null) ImgPreviewPerro.setImage(null);
         this.archivoFotoSeleccionada = null;
         this.rutaFotoActualEnModelo = null;
     }
 
-    /**
-     * Carga y muestra una imagen en el ImageView de previsualización.
-     * Intenta cargar la imagen desde el classpath (recursos de la aplicación).
-     * @param rutaImagenRelativaAResources
-     * La ruta de la imagen, relativa a la carpeta 'resources'.
-     * Debe comenzar con '/' si es desde la raíz de resources.
-     */
-    private void cargarImagenPreview(String rutaImagenRelativaAResources) {
-        if (ImgPreviewPerro == null) return;
-        String pathNormalizado = null;
-
-        if (rutaImagenRelativaAResources != null && !rutaImagenRelativaAResources.isEmpty()) {
-            try {
-                pathNormalizado = rutaImagenRelativaAResources.startsWith("/")
-                        ? rutaImagenRelativaAResources
-                        : "/" + rutaImagenRelativaAResources.replace("\\", "/");
-
-                try (InputStream stream = getClass().getResourceAsStream(pathNormalizado)) {
-                    if (stream != null) {
-                        ImgPreviewPerro.setImage(new Image(stream));
-                    } else {
-                        System.err.println("WARN: No se pudo cargar imagen de preview desde classpath: " + pathNormalizado);
-                        ImgPreviewPerro.setImage(null);
-                    }
-                }
-            } catch (Exception e) {
-                ImgPreviewPerro.setImage(null);
-                System.err.println("ERROR: Cargando imagen de preview: " +
-                        (pathNormalizado != null ? pathNormalizado : rutaImagenRelativaAResources) +
-                        " - " + e.getMessage());
-                e.printStackTrace();
-            }
-        } else {
-            ImgPreviewPerro.setImage(null);
-        }
-    }
-
-    /**
-     * Carga las patologías asociadas a un perro desde la base de datos y las muestra
-     * en el TextArea, separadas por comas.
-     * @param idPerro El ID del perro cuyas patologías se van a cargar.
-     */
+    // --- NUEVO MÉTODO ---
     private void cargarYMostrarPatologiasAsociadas(int idPerro) {
         if (TxtAreaPatologia == null || identificacionPatologiaDao == null || patologiaDao == null) {
-            System.err.println("Error: Componentes para patologías no están inicializados (TxtAreaPatologia o DAOs). No se pueden cargar.");
+            System.err.println("Componentes para patologías no listos.");
+            if(TxtAreaPatologia != null) TxtAreaPatologia.setText("No se pudieron cargar patologías.");
             return;
         }
         try {
-            List<IdentificacionPatologia> identificaciones = identificacionPatologiaDao.obtenerPatologiasPorPerro(idPerro);
-            List<String> nombresDePatologias = new ArrayList<>();
-
-            if (identificaciones != null) {
-                for (IdentificacionPatologia ident : identificaciones) {
-                    if (ident == null) continue; // Seguridad extra
-
-                    int idPatologiaActual = ident.getIdPatologia();
-                    if (idPatologiaActual > 0) {
-
-                        Patologia patologia = patologiaDao.obtenerPatologiaPorId(idPatologiaActual);
-
-                        if (patologia != null && patologia.getNombre() != null && !patologia.getNombre().trim().isEmpty()) {
-                            nombresDePatologias.add(patologia.getNombre());
-                        } else {
-                            System.err.println("WARN: No se encontró el nombre para la patología con ID: " + idPatologiaActual +
-                                    " o el nombre es vacío, para el perro ID: " + idPerro);
+            List<IdentificacionPatologia> identificaciones = identificacionPatologiaDao.obtenerIdentificacionesPorPerro(idPerro);
+            if (identificaciones != null && !identificaciones.isEmpty()) {
+                StringBuilder sb = new StringBuilder();
+                for (IdentificacionPatologia ip : identificaciones) {
+                    Patologia patologia = patologiaDao.obtenerPatologiaPorId(ip.getIdPatologia());
+                    if (patologia != null) {
+                        sb.append(patologia.getNombre());
+                        if (ip.getDescripcion() != null && !ip.getDescripcion().trim().isEmpty()) {
+                            sb.append(" (").append(ip.getDescripcion()).append(")");
                         }
-                    } else {
-                        System.err.println("WARN: Se encontró una identificación de patología con ID de patología inválido (<=0) para el perro ID: " + idPerro);
+                        sb.append(", ");
                     }
                 }
+                if (sb.length() > 2) {
+                    sb.setLength(sb.length() - 2); // Quitar la última coma y espacio
+                }
+                TxtAreaPatologia.setText(sb.toString());
+            } else {
+                TxtAreaPatologia.setText(""); // O "Ninguna conocida"
             }
-            TxtAreaPatologia.setText(String.join(", ", nombresDePatologias));
-
         } catch (SQLException e) {
             e.printStackTrace();
-            UtilidadesVentana.mostrarAlertaError("Error al Cargar Patologías",
-                    "No se pudieron cargar las patologías existentes del perro: " + e.getMessage());
-            if (TxtAreaPatologia != null) TxtAreaPatologia.setText("Error al cargar patologías");
+            UtilidadesVentana.mostrarAlertaError("Error BD", "No se pudieron cargar las patologías del perro.");
+            TxtAreaPatologia.setText("Error al cargar patologías");
         }
     }
-
-
-    /**
-     * Abre un FileChooser para que el usuario seleccione una imagen para el perro.
-     * Muestra una vista previa de la imagen seleccionada.
-     * @param event El evento de acción que disparó este método.
-     */
     @FXML
     void handleSeleccionarFoto(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -307,16 +223,7 @@ public class FormularioPerroController {
         }
     }
 
-    /**
-     * Valida los campos obligatorios del formulario antes de intentar guardar.
-     * @param nombre El nombre del perro.
-     * @param fechaNac La fecha de nacimiento del perro.
-     * @param sexo El sexo del perro.
-     * @param nombreRazaStr El nombre de la raza ingresado.
-     * @param estado El estado de adopción seleccionado.
-     * @return true si todos los campos obligatorios son válidos, false en caso contrario.
-     *         Muestra alertas de error si la validación falla.
-     */
+
     private boolean validarCamposObligatorios(String nombre, LocalDate fechaNac, String sexo, String nombreRazaStr, String estado) {
         if (nombre == null || nombre.trim().isEmpty()) {
             UtilidadesVentana.mostrarAlertaError("Campo Obligatorio", "El nombre del perro es obligatorio.");
