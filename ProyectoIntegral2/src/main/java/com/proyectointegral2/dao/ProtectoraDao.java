@@ -58,12 +58,13 @@ public class ProtectoraDao{
     }
 
     public Protectora obtenerProtectoraPorIdUsuario(int idUsuario) throws SQLException {
-        String sql = "SELECT * FROM Protectora WHERE ID_Usuario = ?";
-        try (Connection conn = ConexionDB.getConnection() ;
+        String sql = "SELECT * FROM Protectora WHERE ID_Usuario = ?"; // Busca en la columna ID_USUARIO de la tabla Protectora
+        try (Connection conn = ConexionDB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, idUsuario);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
+
                     return mapResultSetToProtectora(rs);
                 }
             }
