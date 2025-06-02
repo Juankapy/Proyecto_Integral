@@ -42,20 +42,13 @@ import java.util.ResourceBundle;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-/**
- * Controlador para el formulario de edición del perfil de un usuario cliente.
- * Permite al usuario modificar sus datos personales (tabla Cliente) y los datos
- * de su cuenta (tabla Usuario), incluyendo nombre de usuario, contraseña y foto de perfil.
- */
 public class FormularioUsuarioController implements Initializable {
 
-    // --- Componentes FXML ---
     @FXML private ImageView imgIconoVolver;
     @FXML private Label lblTituloFormulario;
     @FXML private ImageView imgFotoPerfilEditable;
     @FXML private Button btnCambiarFoto;
 
-    // Campos para datos del Cliente
     @FXML private TextField TxtNombre;
     @FXML private TextField TxtApellido;
     @FXML private TextField TxtNIF;
@@ -67,7 +60,6 @@ public class FormularioUsuarioController implements Initializable {
     @FXML private TextField TxtTelefono;
     @FXML private TextField TxtEmail;
 
-    // Campos para datos del Usuario (cuenta)
     @FXML private TextField TxtNombreUsuario;
     @FXML private PasswordField TxtPassword;
     @FXML private PasswordField TxtConfirmPassword;
@@ -75,16 +67,13 @@ public class FormularioUsuarioController implements Initializable {
     @FXML private Button BtnCancelar;
     @FXML private Button BtnGuardar;
 
-    // --- DAOs ---
     private ClienteDao clienteDAO;
     private UsuarioDao usuarioDAO;
 
-    // --- Estado del Controlador ---
     private Cliente clienteAEditar;
     private Usuario cuentaUsuarioAEditar;
     private File nuevaFotoSeleccionada;
 
-    // --- Constantes ---
     private static final String RUTA_PLACEHOLDER_FOTO_PERFIL_USUARIO = "/assets/Imagenes/iconos/sinusuario.jpg";
     private static final String DIRECTORIO_BASE_FOTOS_PERFIL_FILESYSTEM = "src/main/resources/assets/Imagenes/perfiles_usuarios/";
     private static final String RUTA_BASE_FOTOS_PERFIL_CLASSPATH = "/assets/Imagenes/perfiles_usuarios/";
@@ -94,18 +83,12 @@ public class FormularioUsuarioController implements Initializable {
     private static final String TITULO_PERFIL_USUARIO = "Mi Perfil";
     private static final String TITULO_MAIN_CLIENTE = "Panel Principal";
 
-    // Patrones de validación
     private static final Pattern NIF_PATTERN = Pattern.compile("^[0-9]{8}[A-Z]$");
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
     private static final Pattern CP_PATTERN = Pattern.compile("\\d{5}");
     private static final Pattern TELEFONO_PATTERN = Pattern.compile("\\d{9}");
 
 
-    /**
-     * Método de inicialización llamado por JavaFX.
-     * @param url La ubicación utilizada para resolver rutas relativas.
-     * @param resourceBundle Los recursos utilizados para localizar el objeto raíz.
-     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
@@ -152,11 +135,7 @@ public class FormularioUsuarioController implements Initializable {
         poblarCamposConDatosExistentes();
     }
 
-    /**
-     * Puebla los campos del formulario con los datos del cliente y usuario que se están editando.
-     */
     private void poblarCamposConDatosExistentes() {
-        // Poblar datos del Cliente
         if (clienteAEditar != null) {
             TxtNombre.setText(Objects.requireNonNullElse(clienteAEditar.getNombre(), ""));
             TxtApellido.setText(Objects.requireNonNullElse(clienteAEditar.getApellidos(), ""));
@@ -175,14 +154,12 @@ public class FormularioUsuarioController implements Initializable {
             cargarImagenPlaceholder();
         }
 
-        // Poblar datos del Usuario (cuenta)
         if (cuentaUsuarioAEditar != null) {
             TxtNombreUsuario.setText(Objects.requireNonNullElse(cuentaUsuarioAEditar.getNombreUsu(), ""));
         } else {
             if(TxtNombreUsuario != null) TxtNombreUsuario.clear();
         }
 
-        // Configurar campos de contraseña para indicar que son opcionales.
         if(TxtPassword != null) TxtPassword.setPromptText("Dejar vacío para no cambiar");
         if(TxtConfirmPassword != null) TxtConfirmPassword.setPromptText("Confirmar nueva contraseña");
     }
@@ -233,7 +210,7 @@ public class FormularioUsuarioController implements Initializable {
                 try (InputStream stream = getClass().getResourceAsStream(pathNormalizado)) {
                     if (stream != null) {
                         imgFotoPerfilEditable.setImage(new Image(stream));
-                        return; // Foto cargada exitosamente.
+                        return;
                     } else {
                         System.err.println("WARN: Foto de perfil no encontrada en classpath: " + pathNormalizado);
                     }
@@ -313,32 +290,27 @@ public class FormularioUsuarioController implements Initializable {
                     "Nombre, apellidos, NIF, email del cliente y nombre de usuario son obligatorios.");
             return false;
         }
-        // Validar NIF
         if (!NIF_PATTERN.matcher(nif.toUpperCase()).matches()) {
             UtilidadesVentana.mostrarAlertaError("Formato Inválido", "El formato del NIF no es válido (ej: 12345678A).");
             TxtNIF.requestFocus();
             return false;
         }
-        // Validar Email
         if (!EMAIL_PATTERN.matcher(email).matches()) {
             UtilidadesVentana.mostrarAlertaError("Formato Inválido", "El formato del correo electrónico no es válido.");
             TxtEmail.requestFocus();
             return false;
         }
-        // Validar Fecha de Nacimiento
         if (fechaNac != null && fechaNac.isAfter(LocalDate.now())) {
             UtilidadesVentana.mostrarAlertaError("Fecha Inválida", "La fecha de nacimiento no puede ser futura.");
             DpFechaNacimiento.requestFocus();
             return false;
         }
-        // Validar Código Postal
         String cp = TxtCP.getText().trim();
         if (!cp.isEmpty() && !CP_PATTERN.matcher(cp).matches()) {
             UtilidadesVentana.mostrarAlertaError("Formato Inválido", "El Código Postal debe tener 5 dígitos si se especifica.");
             TxtCP.requestFocus();
             return false;
         }
-        // Validar Teléfono
         String telefono = TxtTelefono.getText().trim();
         if (!telefono.isEmpty() && !TELEFONO_PATTERN.matcher(telefono).matches()) {
             UtilidadesVentana.mostrarAlertaError("Formato Inválido", "El Teléfono debe tener 9 dígitos si se especifica.");
@@ -347,9 +319,8 @@ public class FormularioUsuarioController implements Initializable {
         }
 
 
-        // Validaciones de Contraseña
         if (!nuevaPassword.isEmpty()) {
-            if (nuevaPassword.length() < 6) { // Mínimo 6 caracteres
+            if (nuevaPassword.length() < 6) {
                 UtilidadesVentana.mostrarAlertaError("Contraseña Débil", "La nueva contraseña debe tener al menos 6 caracteres.");
                 TxtPassword.requestFocus();
                 return false;
@@ -379,7 +350,6 @@ public class FormularioUsuarioController implements Initializable {
             return;
         }
 
-        // 1. Recolectar datos del formulario.
         String nombre = TxtNombre.getText().trim();
         String apellidos = TxtApellido.getText().trim();
         String nif = TxtNIF.getText().trim().toUpperCase();
@@ -395,14 +365,11 @@ public class FormularioUsuarioController implements Initializable {
         String passwordNueva = TxtPassword.getText();
         String confirmPasswordNueva = TxtConfirmPassword.getText();
 
-        // 2. Validar los datos.
         if (!validarEntradasFormulario(nombre, apellidos, nif, fechaNacimiento, emailCliente,
                 nombreUsuarioLogin, passwordNueva, confirmPasswordNueva)) {
             return;
         }
 
-        // 3. Actualizar el objeto Cliente.
-        clienteAEditar.setNombre(nombre);
         clienteAEditar.setApellidos(apellidos);
         clienteAEditar.setNif(nif);
         clienteAEditar.setFechaNacimiento(fechaNacimiento);
@@ -413,20 +380,16 @@ public class FormularioUsuarioController implements Initializable {
         clienteAEditar.setTelefono(telefono);
         clienteAEditar.setEmail(emailCliente);
 
-        // 4. Determinar si la cuenta de Usuario necesita actualización.
         boolean esNecesarioActualizarUsuario = false;
         if (!cuentaUsuarioAEditar.getNombreUsu().equals(nombreUsuarioLogin)) {
             cuentaUsuarioAEditar.setNombreUsu(nombreUsuarioLogin);
             esNecesarioActualizarUsuario = true;
         }
         if (!passwordNueva.isEmpty()) {
-            // IMPORTANTE: Hashear la nueva contraseña antes de setearla.
-            // cuentaUsuarioAEditar.setContrasena(hashUtils.hashPassword(passwordNueva));
             cuentaUsuarioAEditar.setContrasena(passwordNueva);
             esNecesarioActualizarUsuario = true;
         }
 
-        // 5. Procesar nueva foto de perfil si se seleccionó una.
         if (nuevaFotoSeleccionada != null) {
             try {
 
@@ -445,13 +408,11 @@ public class FormularioUsuarioController implements Initializable {
             }
         }
 
-        // 6. Guardar los cambios en la base de datos.
         try {
             boolean exitoActualizacionCliente = clienteDAO.actualizarCliente(clienteAEditar);
             boolean exitoActualizacionUsuario = true;
 
             if (esNecesarioActualizarUsuario) {
-                // Verificar si el nuevo nombre de usuario ya existe
                 if (!cuentaUsuarioAEditar.getNombreUsu().equals(nombreUsuarioLogin) &&
                         usuarioDAO.obtenerUsuarioPorNombreUsuario(nombreUsuarioLogin) != null) {
                     UtilidadesVentana.mostrarAlertaError("Usuario Existente", "El nuevo nombre de usuario '" + nombreUsuarioLogin + "' ya está en uso.");
