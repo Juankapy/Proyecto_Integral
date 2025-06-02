@@ -49,7 +49,7 @@ public class MainClienteController {
     private static final String FXML_LOGIN = "/com/proyectointegral2/Vista/Login.fxml";
     private static final String FXML_DETALLES_PERRO = "/com/proyectointegral2/Vista/DetallesPerro.fxml";
     private static final String FXML_EVENTOS_PANEL = "/com/proyectointegral2/Vista/EventosPanel.fxml";
-    private static final String FXML_BANDEJA_CITAS = "/com/proyectointegral2/Vista/BandejaCitas.fxml";
+    private static final String FXML_BANDEJA_CITAS = "/com/proyectointegral2/Vista/BandejasCitas.fxml";
     private static final String FXML_PERFIL_USUARIO = "/com/proyectointegral2/Vista/PerfilUsuario.fxml";
     private static final double HEADER_HEIGHT_ESTIMADA = 70.0;
     private static final double BOTTOM_BAR_HEIGHT_ESTIMADA = 80.0;

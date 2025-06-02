@@ -9,20 +9,21 @@ import com.proyectointegral2.dao.PatologiaDao;
 import com.proyectointegral2.dao.PerroDao;
 import com.proyectointegral2.dao.RazaDao;
 import com.proyectointegral2.utils.UtilidadesVentana;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,11 +36,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class FormularioPerroController {
@@ -180,27 +177,28 @@ public class FormularioPerroController {
     private void cargarYMostrarPatologiasAsociadas(int idPerro) {
         if (TxtAreaPatologia == null || identificacionPatologiaDao == null || patologiaDao == null) {
             System.err.println("Componentes para patologías no listos.");
-            if(TxtAreaPatologia != null) TxtAreaPatologia.setText("No se pudieron cargar patologías.");
+            if (TxtAreaPatologia != null) TxtAreaPatologia.setText("No se pudieron cargar patologías.");
             return;
         }
         try {
             List<IdentificacionPatologia> identificaciones = identificacionPatologiaDao.obtenerIdentificacionesPorPerro(idPerro);
             if (identificaciones != null && !identificaciones.isEmpty()) {
-                String textoPatologias = identificaciones.stream()
-                        .map(ip -> {
-                            try {
-                                Patologia p = patologiaDao.obtenerPatologiaPorId(ip.getIdPatologia());
-                                if (p != null) {
-                                    String nombrePat = p.getNombre();
-                                    String notas = ip.getDescripcion();
-                                    return nombrePat + (notas != null && !notas.trim().isEmpty() ? " (" + notas + ")" : "");
-                                }
-                            } catch (SQLException e) { e.printStackTrace(); }
-                            return null;
-                        })
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.joining(", "));
-                TxtAreaPatologia.setText(textoPatologias);
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < identificaciones.size(); i++) {
+                    IdentificacionPatologia ip = identificaciones.get(i);
+                    Patologia patologia = patologiaDao.obtenerPatologiaPorId(ip.getIdPatologia());
+                    if (patologia != null) {
+                        sb.append(patologia.getNombre());
+                        String notasEspecificas = ip.getDescripcion();
+                        if (notasEspecificas != null && !notasEspecificas.trim().isEmpty()) {
+                            sb.append(": ").append(notasEspecificas);
+                        }
+                        if (i < identificaciones.size() - 1) {
+                            sb.append("\n");
+                        }
+                    }
+                }
+                TxtAreaPatologia.setText(sb.toString());
             } else {
                 TxtAreaPatologia.setText("");
             }
@@ -407,60 +405,139 @@ public class FormularioPerroController {
 
 
     private void procesarYGuardarPatologiasAsociadas(int idPerro, String textoPatologiasInput) {
-        if (idPerro <= 0 || identificacionPatologiaDao == null || patologiaDao == null || TxtAreaPatologia == null) {
-            System.err.println("No se pueden procesar patologías: idPerro inválido o DAOs/TextArea nulos.");
+        if (idPerro <= 0) {
+            UtilidadesVentana.mostrarAlertaError("Error Interno", "ID de perro no válido para asociar patologías.");
             return;
         }
-        String textoPatologias = textoPatologiasInput;
+        if (identificacionPatologiaDao == null || patologiaDao == null) {
+            UtilidadesVentana.mostrarAlertaError("Error DAO", "Servicios de patologías no disponibles.");
+            return;
+        }
+        // TxtAreaPatologia no es nulo porque lo usamos para obtener el textoPatologiasInput
+        // pero si la referencia al @FXML fuera nula, el programa fallaría antes.
+
+        String textoPatologias = (textoPatologiasInput != null) ? textoPatologiasInput.trim() : "";
 
         try {
+            // 1. Eliminar todas las asociaciones de patologías existentes para este perro
+            // Esto simplifica la lógica: siempre borramos y reinsertamos las actuales.
             identificacionPatologiaDao.eliminarPatologiasPorPerro(idPerro);
             System.out.println("INFO: Patologías previas eliminadas para el perro ID: " + idPerro);
 
-            if (textoPatologias != null && !textoPatologias.trim().isEmpty()) {
-                String[] patologiasEntradas = textoPatologias.split("\\s*[,;]\\s*");
+            // 2. Procesar el nuevo texto de patologías si no está vacío
+            if (!textoPatologias.isEmpty()) {
+                // Permitir separación por comas, punto y coma, o saltos de línea
+                String[] patologiasEntradas = textoPatologias.split("\\s*[,;\n\r]+\\s*");
 
-                for (String entrada : patologiasEntradas) {
-                    entrada = entrada.trim();
-                    if (entrada.isEmpty()) continue;
+                for (String entradaCompleta : patologiasEntradas) {
+                    String entrada = entradaCompleta.trim();
+                    if (entrada.isEmpty()) {
+                        continue;
+                    }
 
                     String nombrePatologiaLimpio;
-                    String notasEspecificas = "";
+                    String notasEspecificasParaEstaAsociacion = ""; // Notas para la tabla IDENTIFICACION_PATOLOGIAS
 
+                    // Parsear "NombrePatologia (Notas Específicas)" o "NombrePatologia: Notas Específicas"
                     int inicioParentesis = entrada.indexOf('(');
                     int finParentesis = entrada.lastIndexOf(')');
+                    int separadorDosPuntos = entrada.indexOf(": ");
 
                     if (inicioParentesis != -1 && finParentesis > inicioParentesis && finParentesis == entrada.length() - 1) {
+                        // Formato: Nombre (Notas)
                         nombrePatologiaLimpio = entrada.substring(0, inicioParentesis).trim();
-                        notasEspecificas = entrada.substring(inicioParentesis + 1, finParentesis).trim();
+                        notasEspecificasParaEstaAsociacion = entrada.substring(inicioParentesis + 1, finParentesis).trim();
+                    } else if (separadorDosPuntos != -1) {
+                        // Formato: Nombre: Notas
+                        nombrePatologiaLimpio = entrada.substring(0, separadorDosPuntos).trim();
+                        if (separadorDosPuntos < entrada.length() - 1) {
+                            notasEspecificasParaEstaAsociacion = entrada.substring(separadorDosPuntos + 1).trim();
+                        }
                     } else {
                         nombrePatologiaLimpio = entrada.trim();
                     }
 
-                    if (nombrePatologiaLimpio.isEmpty()) continue;
+                    if (nombrePatologiaLimpio.isEmpty()) {
+                        continue;
+                    }
 
                     Patologia patologiaExistente = patologiaDao.obtenerPatologiaPorNombre(nombrePatologiaLimpio);
                     int idPatologiaAGuardar;
+                    String descripcionGeneralPatologia = ""; 
 
                     if (patologiaExistente == null) {
-                        boolean crear = UtilidadesVentana.mostrarAlertaConfirmacion("Patología no encontrada",
-                                "La patología '" + nombrePatologiaLimpio + "' no existe. ¿Desea crearla?");
-                        if (crear) {
-                            Patologia nuevaPatologia = new Patologia(0, nombrePatologiaLimpio, "");
-                            idPatologiaAGuardar = patologiaDao.crearPatologia(nuevaPatologia);
-                            if (idPatologiaAGuardar <= 0) {
-                                System.err.println("ERROR: No se pudo crear la patología: " + nombrePatologiaLimpio);
-                                continue;
+                        // La patología no existe, preguntar al usuario si quiere crearla y pedir descripción general
+                        Dialog<Pair<String, String>> dialog = new Dialog<>();
+                        dialog.setTitle("Nueva Patología Detectada");
+                        dialog.setHeaderText("La patología '" + nombrePatologiaLimpio + "' no está en la base de datos.");
+                        // Opcional: Añadir un icono al diálogo
+                        Stage dialogStage = (Stage) dialog.getDialogPane().getScene().getWindow();
+                        try (InputStream iconStream = getClass().getResourceAsStream("/assets/Imagenes/iconos/dogicon_popup.png")) { // Cambia a tu icono
+                            if (iconStream != null) dialogStage.getIcons().add(new Image(iconStream));
+                        } catch (Exception e) {System.err.println("No se pudo cargar icono para diálogo de patología.");}
+
+
+                        ButtonType guardarButtonType = new ButtonType("Crear y Asignar", ButtonBar.ButtonData.OK_DONE);
+                        dialog.getDialogPane().getButtonTypes().addAll(guardarButtonType, ButtonType.CANCEL);
+
+                        GridPane grid = new GridPane();
+                        grid.setHgap(10);
+                        grid.setVgap(10);
+                        grid.setPadding(new Insets(20, 150, 10, 10)); // Ajustar padding
+
+                        TextField txtNombrePatologiaDialog = new TextField(nombrePatologiaLimpio);
+                        txtNombrePatologiaDialog.setEditable(false);
+                        TextArea txtDescGeneralPatologiaDialog = new TextArea();
+                        txtDescGeneralPatologiaDialog.setPromptText("Descripción general de la patología (ej: afecta articulaciones)...");
+                        txtDescGeneralPatologiaDialog.setWrapText(true);
+                        txtDescGeneralPatologiaDialog.setPrefRowCount(3);
+
+                        grid.add(new Label("Nombre Patología:"), 0, 0);
+                        grid.add(txtNombrePatologiaDialog, 1, 0);
+                        grid.add(new Label("Descripción General:"), 0, 1);
+                        grid.add(txtDescGeneralPatologiaDialog, 1, 1);
+                        GridPane.setHgrow(txtDescGeneralPatologiaDialog, Priority.ALWAYS);
+
+                        dialog.getDialogPane().setContent(grid);
+                        Platform.runLater(txtDescGeneralPatologiaDialog::requestFocus); // Focus en el TextArea
+
+                        dialog.setResultConverter(dialogButton -> {
+                            if (dialogButton == guardarButtonType) {
+                                return new Pair<>(nombrePatologiaLimpio, txtDescGeneralPatologiaDialog.getText());
                             }
-                            System.out.println("INFO: Patología '" + nombrePatologiaLimpio + "' creada con ID: " + idPatologiaAGuardar);
-                        } else { continue; }
-                    } else {
+                            return null;
+                        });
+
+                        Optional<Pair<String, String>> result = dialog.showAndWait();
+
+                        if (result.isPresent() && result.get() != null) {
+                            descripcionGeneralPatologia = result.get().getValue(); // Descripción general del diálogo
+                            Patologia nuevaPatologia = new Patologia(0, nombrePatologiaLimpio, descripcionGeneralPatologia);
+                            idPatologiaAGuardar = patologiaDao.crearPatologia(nuevaPatologia); // DAO guarda la descripción general
+
+                            if (idPatologiaAGuardar <= 0) {
+                                UtilidadesVentana.mostrarAlertaError("Error Creación", "No se pudo crear la patología: " + nombrePatologiaLimpio);
+                                continue; // Saltar a la siguiente patología en la entrada del usuario
+                            }
+                            System.out.println("INFO: Patología '" + nombrePatologiaLimpio + "' creada con ID: " + idPatologiaAGuardar + " y desc general: '" + descripcionGeneralPatologia + "'");
+                        } else {
+                            System.out.println("INFO: Creación de patología '" + nombrePatologiaLimpio + "' cancelada por el usuario.");
+                            continue; // Saltar a la siguiente patología
+                        }
+                    } else { // La patología ya existe
                         idPatologiaAGuardar = patologiaExistente.getIdPatologia();
+                        // No necesitamos la descripción general aquí si ya existe, pero podrías cargarla si quisieras
                     }
-                    identificacionPatologiaDao.asignarPatologiaAPerro(idPerro, idPatologiaAGuardar, notasEspecificas);
-                    System.out.println("INFO: Patología '" + nombrePatologiaLimpio + "' (ID: " + idPatologiaAGuardar + ") con notas '" + notasEspecificas + "' asignada al perro ID: " + idPerro);
+
+                    // Asignar la patología (existente o recién creada) al perro con sus notas específicas
+                    identificacionPatologiaDao.asignarPatologiaAPerro(idPerro, idPatologiaAGuardar, notasEspecificasParaEstaAsociacion);
+                    System.out.println("INFO: Patología '" + nombrePatologiaLimpio + "' (ID: " + idPatologiaAGuardar + ") con notas '" + notasEspecificasParaEstaAsociacion + "' asignada al perro ID: " + idPerro);
                 }
             }
+
+            // 3. Recargar y mostrar las patologías en el TextArea para reflejar los cambios
+            cargarYMostrarPatologiasAsociadas(idPerro);
+
         } catch (SQLException e) {
             e.printStackTrace();
             UtilidadesVentana.mostrarAlertaError("Error BD (Patologías)", "No se pudieron guardar las patologías asociadas: " + e.getMessage());

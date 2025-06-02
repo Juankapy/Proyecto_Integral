@@ -1,12 +1,11 @@
 package com.proyectointegral2.Controller;
 
 import com.proyectointegral2.Model.Perro;
-import com.proyectointegral2.Model.Raza; // Para la tarjeta
-import com.proyectointegral2.Model.Protectora; // Para la tarjeta
+import com.proyectointegral2.Model.Raza;
+import com.proyectointegral2.Model.Protectora;
 import com.proyectointegral2.Model.Usuario;
 import com.proyectointegral2.dao.PerroDao;
-import com.proyectointegral2.dao.ProtectoraDao; // Para obtener nombre de protectora
-// import com.proyectointegral2.dao.ReservaCitaDao; // Para verificar si ha tenido citas
+import com.proyectointegral2.dao.ProtectoraDao;
 import com.proyectointegral2.Model.SesionUsuario;
 import com.proyectointegral2.utils.UtilidadesVentana;
 

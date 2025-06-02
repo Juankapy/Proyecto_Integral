@@ -7,6 +7,7 @@ import com.proyectointegral2.Model.Protectora;
 import com.proyectointegral2.dao.IdentificacionPatologiaDao;
 import com.proyectointegral2.dao.PatologiaDao;
 import com.proyectointegral2.dao.ProtectoraDao;
+import com.proyectointegral2.utils.UtilidadesExcepciones;
 import com.proyectointegral2.utils.UtilidadesVentana;
 
 import javafx.event.ActionEvent;
@@ -208,8 +209,7 @@ public class DetallesPerroController {
         System.out.println("Botón Reservar Cita presionado para: " + perroActual.getNombre());
         String titulo = "Solicitar Cita con " + perroActual.getNombre();
         Stage ownerStage = (Stage) BtnReservarCita.getScene().getWindow();
-
-        UtilidadesVentana.mostrarAlertaInformacion("Próximamente", "Formulario de solicitud de cita no implementado.");
+        UtilidadesVentana.cambiarEscena(FXML_FORMULARIO_SOLICITAR_CITA,"Panel Solictud de Citas", false);
     }
 
     @FXML
