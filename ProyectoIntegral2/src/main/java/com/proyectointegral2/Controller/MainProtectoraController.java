@@ -74,8 +74,8 @@ public class MainProtectoraController {
     @FXML private TableColumn<RegistroAdopcionInfo, String> ColumEstadoAdopcion;
 
     // --- Constants ---
-    private static final String RUTA_BASE_IMAGENES_PERROS_RESOURCES = "/assets/Imagenes/Perros/";
-    private static final String RUTA_IMAGEN_PLACEHOLDER_PERRO = "/assets/Imagenes/iconos/placeholder_dog.png";
+    private static final String RUTA_BASE_IMAGENES_PERROS_RESOURCES = "/assets/Imagenes/perros";
+    private static final String RUTA_IMAGEN_PLACEHOLDER_PERRO = "/assets/Imagenes/iconos/placeholder_dog.jpg";
     private static final String RUTA_FXML_LOGIN = "/com/proyectointegral2/Vista/Login.fxml";
     private static final String RUTA_FXML_FORMULARIO_PERRO = "/com/proyectointegral2/Vista/FormularioPerro.fxml";
     private static final String RUTA_FXML_PERFIL_PROTECTORA = "/com/proyectointegral2/Vista/PerfilProtectora.fxml";
@@ -85,7 +85,7 @@ public class MainProtectoraController {
     private static final double TARJETA_IMG_AREA_HEIGHT = 160.0;
     private static final double TARJETA_PREF_WIDTH = 190.0;
     private static final double CARD_HORIZONTAL_GAP = 20.0;
-    private static final double CARD_INTERNAL_PADDING = 10.0; // <<-- AÑADIDO (o modificado si ya existía)
+    private static final double CARD_INTERNAL_PADDING = 10.0;
     private static final double HBOX_TITULO_GRID_HEIGHT_ESTIMADA = 60.0;
     private static final double TABLAS_SECTION_CONTAINER_HEIGHT_ESTIMADA = 350.0;
     private static final double MIN_GRID_CONTAINER_HEIGHT = 250.0;
@@ -107,6 +107,16 @@ public class MainProtectoraController {
 
     @FXML
     public void initialize() {
+        System.out.println("Intentando cargar placeholder: " + RUTA_IMAGEN_PLACEHOLDER_PERRO);
+        try (InputStream testStream = getClass().getResourceAsStream(RUTA_IMAGEN_PLACEHOLDER_PERRO)) {
+            if (testStream != null) {
+                System.out.println("Placeholder ENCONTRADO!");
+            } else {
+                System.err.println("Placeholder NO ENCONTRADO en classpath con la ruta: " + RUTA_IMAGEN_PLACEHOLDER_PERRO);
+            }
+        } catch (Exception e) {
+            System.err.println("Excepción al intentar cargar placeholder: " + e.getMessage());
+        }
         System.out.println("MainProtectoraController inicializado. Validando sesión...");
         try {
             this.perroDao = new PerroDao();
