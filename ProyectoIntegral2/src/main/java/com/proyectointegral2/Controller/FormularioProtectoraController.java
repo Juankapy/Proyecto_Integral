@@ -4,12 +4,12 @@ import com.proyectointegral2.Model.Protectora;
 import com.proyectointegral2.Model.Usuario;
 import com.proyectointegral2.dao.ProtectoraDao;
 import com.proyectointegral2.dao.UsuarioDao;
-import com.proyectointegral2.utils.UtilidadesExcepciones; // Si lo usas para manejo de excepciones
+import com.proyectointegral2.utils.UtilidadesExcepciones;
 import com.proyectointegral2.utils.UtilidadesVentana;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader; // Para volver al perfil
-import javafx.fxml.Initializable; // Si se usa el initialize con parámetros
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -33,7 +33,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
-import java.util.Arrays; // Para deshabilitar campos
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.UUID;
@@ -47,13 +47,11 @@ import java.util.regex.Pattern;
  */
 public class FormularioProtectoraController implements Initializable {
 
-    // --- Componentes FXML ---
     @FXML private ImageView imgIconoVolver;
     @FXML private Label lblTituloFormulario;
     @FXML private ImageView imgFotoProtectoraEditable;
     @FXML private Button btnCambiarFotoProtectora;
 
-    // Campos para datos de la Protectora
     @FXML private TextField txtNombreProtectora;
     @FXML private TextField txtCIF;
     @FXML private TextField txtEmailProtectora;
@@ -63,34 +61,33 @@ public class FormularioProtectoraController implements Initializable {
     @FXML private TextField txtProvinciaProtectora;
     @FXML private TextField txtCPProtectora;
 
-    // Campos para la cuenta de Usuario asociada
     @FXML private PasswordField txtPasswordCuenta;
     @FXML private PasswordField txtConfirmPasswordCuenta;
 
     @FXML private Button btnCancelar;
     @FXML private Button btnGuardarCambios;
 
-    // --- DAOs ---
     private ProtectoraDao protectoraDAO;
     private UsuarioDao usuarioDAO;
 
-    // --- Estado del Controlador ---
     private Protectora protectoraAEditar;
     private Usuario cuentaUsuarioAsociada;
     private File nuevaFotoSeleccionada;
 
-    // --- Constantes ---
-    private static final String RUTA_PLACEHOLDER_LOGO_PROTECTORA = "/assets/Imagenes/iconos/placeholder_logo_protectora.png"; // O sinusuario.jpg
-    private static final String DIRECTORIO_BASE_FOTOS_PROTECTORAS_FILESYSTEM = "src/main/resources/assets/Imagenes/logos_protectoras/";
+    private static final String RUTA_PLACEHOLDER_LOGO_PROTECTORA = "/assets/Imagenes/iconos/sinusuario.jpg";
+    private static final String RUTA_CLASSPATH_FOTOS_PROTECTORAS = "/assets/Imagenes/logos_protectoras/";
+    private static final String DIRECTORIO_BASE_FOTOS_PROTECTORAS_FILESYSTEM = "/assets/Imagenes/logos_protectoras/";
     private static final String RUTA_BASE_FOTOS_PROTECTORAS_CLASSPATH = "/assets/Imagenes/logos_protectoras/";
+    private String DIRECTORIO_FILESYSTEM_FOTOS_PROTECTORAS_SRC;
+    private String DIRECTORIO_FILESYSTEM_FOTOS_TARGET;
 
-    // Rutas para navegación
+
+
     private static final String RUTA_FXML_PERFIL_PROTECTORA = "/com/proyectointegral2/Vista/PerfilProtectora.fxml";
-    private static final String RUTA_FXML_MAIN_PROTECTORA = "/com/proyectointegral2/Vista/MainProtectora.fxml"; // Fallback
+    private static final String RUTA_FXML_MAIN_PROTECTORA = "/com/proyectointegral2/Vista/MainProtectora.fxml";
     private static final String TITULO_PERFIL_PROTECTORA = "Perfil de Protectora";
     private static final String TITULO_MAIN_PROTECTORA = "Panel de Protectora";
 
-    // Patrones de validación
     private static final Pattern CIF_PATTERN = Pattern.compile("^[A-HJNP-SUVW][0-9]{7}[0-9A-J]$");
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
     private static final Pattern CP_PATTERN = Pattern.compile("\\d{5}");
@@ -107,17 +104,46 @@ public class FormularioProtectoraController implements Initializable {
         try {
             this.protectoraDAO = new ProtectoraDao();
             this.usuarioDAO = new UsuarioDao();
+            URL rootResourceUrl = getClass().getResource("/"); // Raíz de la carpeta resources (ej. target/classes/)
+            if (rootResourceUrl != null && "file".equals(rootResourceUrl.getProtocol())) {
+                Path targetClassesPath = Paths.get(rootResourceUrl.toURI());
+                Path targetLogosPath = targetClassesPath.resolve(RUTA_CLASSPATH_FOTOS_PROTECTORAS.substring(1)); // Quitar la primera '/'
+                DIRECTORIO_FILESYSTEM_FOTOS_TARGET = targetLogosPath.toString();
+
+                try {
+                    Files.createDirectories(Paths.get(DIRECTORIO_FILESYSTEM_FOTOS_TARGET));
+                    System.out.println("INFO: Directorio para guardar logos (target/classes): " + DIRECTORIO_FILESYSTEM_FOTOS_TARGET);
+                } catch (IOException e) {
+                    System.err.println("WARN: No se pudo crear el directorio de logos en target/classes: " + e.getMessage());
+                    // Usar un fallback si la creación del directorio falla
+                    Path userHomeDir = Paths.get(System.getProperty("user.home"));
+                    Path appImageDir = userHomeDir.resolve("DogpuccinoAppImages").resolve("logos_protectoras");
+                    DIRECTORIO_FILESYSTEM_FOTOS_TARGET = appImageDir.toString();
+                    Files.createDirectories(Paths.get(DIRECTORIO_FILESYSTEM_FOTOS_TARGET));
+                    System.out.println("WARN: Logos se guardarán en directorio de fallback: " + DIRECTORIO_FILESYSTEM_FOTOS_TARGET);
+                }
+            } else {
+                // Fallback si no se puede determinar la ruta de target/classes (ej. desde JAR)
+                Path userHomeDir = Paths.get(System.getProperty("user.home"));
+                Path appImageDir = userHomeDir.resolve("DogpuccinoAppImages").resolve("logos_protectoras");
+                DIRECTORIO_FILESYSTEM_FOTOS_TARGET = appImageDir.toString();
+                Files.createDirectories(Paths.get(DIRECTORIO_FILESYSTEM_FOTOS_TARGET));
+                System.out.println("WARN: Ejecutando desde JAR o protocolo no 'file'. Logos se guardarán en: " + DIRECTORIO_FILESYSTEM_FOTOS_TARGET);
+            }
         } catch (Exception e) {
-            System.err.println("Error crítico al inicializar DAOs en FormularioProtectoraController: " + e.getMessage());
-            e.printStackTrace();
-            UtilidadesVentana.mostrarAlertaError("Error Crítico de Sistema",
-                    "No se pudo inicializar el acceso a la base de datos. El formulario no funcionará correctamente.");
-            if (btnGuardarCambios != null) btnGuardarCambios.setDisable(true);
-            if (btnCambiarFotoProtectora != null) btnCambiarFotoProtectora.setDisable(true);
+            handleDaoInitializationError(e);
         }
         if (lblTituloFormulario != null) lblTituloFormulario.setText("Editar Datos de Protectora");
         if (btnGuardarCambios != null) btnGuardarCambios.setText("Guardar Cambios");
         cargarImagenPlaceholder();
+    }
+    private void handleDaoInitializationError(Exception e){
+        System.err.println("Error crítico al inicializar DAOs: " + e.getMessage());
+        e.printStackTrace();
+        UtilidadesVentana.mostrarAlertaError("Error Crítico de Sistema",
+                "No se pudo inicializar el acceso a la base de datos. El formulario no funcionará correctamente.");
+        if (btnGuardarCambios != null) btnGuardarCambios.setDisable(true);
+        if (btnCambiarFotoProtectora != null) btnCambiarFotoProtectora.setDisable(true);
     }
 
     /**
@@ -164,12 +190,34 @@ public class FormularioProtectoraController implements Initializable {
         if (txtCiudadProtectora != null) txtCiudadProtectora.setText(Objects.requireNonNullElse(protectoraAEditar.getCiudad(), ""));
         if (txtProvinciaProtectora != null) txtProvinciaProtectora.setText(Objects.requireNonNullElse(protectoraAEditar.getProvincia(), ""));
         if (txtCPProtectora != null) txtCPProtectora.setText(Objects.requireNonNullElse(protectoraAEditar.getCodigoPostal(), ""));
-
-
         if (txtPasswordCuenta != null) txtPasswordCuenta.setPromptText("Dejar vacío para no cambiar");
         if (txtConfirmPasswordCuenta != null) txtConfirmPasswordCuenta.setPromptText("Confirmar nueva contraseña");
-
         cargarFotoProtectoraActual(protectoraAEditar.getRutaFotoPerfil());
+    }
+
+    /**
+     * Obtiene la extensión de un nombre de archivo.
+     * @param nombreArchivo El nombre completo del archivo.
+     * @return La extensión en minúsculas, o una cadena vacía si no tiene extensión.
+     */
+    private String obtenerExtensionArchivo(String nombreArchivo) {
+        if (nombreArchivo == null) return "";
+        int ultimoPunto = nombreArchivo.lastIndexOf('.');
+        if (ultimoPunto > 0 && ultimoPunto < nombreArchivo.length() - 1) {
+            return nombreArchivo.substring(ultimoPunto + 1).toLowerCase();
+        }
+        return ""; // Sin extensión o nombre de archivo inválido
+    }
+
+    /**
+     * Verifica si una extensión de archivo corresponde a un formato de imagen común.
+     * @param extension La extensión del archivo (ej. "png", "jpg").
+     * @return true si es una extensión de imagen válida, false en caso contrario.
+     */
+    private boolean esExtensionImagenValida(String extension) {
+        if (extension == null) return false;
+        String extLower = extension.toLowerCase();
+        return extLower.equals("png") || extLower.equals("jpg") || extLower.equals("jpeg") || extLower.equals("gif");
     }
 
     /**
@@ -209,48 +257,44 @@ public class FormularioProtectoraController implements Initializable {
      */
     private void cargarFotoProtectoraActual(String rutaFotoRelativaAlClasspath) {
         if (imgFotoProtectoraEditable == null) return;
-        String pathNormalizado = null;
-
+        Image imagenParaCargar = null;
         if (rutaFotoRelativaAlClasspath != null && !rutaFotoRelativaAlClasspath.trim().isEmpty()) {
-            try {
-                pathNormalizado = rutaFotoRelativaAlClasspath.startsWith("/")
-                        ? rutaFotoRelativaAlClasspath
-                        : "/" + rutaFotoRelativaAlClasspath.replace("\\", "/");
+            String pathNormalizado = rutaFotoRelativaAlClasspath.trim();
+            if (!pathNormalizado.startsWith("/")) {
+                pathNormalizado = "/" + pathNormalizado; // Asegurar que sea absoluta al classpath
+            }
+            pathNormalizado = pathNormalizado.replace("\\", "/"); // Normalizar separadores
 
-                try (InputStream stream = getClass().getResourceAsStream(pathNormalizado)) {
-                    if (stream != null) {
-                        imgFotoProtectoraEditable.setImage(new Image(stream));
-                        return;
-                    } else {
-                        System.err.println("WARN: Foto/Logo de protectora no encontrada en classpath: " + pathNormalizado);
+            System.out.println("Intentando cargar imagen existente: " + pathNormalizado);
+            try (InputStream stream = getClass().getResourceAsStream(pathNormalizado)) {
+                if (stream != null) {
+                    imagenParaCargar = new Image(stream);
+                    if (imagenParaCargar.isError()) {
+                        System.err.println("WARN: Error al decodificar imagen existente: " + pathNormalizado);
+                        imagenParaCargar = null;
                     }
+                } else {
+                    System.err.println("WARN: Imagen existente no encontrada en classpath: " + pathNormalizado);
                 }
             } catch (Exception e) {
-                System.err.println("ERROR: Excepción al cargar foto/logo de protectora desde '" +
-                        (pathNormalizado != null ? pathNormalizado : rutaFotoRelativaAlClasspath) + "': " + e.getMessage());
-                e.printStackTrace();
+                System.err.println("ERROR: Excepción al cargar imagen existente: " + e.getMessage());
             }
         }
-        cargarImagenPlaceholder();
+
+        if (imagenParaCargar == null) { // Si falló o no había, usar placeholder
+            try (InputStream placeholderStream = getClass().getResourceAsStream(RUTA_PLACEHOLDER_LOGO_PROTECTORA)) {
+                if (placeholderStream != null) imagenParaCargar = new Image(placeholderStream);
+                else System.err.println("ERROR CRITICO: Placeholder no encontrado: " + RUTA_PLACEHOLDER_LOGO_PROTECTORA);
+            } catch (Exception e) { System.err.println("ERROR CRITICO: Excepción al cargar placeholder: " + e.getMessage());}
+        }
+        imgFotoProtectoraEditable.setImage(imagenParaCargar);
     }
 
     /**
      * Carga la imagen de placeholder en el ImageView de la foto/logo.
      */
     private void cargarImagenPlaceholder() {
-        if (imgFotoProtectoraEditable == null) return;
-        try (InputStream placeholderStream = getClass().getResourceAsStream(RUTA_PLACEHOLDER_LOGO_PROTECTORA)) {
-            if (placeholderStream != null) {
-                imgFotoProtectoraEditable.setImage(new Image(placeholderStream));
-            } else {
-                System.err.println("Error Crítico: Placeholder de logo de protectora no encontrado en: " + RUTA_PLACEHOLDER_LOGO_PROTECTORA);
-                imgFotoProtectoraEditable.setImage(null);
-            }
-        } catch (Exception e) {
-            System.err.println("Excepción crítica al cargar imagen placeholder de logo de protectora: " + e.getMessage());
-            e.printStackTrace();
-            imgFotoProtectoraEditable.setImage(null);
-        }
+        cargarFotoProtectoraActual(null);
     }
 
     /**
@@ -300,34 +344,29 @@ public class FormularioProtectoraController implements Initializable {
             UtilidadesVentana.mostrarAlertaError("Campos Obligatorios", "Todos los campos de información de la protectora son obligatorios.");
             return false;
         }
-        // Validar CIF
         if (!CIF_PATTERN.matcher(cif.toUpperCase()).matches()) { // Convertir a mayúsculas para validar
             UtilidadesVentana.mostrarAlertaError("Formato Inválido", "El formato del CIF no es válido.");
             txtCIF.requestFocus();
             return false;
         }
-        // Validar Email
         if (!EMAIL_PATTERN.matcher(email).matches()) {
             UtilidadesVentana.mostrarAlertaError("Formato Inválido", "El formato del correo electrónico no es válido.");
             txtEmailProtectora.requestFocus();
             return false;
         }
-        // Validar Código Postal
         if (!CP_PATTERN.matcher(cp).matches()) {
             UtilidadesVentana.mostrarAlertaError("Formato Inválido", "El Código Postal debe tener 5 dígitos.");
             txtCPProtectora.requestFocus();
             return false;
         }
-        // Validar Teléfono
         if (!TELEFONO_PATTERN.matcher(telefono).matches()) {
             UtilidadesVentana.mostrarAlertaError("Formato Inválido", "El Teléfono debe tener 9 dígitos.");
             txtTelefonoProtectora.requestFocus();
             return false;
         }
 
-        // Validaciones de Contraseña
         if (!nuevaPassword.isEmpty()) {
-            if (nuevaPassword.length() < 6) { // Mínimo 6 caracteres
+            if (nuevaPassword.length() < 6) {
                 UtilidadesVentana.mostrarAlertaError("Contraseña Débil", "La nueva contraseña debe tener al menos 6 caracteres.");
                 txtPasswordCuenta.requestFocus();
                 return false;
@@ -341,6 +380,46 @@ public class FormularioProtectoraController implements Initializable {
             }
         }
         return true;
+    }
+
+    /**
+     * Guarda la nueva foto/logo seleccionada en el sistema de archivos (dentro de resources para desarrollo)
+     * y devuelve su ruta relativa al classpath para ser guardada en la BD.
+     * @param fotoArchivo El archivo de la foto/logo seleccionado por el usuario.
+     * @param identificadorUnico Un identificador para ayudar a crear un nombre de archivo único (ej. CIF o ID de protectora).
+     * @return Ruta relativa para la BD (ej. "/assets/imagenes/logos_protectoras/nombre_unico.png"), o null si hay error.
+     * @throws IOException Si hay error de E/S al copiar el archivo.
+     */
+    private String guardarNuevaFotoYObtenerRutaClasspath(File fotoArchivo, String identificadorUnico) throws IOException {
+        if (fotoArchivo == null || DIRECTORIO_FILESYSTEM_FOTOS_TARGET == null) {
+            System.err.println("ERROR: fotoArchivo es null o DIRECTORIO_FILESYSTEM_FOTOS_TARGET no está inicializado.");
+            return null;
+        }
+
+        String extension = obtenerExtensionArchivo(fotoArchivo.getName());
+        if (!esExtensionImagenValida(extension)) {
+            UtilidadesVentana.mostrarAlertaError("Extensión Inválida", "El archivo seleccionado no es una imagen válida (png, jpg, jpeg, gif).");
+            return null;
+        }
+
+        String nombreBase = (identificadorUnico != null && !identificadorUnico.isEmpty()) ?
+                identificadorUnico.replaceAll("[^a-zA-Z0-9.-]", "_") : "logo";
+        String nombreUnicoArchivo = nombreBase + "_" + UUID.randomUUID().toString().substring(0, 8) + "." + extension;
+
+        Path directorioDestinoFisico = Paths.get(DIRECTORIO_FILESYSTEM_FOTOS_TARGET);
+        // Ya se intentó crear en initialize, pero verificar de nuevo por si acaso
+        if (!Files.exists(directorioDestinoFisico)) {
+            Files.createDirectories(directorioDestinoFisico);
+        }
+
+        Path rutaDestinoCompletaFisica = directorioDestinoFisico.resolve(nombreUnicoArchivo);
+        Files.copy(fotoArchivo.toPath(), rutaDestinoCompletaFisica, StandardCopyOption.REPLACE_EXISTING);
+        System.out.println("INFO: Foto/Logo copiada a (sistema de archivos): " + rutaDestinoCompletaFisica);
+
+        // La ruta para la BD DEBE ser la ruta relativa al classpath, siempre con "/"
+        String rutaParaBD = (RUTA_CLASSPATH_FOTOS_PROTECTORAS + nombreUnicoArchivo).replace("\\", "/");
+        System.out.println("INFO: Ruta para BD (classpath): " + rutaParaBD);
+        return rutaParaBD;
     }
 
 
@@ -383,6 +462,26 @@ public class FormularioProtectoraController implements Initializable {
         protectoraAEditar.setCiudad(ciudad);
         protectoraAEditar.setProvincia(provincia);
         protectoraAEditar.setCodigoPostal(cp);
+
+        if (nuevaFotoSeleccionada != null) {
+            try {
+                String identificadorParaFoto = protectoraAEditar.getCif() != null ? protectoraAEditar.getCif() : "protectora_" + protectoraAEditar.getIdProtectora();
+                String rutaRelativaFotoGuardada = guardarNuevaFotoYObtenerRutaClasspath(
+                        this.nuevaFotoSeleccionada,
+                        identificadorParaFoto
+                );
+                if (rutaRelativaFotoGuardada != null) {
+                    protectoraAEditar.setRutaFotoPerfil(rutaRelativaFotoGuardada); // Guardar ruta con '/'
+                    System.out.println("INFO: Nueva ruta de foto asignada a protectoraAEditar: " + rutaRelativaFotoGuardada);
+                } else {
+                    System.out.println("WARN: No se procesó una nueva foto (quizás extensión inválida), se mantiene la anterior si existe.");
+                }
+            } catch (IOException e) {
+                UtilidadesVentana.mostrarAlertaError("Error al Guardar Imagen", "Ocurrió un error al guardar la nueva imagen/logo: " + e.getMessage());
+                e.printStackTrace();
+                return; // Detener si falla el guardado de la imagen
+            }
+        }
 
         // 4. Determinar si la contraseña del Usuario necesita actualización.
         boolean esNecesarioActualizarPasswordUsuario = !passwordNueva.isEmpty();

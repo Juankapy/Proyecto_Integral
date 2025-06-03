@@ -2,8 +2,7 @@ package com.proyectointegral2.Controller;
 
 import com.proyectointegral2.Model.Protectora;
 import com.proyectointegral2.Model.RedSocial;
-import com.proyectointegral2.Model.Usuario; // Para el objeto Usuario asociado
-// import com.proyectointegral2.dao.ProtectoraDao; // No se usa directamente para cargar datos aquí, ya que Protectora se pasa
+import com.proyectointegral2.Model.Usuario;
 import com.proyectointegral2.dao.ProtectoraDao;
 import com.proyectointegral2.dao.RedesSocialesDao;
 import com.proyectointegral2.utils.UtilidadesVentana;
@@ -11,7 +10,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-// import javafx.fxml.Initializable; // No es estrictamente necesario si solo usas @FXML initialize()
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -37,7 +35,6 @@ import java.util.Objects;
  */
 public class PerfilProtectoraController {
 
-    // --- Componentes FXML ---
     @FXML private ImageView imgIconoVolver;
     @FXML private ImageView imgIconoProtectoraGrande;
     @FXML private Label lblNombreProtectoraTitulo;
@@ -51,16 +48,13 @@ public class PerfilProtectoraController {
     @FXML private ListView<String> listViewRedesSociales;
     @FXML private ImageView imgLogoDogpuccino;
 
-    // --- DAOs (Data Access Objects) ---
     private RedesSocialesDao redesSocialesDao;
      private ProtectoraDao protectoraDao;
 
-    // --- Estado del Controlador ---
     private Protectora protectoraActual;
     private Usuario cuentaUsuarioAsociada;
 
-    // --- Constantes ---
-    private static final String RUTA_PLACEHOLDER_LOGO_PROTECTORA = "/assets/Imagenes/iconos/placeholder_logo_protectora.png";
+    private static final String RUTA_PLACEHOLDER_LOGO_PROTECTORA = "/assets/Imagenes/iconos/sinusuario.jpg";
     private static final String RUTA_FXML_FORMULARIO_PROTECTORA = "/com/proyectointegral2/Vista/FormularioProtectora.fxml";
     private static final String RUTA_FXML_MAIN_PROTECTORA = "/com/proyectointegral2/Vista/MainProtectora.fxml";
     private static final String TITULO_VENTANA_MAIN_PROTECTORA = "Panel de Protectora - Dogpuccino";
@@ -183,33 +177,65 @@ public class PerfilProtectoraController {
     /**
      * Carga el logo o foto de la protectora en el ImageView.
      * Si no hay imagen o hay un error, carga una imagen placeholder.
-     * @param rutaImagenRelativa La ruta de la imagen, relativa a 'resources'.
+     * @param rutaImagenRelativaAlClasspath La ruta de la imagen, DEBE comenzar con "/"
+     *                                     si es desde la raíz de 'resources'
+     *                                     (ej: "/assets/Imagenes/Protectoras/logo.png").
      */
-    private void cargarLogoOImagenProtectora(String rutaImagenRelativa) {
-        if (imgLogoOFotoProtectora == null) return;
-        String pathNormalizado = null;
+    private void cargarLogoOImagenProtectora(String rutaImagenRelativaAlClasspath) {
+        if (imgLogoOFotoProtectora == null) {
+            System.err.println("ERROR: ImageViews para logo/foto de protectora no inyectados.");
+            return;
+        }
 
-        if (rutaImagenRelativa != null && !rutaImagenRelativa.trim().isEmpty()) {
-            try {
-                pathNormalizado = rutaImagenRelativa.startsWith("/")
-                        ? rutaImagenRelativa
-                        : "/" + rutaImagenRelativa.replace("\\", "/");
+        Image imagenParaMostrar = null;
+        String pathIntentarCargar = null;
 
-                try (InputStream stream = getClass().getResourceAsStream(pathNormalizado)) {
-                    if (stream != null) {
-                        imgLogoOFotoProtectora.setImage(new Image(stream));
-                        return;
+        if (rutaImagenRelativaAlClasspath != null && !rutaImagenRelativaAlClasspath.trim().isEmpty()) {
+            pathIntentarCargar = rutaImagenRelativaAlClasspath.trim().replace("\\", "/");
+            if (!pathIntentarCargar.startsWith("/")) {
+                pathIntentarCargar = "/" + pathIntentarCargar;
+            }
+
+            System.out.println("PerfilProtectora: Intentando cargar imagen desde classpath: " + pathIntentarCargar);
+            try (InputStream stream = getClass().getResourceAsStream(pathIntentarCargar)) {
+                if (stream != null) {
+                    imagenParaMostrar = new Image(stream);
+                    if (imagenParaMostrar.isError()) {
+                        System.err.println("WARN: Error al decodificar imagen: " + pathIntentarCargar + ". Ex: " + (imagenParaMostrar.getException() != null ? imagenParaMostrar.getException().getMessage() : "Desconocida"));
+                        imagenParaMostrar = null;
                     } else {
-                        System.err.println("WARN: Logo/Foto de protectora no encontrada en classpath: " + pathNormalizado);
+                        System.out.println("INFO: Imagen de protectora cargada exitosamente desde: " + pathIntentarCargar);
                     }
+                } else {
+                    System.err.println("WARN: Logo/Foto no encontrada en classpath: " + pathIntentarCargar);
                 }
             } catch (Exception e) {
-                System.err.println("ERROR: Excepción al cargar logo/foto de protectora desde '" +
-                        (pathNormalizado != null ? pathNormalizado : rutaImagenRelativa) + "': " + e.getMessage());
+                System.err.println("ERROR: Excepción general al cargar imagen desde '" + pathIntentarCargar + "': " + e.getMessage());
+            }
+        } else {
+            System.out.println("INFO: Ruta de imagen de protectora no proporcionada o vacía.");
+        }
+
+        if (imagenParaMostrar == null) {
+            System.out.println("Cargando imagen placeholder para protectora...");
+            try (InputStream placeholderStream = getClass().getResourceAsStream(RUTA_PLACEHOLDER_LOGO_PROTECTORA)) {
+                if (placeholderStream != null) {
+                    imagenParaMostrar = new Image(placeholderStream);
+                    if (imagenParaMostrar.isError()) {
+                        System.err.println("ERROR CRITICO: Error al decodificar la imagen placeholder: " + RUTA_PLACEHOLDER_LOGO_PROTECTORA +
+                                ". Excepción: " + (imagenParaMostrar.getException() != null ? imagenParaMostrar.getException().getMessage() : "Desconocida"));
+                        imagenParaMostrar = null;
+                    }
+                } else {
+                    System.err.println("Error Crítico: Placeholder de logo de protectora no encontrado en: " + RUTA_PLACEHOLDER_LOGO_PROTECTORA);
+                }
+            } catch (Exception e) {
+                System.err.println("Excepción crítica al cargar imagen placeholder de logo de protectora: " + e.getMessage());
                 e.printStackTrace();
             }
         }
-        cargarImagenPlaceholder();
+
+        if (imgLogoOFotoProtectora != null) imgLogoOFotoProtectora.setImage(imagenParaMostrar);
     }
 
     /**

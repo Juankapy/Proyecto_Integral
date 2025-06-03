@@ -29,7 +29,6 @@ import java.sql.SQLException;
  */
 public class LoginController {
 
-    // --- Constantes para Roles y FXML ---
     private static final String ROL_CLIENTE = "CLIENTE";
     private static final String ROL_PROTECTORA = "PROTECTORA";
 
@@ -40,7 +39,6 @@ public class LoginController {
     private static final String FXML_INICIO_CHOOSE = "/com/proyectointegral2/Vista/InicioChoose.fxml";
     private static final String TITLE_REGISTRO = "Registro - Dogpuccino";
 
-    // --- Componentes FXML ---
     @FXML private ImageView ImgUsuario;
     @FXML private ImageView ImgLateralLogin;
     @FXML private Button BtnConfirmar;
@@ -49,7 +47,6 @@ public class LoginController {
     @FXML private TextField TxtNombreUsuario;
     @FXML private Hyperlink HyRegistrarse;
 
-    // --- DAOs para acceso a datos ---
     private UsuarioDao usuarioDao;
     private ClienteDao clienteDao;
     private ProtectoraDao protectoraDao;
@@ -169,10 +166,10 @@ public class LoginController {
             Cliente cliente = clienteDao.obtenerClientePorIdUsuario(usuario.getIdUsuario());
             if (cliente != null) {
                 System.out.println("DEBUG LoginController.obtenerEntidadIdPorRol: ClienteDao devolvió cliente con ID_CLIENTE: " + cliente.getIdCliente());
-                return cliente.getIdCliente(); // Devuelve el ID_CLIENTE real
+                return cliente.getIdCliente();
             } else {
                 System.err.println("ERROR LoginController.obtenerEntidadIdPorRol: clienteDao.obtenerClientePorIdUsuario(" + usuario.getIdUsuario() + ") devolvió NULL.");
-                return 0; // Cliente no encontrado
+                return 0;
             }
         } else if (ROL_PROTECTORA.equalsIgnoreCase(rol)) {
             Protectora protectora = protectoraDao.obtenerProtectoraPorIdUsuario(usuario.getIdUsuario());
@@ -181,11 +178,11 @@ public class LoginController {
                 return protectora.getIdProtectora();
             } else {
                 System.err.println("ERROR LoginController.obtenerEntidadIdPorRol: protectoraDao.obtenerProtectoraPorIdUsuario(" + usuario.getIdUsuario() + ") devolvió NULL.");
-                return 0; // Protectora no encontrada
+                return 0;
             }
         }
         System.err.println("WARN LoginController.obtenerEntidadIdPorRol: Rol no reconocido: '" + rol + "'");
-        return 0; // Rol no reconocido
+        return 0;
     }
 
     /**
@@ -214,9 +211,9 @@ public class LoginController {
         String tituloVista;
         boolean esDinamica = true;
 
-        Usuario usuarioLogueado = SesionUsuario.getUsuarioLogueado(); // Ya tienes el usuario en SesionUsuario
+        Usuario usuarioLogueado = SesionUsuario.getUsuarioLogueado();
 
-        if (usuarioLogueado == null) { // Verificación extra
+        if (usuarioLogueado == null) {
             UtilidadesExcepciones.mostrarAdvertencia("Error de Sesión", "No se pudo recuperar la información del usuario logueado.","");
             return;
         }
@@ -240,15 +237,10 @@ public class LoginController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
             Parent root = loader.load();
 
-            // Obtener el controlador de la vista cargada
             Object controller = loader.getController();
 
-            // YA NO ES NECESARIO LLAMAR A initData EXPLÍCITAMENTE AQUÍ
-            // SI MainProtectoraController.initialize() obtiene los datos de SesionUsuario.
             if (controller instanceof MainClienteController && ROL_CLIENTE.equalsIgnoreCase(rol.trim())) {
                 System.out.println("DEBUG LoginController: MainClienteController cargado.");
-                // Si MainClienteController también necesita datos de SesionUsuario,
-                // debería obtenerlos en su propio initialize().
             } else if (controller instanceof MainProtectoraController && ROL_PROTECTORA.equalsIgnoreCase(rol.trim())) {
                 System.out.println("DEBUG LoginController: MainProtectoraController cargado. Su initialize() usará SesionUsuario.");
             }
