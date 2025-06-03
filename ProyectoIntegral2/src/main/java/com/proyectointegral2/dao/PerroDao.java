@@ -200,8 +200,8 @@ public class PerroDao {
                 "JOIN RAZA R ON P.ID_RAZA = R.ID_RAZA " +
                 "JOIN RESERVAS_CITAS RC ON P.ID_PERRO = RC.ID_PERRO " +
                 "WHERE RC.ID_CLIENTE = ? " +
-                "  AND (RC.ESTADO_CITA = 'Confirmada' OR RC.ESTADO_CITA = 'Completada') " +
-                "  AND (P.ADOPTADO = 'N' OR P.ADOPTADO = 'R' OR P.ADOPTADO = 'A')";
+                "AND RC.ESTADO_CITA = 'Completada' " +
+                "AND (P.ADOPTADO = 'N' OR P.ADOPTADO = 'R' OR P.ADOPTADO = 'A')";
 
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {

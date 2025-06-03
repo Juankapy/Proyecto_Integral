@@ -35,7 +35,6 @@
   <component name="ProjectColorInfo">{
     &quot;associatedIndex&quot;: 6 }</component>
   <component name="ProjectId" id="2x1wRszBZoUNuo6nkgR5sh5N9SW" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -107,8 +106,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.25659.59" />
-        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.25659.59" />
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.25410.129" />
+        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-IU-251.25410.129" />
       </set>
     </attachedChunks>
   </component>
@@ -152,6 +151,7 @@
       <workItem from="1748361349208" duration="2128000" />
       <workItem from="1748878203559" duration="11462000" />
       <workItem from="1748934016642" duration="6840000" />
+      <workItem from="1748968192713" duration="6131000" />
     </task>
     <servers />
   </component>

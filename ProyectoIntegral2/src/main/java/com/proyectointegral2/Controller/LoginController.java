@@ -152,9 +152,8 @@ public class LoginController {
      * @return El ID de la entidad (Cliente ID o Protectora ID), o 0 si no se encuentra o no aplica.
      * @throws SQLException Si ocurre un error durante la consulta a la base de datos.
      */
-
     private int obtenerEntidadIdPorRol(Usuario usuario) throws SQLException {
-        String rol = usuario.getRol() != null ? usuario.getRol().trim() : null; // Asegurar trim aquí también
+        String rol = usuario.getRol() != null ? usuario.getRol().trim() : null;
         if (rol == null) {
             System.err.println("ERROR LoginController: Rol de usuario es null en obtenerEntidadIdPorRol.");
             return 0;

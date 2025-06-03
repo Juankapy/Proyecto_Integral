@@ -78,6 +78,7 @@ public class MainClienteController {
     private List<Perro> listaCompletaDePerrosParaCitas;
     private List<Perro> listaPerrosConCitaPreviaParaAdopcion;
     private List<Perro> perrosFiltradosParaMostrar;
+    private List<Perro> listaBase = new ArrayList<>();
 
     // --- DAOs (sin cambios) ---
     private PerroDao perroDao;
@@ -159,7 +160,7 @@ public class MainClienteController {
         return true;
     }
 
-    // --- MÉTODOS QUE NO CAMBIAN (los copio aquí para que tengas el bloque completo) ---
+    // --- MÉTODOS QUE NO CAMBIAN ---
     private void cargarDatosInicialesPerrosParaCitas() {
         if (perroDao == null) {
             System.err.println("ERROR: PerroDao no inicializado en cargarDatosInicialesPerrosParaCitas.");
@@ -190,43 +191,24 @@ public class MainClienteController {
     }
 
     private void cargarPerrosConCitaPreviaParaAdopcion() {
-        if (usuarioLogueado == null || perroDao == null) {
-            this.listaPerrosConCitaPreviaParaAdopcion = new ArrayList<>();
-            System.err.println("ERROR: No se puede cargar perros para adopción sin usuario logueado o PerroDao.");
-            return;
-        }
         int idCliente = SesionUsuario.getEntidadIdEspecifica();
-        if (idCliente == 0 && ROL_ESPERADO_CLIENTE.equalsIgnoreCase(usuarioLogueado.getRol())) {
-            idCliente = usuarioLogueado.getIdUsuario();
-        }
-        if (idCliente <= 0) {
-            UtilidadesVentana.mostrarAlertaError("Error de Usuario", "No se pudo identificar al cliente actual para cargar perros para adopción.");
-            this.listaPerrosConCitaPreviaParaAdopcion = new ArrayList<>();
-            return;
-        }
         try {
-            this.listaPerrosConCitaPreviaParaAdopcion = perroDao.obtenerPerrosConCitasPreviasPorCliente(idCliente);
-            if (this.listaPerrosConCitaPreviaParaAdopcion == null) {
-                this.listaPerrosConCitaPreviaParaAdopcion = new ArrayList<>();
+            listaBase = perroDao.obtenerPerrosConCitasPreviasPorCliente(idCliente);
+            if (listaBase == null) {
+                listaBase = new ArrayList<>();
             }
-            System.out.println("INFO: Perros con cita previa para adopción cargados para cliente ID " + idCliente + ": " + this.listaPerrosConCitaPreviaParaAdopcion.size());
+            System.out.println("DEBUG: Perros con cita previa obtenidos: " + listaBase.size());
         } catch (SQLException e) {
-            System.err.println("ERROR SQL al cargar perros para adopción con cita previa para cliente ID " + idCliente + ": " + e.getMessage());
             e.printStackTrace();
-            this.listaPerrosConCitaPreviaParaAdopcion = new ArrayList<>();
-            UtilidadesVentana.mostrarAlertaError("Error de Datos", "No se pudieron cargar los perros con citas previas: " + e.getMessage());
-        } catch (UnsupportedOperationException uoe) {
-            System.err.println("FUNCIONALIDAD PENDIENTE: " + uoe.getMessage());
-            UtilidadesVentana.mostrarAlertaAdvertencia("Funcionalidad en Desarrollo","Funcionalidad en Desarrollo", "La vista de perros para adopción con cita previa aún no está completamente disponible.");
-            this.listaPerrosConCitaPreviaParaAdopcion = new ArrayList<>();
+            UtilidadesVentana.mostrarAlertaError("Error de Base de Datos", "No se pudieron obtener los perros con cita previa.");
+            listaBase = new ArrayList<>();
         }
+        // No llamar aquí a popularGridConPerros()
     }
 
     private void actualizarListaDePerrosSegunModoVista() {
-        List<Perro> listaBase;
         if (modoVistaActual == ModoVistaPerros.PARA_ADOPCION_CON_CITA) {
             cargarPerrosConCitaPreviaParaAdopcion();
-            listaBase = new ArrayList<>(this.listaPerrosConCitaPreviaParaAdopcion);
         } else {
             if (this.listaCompletaDePerrosParaCitas.isEmpty() && perroDao != null) {
                 cargarDatosInicialesPerrosParaCitas();
@@ -390,36 +372,29 @@ public class MainClienteController {
     }
 
     private void popularGridConPerros() {
-        if (dogScrollPane != null && dogGrid != null) {
-            dogScrollPane.setContent(dogGrid);
-        }
-        if (dogGrid == null || perrosFiltradosParaMostrar == null) {
-            System.err.println("ERROR: dogGrid o perrosFiltradosParaMostrar es null en popularGridConPerros.");
-            return;
-        }
+        System.out.println("DEBUG: Repoblando grid con " + perrosFiltradosParaMostrar.size() + " perros.");
         dogGrid.getChildren().clear();
-
-        if (dogGrid == null || perrosFiltradosParaMostrar == null) {
-            System.err.println("ERROR: dogGrid o perrosFiltradosParaMostrar es null en popularGridConPerros.");
-            return;
-        }
-        dogGrid.getChildren().clear();
-        int numColumnas = Math.max(1, dogGrid.getColumnConstraints().size());
-        int columnaActual = 0; int filaActual = 0;
-        if (perrosFiltradosParaMostrar.isEmpty()) {
-            System.out.println("INFO: No hay perros para mostrar en el grid según los filtros y modo actual.");
-        } else {
-            for (Perro perro : perrosFiltradosParaMostrar) {
-                VBox tarjetaPerro = crearTarjetaPerro(perro);
-                dogGrid.add(tarjetaPerro, columnaActual, filaActual);
-                columnaActual++;
-                if (columnaActual >= numColumnas) {
-                    columnaActual = 0;
-                    filaActual++;
+        int columna = 0;
+        int fila = 0;
+        for (Perro perro : perrosFiltradosParaMostrar) {
+            try {
+                // Aquí va tu lógica para cargar la tarjeta del perro
+                VBox tarjeta = crearTarjetaPerro(perro);
+                dogGrid.add(tarjeta, columna, fila);
+                System.out.println("DEBUG: Tarjeta añadida para perro: " + perro.getNombre());
+                columna++;
+                if (columna == 4) {
+                    columna = 0;
+                    fila++;
                 }
+            } catch (Exception e) {
+                System.err.println("ERROR al crear tarjeta para perro: " + perro.getNombre() + " - " + e.getMessage());
+                e.printStackTrace();
             }
         }
+        System.out.println("DEBUG: Tarjetas añadidas al grid.");
     }
+
 
     private VBox crearTarjetaPerro(Perro perro) {
         VBox card = new VBox(5);
