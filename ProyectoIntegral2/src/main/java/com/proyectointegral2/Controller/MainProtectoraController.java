@@ -230,9 +230,6 @@ public class MainProtectoraController {
                 ((Stage)mainBorderPane.getScene().getWindow()).isShowing()) {
             Platform.runLater(() -> adaptarUIAlTamanoDeVentana((Stage) mainBorderPane.getScene().getWindow()));
         } else {
-            // Si la ventana no se muestra aún, popularGrid se llamará cuando se muestre
-            // o por el primer evento de cambio de tamaño.
-            // Pero podemos intentar una populación inicial si la lista de perros ya está cargada.
             if (listaDePerrosDeLaProtectora != null && !listaDePerrosDeLaProtectora.isEmpty()) {
                 popularGridConPerrosDeProtectora();
             }

@@ -76,7 +76,7 @@ public class FormularioProtectoraController implements Initializable {
 
     private static final String RUTA_PLACEHOLDER_LOGO_PROTECTORA = "/assets/Imagenes/iconos/sinusuario.jpg";
     private static final String RUTA_CLASSPATH_FOTOS_PROTECTORAS = "/assets/Imagenes/logos_protectoras/";
-    private static final String DIRECTORIO_BASE_FOTOS_PROTECTORAS_FILESYSTEM = "/assets/Imagenes/logos_protectoras/";
+    private String DIRECTORIO_BASE_FOTOS_PROTECTORAS_FILESYSTEM ;
     private static final String RUTA_BASE_FOTOS_PROTECTORAS_CLASSPATH = "/assets/Imagenes/logos_protectoras/";
     private String DIRECTORIO_FILESYSTEM_FOTOS_PROTECTORAS_SRC;
     private String DIRECTORIO_FILESYSTEM_FOTOS_TARGET;
@@ -104,7 +104,7 @@ public class FormularioProtectoraController implements Initializable {
         try {
             this.protectoraDAO = new ProtectoraDao();
             this.usuarioDAO = new UsuarioDao();
-            URL rootResourceUrl = getClass().getResource("/"); // Raíz de la carpeta resources (ej. target/classes/)
+            URL rootResourceUrl = getClass().getResource("/");
             if (rootResourceUrl != null && "file".equals(rootResourceUrl.getProtocol())) {
                 Path targetClassesPath = Paths.get(rootResourceUrl.toURI());
                 Path targetLogosPath = targetClassesPath.resolve(RUTA_CLASSPATH_FOTOS_PROTECTORAS.substring(1)); // Quitar la primera '/'
