@@ -27,7 +27,7 @@ public class ReservaCitaDao {
                 COL_ID_CLIENTE + ", " + COL_ID_PERRO + ", " + COL_ID_PROTECTORA + ", " +
                 COL_ESTADO_CITA + ") VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql, new String[] {COL_ID_RESERVA_CITA});) {
 
             pstmt.setDate(1, Date.valueOf(reserva.getFecha()));
             pstmt.setTime(2, Time.valueOf(reserva.getHora()));
@@ -42,7 +42,13 @@ public class ReservaCitaDao {
             }
             try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    return generatedKeys.getInt(1);
+                    String key = generatedKeys.getString(1);
+                    System.out.println("Valor generado: " + key); // Para depuración
+                    try {
+                        return Integer.parseInt(key);
+                    } catch (NumberFormatException e) {
+                        throw new SQLException("El valor generado no es un número: " + key, e);
+                    }
                 } else {
                     throw new SQLException("No se pudo obtener el ID generado para la reserva.");
                 }
