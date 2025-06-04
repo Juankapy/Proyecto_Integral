@@ -6,19 +6,20 @@ import com.proyectointegral2.Model.ReservaCita;
 import com.proyectointegral2.utils.ConexionDB;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReservaCitaDao {
 
-    // Nombres de columnas
     private static final String COL_ID_RESERVA_CITA = "ID_RESERVA_CITA";
     private static final String COL_FECHA = "Fecha";
     private static final String COL_HORA = "Hora";
     private static final String COL_ID_CLIENTE = "ID_Cliente";
     private static final String COL_ID_PERRO = "ID_Perro";
     private static final String COL_ID_PROTECTORA = "ID_Protectora";
-    private static final String COL_ESTADO_CITA = "EstadoCita";
+    private static final String COL_ESTADO_CITA = "Estado_Cita";
 
     public int crearReservaCita(ReservaCita reserva) throws SQLException {
         String sql = "INSERT INTO Reservas_Citas (" +
@@ -69,44 +70,6 @@ public class ReservaCitaDao {
             }
         }
         return reservas;
-    }
-
-    public List<ReservaCita> obtenerReservasPorProtectora(int idProtectora) throws SQLException {
-        List<ReservaCita> reservas = new ArrayList<>();
-        String sql = "SELECT * FROM Reservas_Citas WHERE " + COL_ID_PROTECTORA + " = ? ORDER BY " +
-                COL_FECHA + " DESC, " + COL_HORA + " DESC";
-        try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, idProtectora);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    reservas.add(mapResultSetToReservaCita(rs));
-                }
-            }
-        }
-        return reservas;
-    }
-
-    public boolean actualizarReservaCita(ReservaCita reserva) throws SQLException {
-        String sql = "UPDATE Reservas_Citas SET " +
-                COL_FECHA + " = ?, " + COL_HORA + " = ?, " +
-                COL_ID_CLIENTE + " = ?, " + COL_ID_PERRO + " = ?, " +
-                COL_ID_PROTECTORA + " = ?, " + COL_ESTADO_CITA + " = ? " +
-                "WHERE " + COL_ID_RESERVA_CITA + " = ?";
-        try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setDate(1, Date.valueOf(reserva.getFecha()));
-            pstmt.setTime(2, Time.valueOf(reserva.getHora()));
-            pstmt.setInt(3, reserva.getIdCliente());
-            pstmt.setInt(4, reserva.getIdPerro());
-            pstmt.setInt(5, reserva.getIdProtectora());
-            pstmt.setString(6, reserva.getEstadoCita());
-            pstmt.setInt(7, reserva.getIdReserva());
-
-            return pstmt.executeUpdate() > 0;
-        }
     }
 
     // Método para mapear ResultSet a ReservaCita
@@ -188,5 +151,24 @@ public class ReservaCitaDao {
             e.printStackTrace();
         }
         return citas;
+    }
+
+    public List<LocalTime> obtenerHorasReservadasPorPerroYFecha(int idPerro, LocalDate fechaSeleccionada) {
+        List<LocalTime> horasReservadas = new ArrayList<>();
+        String sql = "SELECT Hora FROM Reservas_Citas WHERE ID_Perro = ? AND Fecha = ?";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idPerro);
+            pstmt.setDate(2, Date.valueOf(fechaSeleccionada));
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    horasReservadas.add(rs.getTime("Hora").toLocalTime());
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return horasReservadas;
     }
 }
