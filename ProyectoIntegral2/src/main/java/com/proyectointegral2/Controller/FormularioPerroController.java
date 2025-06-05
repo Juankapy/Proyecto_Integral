@@ -19,12 +19,11 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane; // Para el layout del diálogo
-import javafx.scene.layout.Priority; // Para el layout del diálogo
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Pair; // Para el resultado del diálogo
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -54,6 +53,7 @@ public class FormularioPerroController {
     @FXML private Button btnSeleccionarImagen;
     @FXML private Button BtnAnadirPerro;
     @FXML private Button BtnCancelar;
+    // @FXML private TextArea TxtAreaDescripcion; // Comentado/Eliminado si Perro no tiene descripción
 
     // --- Instance Variables ---
     private Perro perroAEditar;
@@ -79,7 +79,6 @@ public class FormularioPerroController {
             patologiaDao = new PatologiaDao();
             identificacionPatologiaDao = new IdentificacionPatologiaDao();
 
-            // Configurar directorio para guardar imágenes
             URL resourceUrl = getClass().getResource(RUTA_BASE_IMAGENES_PERROS_RESOURCES);
             if (resourceUrl != null && "file".equals(resourceUrl.getProtocol())) {
                 DIRECTORIO_IMAGENES_PERROS_FILESYSTEM = Paths.get(resourceUrl.toURI()).toString();
@@ -94,11 +93,11 @@ public class FormularioPerroController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            UtilidadesVentana.mostrarAlertaError("Error Crítico DAO/Rutas", "No se pudo inicializar el controlador del formulario: " + e.getMessage());
+            UtilidadesVentana.mostrarAlertaError("Error Crítico DAO/Rutas", "No se pudo inicializar: " + e.getMessage());
             if (BtnAnadirPerro != null) BtnAnadirPerro.setDisable(true);
         }
         configurarComboBoxesIniciales();
-        if (ImgPreviewPerro != null) ImgPreviewPerro.setImage(null); // Limpiar preview inicial
+        if (ImgPreviewPerro != null) ImgPreviewPerro.setImage(null);
     }
 
     private void configurarComboBoxesIniciales() {
@@ -107,7 +106,7 @@ public class FormularioPerroController {
         }
         if (CmbEstado != null) {
             CmbEstado.setItems(FXCollections.observableArrayList("En Adopción", "Adoptado"));
-            CmbEstado.setValue("En Adopción"); // Valor por defecto para un perro nuevo
+            CmbEstado.setValue("En Adopción");
         }
     }
 
@@ -130,7 +129,7 @@ public class FormularioPerroController {
             CmbEstado.setValue(perro.isAdoptado() ? "Adoptado" : "En Adopción");
         }
 
-        this.rutaFotoActualEnModelo = perro.getFoto(); // Esta es la ruta relativa al classpath
+        this.rutaFotoActualEnModelo = perro.getFoto();
         cargarImagenPreview(this.rutaFotoActualEnModelo);
         this.archivoFotoSeleccionada = null;
 
@@ -169,11 +168,9 @@ public class FormularioPerroController {
                     if (stream != null) image = new Image(stream);
                     else System.err.println("WARN: No se pudo cargar imagen de preview desde classpath: " + path);
                 }
-            } catch (Exception e) {
-                System.err.println("ERROR al cargar imagen de preview (ruta: "+rutaClasspath+"): " + e.getMessage());
-            }
+            } catch (Exception e) { System.err.println("ERROR al cargar imagen de preview (ruta: "+rutaClasspath+"): " + e.getMessage());}
         }
-        ImgPreviewPerro.setImage(image); // Muestra null (vacío) si image no se pudo cargar
+        ImgPreviewPerro.setImage(image);
     }
 
     private void cargarYMostrarPatologiasAsociadas(int idPerro) {
@@ -224,8 +221,8 @@ public class FormularioPerroController {
             String extension = obtenerExtensionArchivo(selectedFile.getName());
             if (!esExtensionImagenValida(extension)) {
                 UtilidadesVentana.mostrarAlertaError("Extensión Inválida", "Por favor, seleccione un archivo PNG, JPG, JPEG o GIF.");
-                this.archivoFotoSeleccionada = null; // Resetear si no es válida
-                cargarImagenPreview(this.rutaFotoActualEnModelo); // Mostrar la foto anterior si existía
+                this.archivoFotoSeleccionada = null;
+                cargarImagenPreview(this.rutaFotoActualEnModelo); // Volver a mostrar la original si la nueva es inválida
                 return;
             }
             try (InputStream stream = new FileInputStream(selectedFile)) {
@@ -306,7 +303,13 @@ public class FormularioPerroController {
     private String guardarImagenYObtenerRutaBD(boolean esNuevo) throws IOException {
         if (archivoFotoSeleccionada != null) {
             String extension = obtenerExtensionArchivo(archivoFotoSeleccionada.getName());
-            // La validación de extensión se hizo en handleSeleccionarFoto
+            // La validación de extensión se hizo en handleSeleccionarFoto, pero no está de más aquí si la lógica cambia
+            if (!esExtensionImagenValida(extension) && !extension.isEmpty()) { // Permitir sin extensión si es el caso
+                UtilidadesVentana.mostrarAlertaError("Extensión Inválida", "La imagen seleccionada no es un formato válido (png, jpg, jpeg, gif).");
+                this.archivoFotoSeleccionada = null;
+                return esNuevo ? null : this.rutaFotoActualEnModelo;
+            }
+
             String nombreUnicoArchivo = UUID.randomUUID().toString() + (extension.isEmpty() ? "" : "." + extension);
             Path directorioDestino = Paths.get(DIRECTORIO_IMAGENES_PERROS_FILESYSTEM);
 
@@ -356,8 +359,7 @@ public class FormularioPerroController {
 
         if (esNuevo) {
             perroParaGuardar = new Perro();
-            // ID_Perro será generado por la BD o el DAO
-            perroParaGuardar.setIdProtectora(this.idProtectoraDelPerro);
+            // El ID del perro se asignará por el DAO o la BD
         } else {
             perroParaGuardar = this.perroAEditar;
         }
@@ -366,7 +368,7 @@ public class FormularioPerroController {
         perroParaGuardar.setFechaNacimiento(fechaNac);
         perroParaGuardar.setSexo(sexo);
         perroParaGuardar.setRaza(razaObjeto);
-        // No hay campo descripcionPerro en el modelo Perro según tu última definición
+        perroParaGuardar.setIdProtectora(this.idProtectoraDelPerro); // ASIGNAR EL ID DE LA PROTECTORA
 
         if ("Adoptado".equalsIgnoreCase(estadoSeleccionado)) {
             perroParaGuardar.setAdoptado("S");
@@ -402,23 +404,17 @@ public class FormularioPerroController {
     }
 
     private void procesarYGuardarPatologiasAsociadas(int idPerro, String textoPatologiasInput) {
-        if (idPerro <= 0) {
-            UtilidadesVentana.mostrarAlertaError("Error Interno", "ID de perro no válido para asociar patologías.");
-            return;
-        }
-        if (identificacionPatologiaDao == null || patologiaDao == null) {
-            UtilidadesVentana.mostrarAlertaError("Error DAO", "Servicios de patologías no disponibles.");
+        if (idPerro <= 0 || identificacionPatologiaDao == null || patologiaDao == null) {
+            System.err.println("No se pueden procesar patologías: idPerro inválido o DAOs nulos.");
             return;
         }
         String textoPatologiasCompleto = (textoPatologiasInput != null) ? textoPatologiasInput.trim() : "";
 
         try {
-            // 1. Eliminar todas las asociaciones de patologías existentes para este perro
             identificacionPatologiaDao.eliminarPatologiasPorPerro(idPerro);
             System.out.println("INFO: Patologías previas para perro ID: " + idPerro + " eliminadas antes de actualizar.");
 
             if (!textoPatologiasCompleto.isEmpty()) {
-                // 2. Parsear el texto del TextArea
                 String[] lineasPatologias = textoPatologiasCompleto.split("\\r?\\n");
 
                 for (String linea : lineasPatologias) {
@@ -426,9 +422,8 @@ public class FormularioPerroController {
                     if (linea.isEmpty()) continue;
 
                     String nombrePatologiaLimpio;
-                    String notasEspecificasParaEstaAsociacion = ""; // Notas para la tabla IDENTIFICACION_PATOLOGIAS
+                    String notasEspecificasParaEstaAsociacion = "";
 
-                    // Parsear "NombrePatologia: NotasEspecificas" o "NombrePatologia (NotasEspecificas)"
                     int separadorDosPuntos = linea.indexOf(':');
                     int inicioParentesis = linea.indexOf('(');
                     int finParentesis = linea.lastIndexOf(')');
@@ -449,28 +444,25 @@ public class FormularioPerroController {
 
                     Patologia patologiaExistente = patologiaDao.obtenerPatologiaPorNombre(nombrePatologiaLimpio);
                     int idPatologiaAGuardar;
-                    // String descripcionGeneralPatologia = ""; // No se usa aquí directamente, se pasa al crear
 
-                    if (patologiaExistente == null) { // La patología no existe en la tabla PATOLOGIA
-                        boolean crearNuevaPatologiaConfirmado = UtilidadesVentana.mostrarAlertaConfirmacion("Patología no Encontrada",
+                    if (patologiaExistente == null) {
+                        boolean crear = UtilidadesVentana.mostrarAlertaConfirmacion("Patología no Encontrada",
                                 "La patología '" + nombrePatologiaLimpio + "' no existe. ¿Desea crearla?");
-
-                        if (crearNuevaPatologiaConfirmado) {
-                            // --- DIÁLOGO PARA DESCRIPCIÓN GENERAL DE LA NUEVA PATOLOGÍA ---
+                        if (crear) {
                             Dialog<String> dialogDescGeneral = new Dialog<>();
                             dialogDescGeneral.setTitle("Nueva Patología: " + nombrePatologiaLimpio);
                             dialogDescGeneral.setHeaderText("Proporcione una descripción general para la nueva patología '" + nombrePatologiaLimpio + "' (opcional).");
-                            try (InputStream iconStream = getClass().getResourceAsStream("/assets/Imagenes/iconos/info_icon.png")) { // Cambia a tu icono
+                            try (InputStream iconStream = getClass().getResourceAsStream("/assets/Imagenes/iconos/info_icon.png")) {
                                 if (iconStream != null) ((Stage)dialogDescGeneral.getDialogPane().getScene().getWindow()).getIcons().add(new Image(iconStream));
-                            } catch (Exception e) { System.err.println("No se pudo cargar icono para diálogo de patología."); }
+                            } catch (Exception e) { System.err.println("No se pudo cargar icono para diálogo de patología.");}
 
                             ButtonType guardarButtonType = new ButtonType("Guardar Descripción", ButtonBar.ButtonData.OK_DONE);
                             dialogDescGeneral.getDialogPane().getButtonTypes().addAll(guardarButtonType, ButtonType.CANCEL);
 
                             VBox contentVBox = new VBox(10);
-                            contentVBox.setPadding(new Insets(20));
+                            contentVBox.setPadding(new Insets(10));
                             TextArea txtDescGeneralDialog = new TextArea();
-                            txtDescGeneralDialog.setPromptText("Ej: Enfermedad común en razas pequeñas, se caracteriza por...");
+                            txtDescGeneralDialog.setPromptText("Ej: Enfermedad común en razas pequeñas...");
                             txtDescGeneralDialog.setWrapText(true);
                             txtDescGeneralDialog.setPrefRowCount(4);
                             contentVBox.getChildren().addAll(new Label("Descripción para '" + nombrePatologiaLimpio + "':"), txtDescGeneralDialog);
@@ -478,37 +470,27 @@ public class FormularioPerroController {
                             Platform.runLater(txtDescGeneralDialog::requestFocus);
 
                             dialogDescGeneral.setResultConverter(dialogButton -> {
-                                if (dialogButton == guardarButtonType) {
-                                    return txtDescGeneralDialog.getText();
-                                }
-                                return null; // Si presiona Cancelar o cierra
+                                if (dialogButton == guardarButtonType) return txtDescGeneralDialog.getText();
+                                return null;
                             });
-
                             Optional<String> resultadoDescGeneral = dialogDescGeneral.showAndWait();
-                            String descripcionPatologiaAGuardar = resultadoDescGeneral.orElse("").trim(); // "" si cancela o no escribe nada
+                            String descripcionPatologiaGeneral = resultadoDescGeneral.orElse("").trim();
 
-                            Patologia nuevaPatologia = new Patologia(0, nombrePatologiaLimpio, descripcionPatologiaAGuardar);
-                            idPatologiaAGuardar = patologiaDao.crearPatologia(nuevaPatologia); // DAO guarda nombre y descripción general
-
+                            Patologia nuevaPatologia = new Patologia(0, nombrePatologiaLimpio, descripcionPatologiaGeneral);
+                            idPatologiaAGuardar = patologiaDao.crearPatologia(nuevaPatologia);
                             if (idPatologiaAGuardar <= 0) {
                                 UtilidadesVentana.mostrarAlertaError("Error Creación", "No se pudo crear la patología: " + nombrePatologiaLimpio);
                                 continue;
                             }
-                            System.out.println("INFO: Patología '" + nombrePatologiaLimpio + "' creada con ID: " + idPatologiaAGuardar + " y desc. general: '" + descripcionPatologiaAGuardar + "'");
-                        } else {
-                            System.out.println("INFO: Creación de patología '" + nombrePatologiaLimpio + "' cancelada por el usuario.");
-                            continue; // Saltar a la siguiente patología si el usuario no quiere crearla
-                        }
-                    } else { // La patología ya existe
+                            System.out.println("INFO: Patología '" + nombrePatologiaLimpio + "' creada con ID: " + idPatologiaAGuardar);
+                        } else { continue; }
+                    } else {
                         idPatologiaAGuardar = patologiaExistente.getIdPatologia();
                     }
-
                     identificacionPatologiaDao.asignarPatologiaAPerro(idPerro, idPatologiaAGuardar, notasEspecificasParaEstaAsociacion);
-                    System.out.println("INFO: Patología '" + nombrePatologiaLimpio + "' (ID: " + idPatologiaAGuardar + ") con notas específicas '" + notasEspecificasParaEstaAsociacion + "' asignada al perro ID: " + idPerro);
+                    System.out.println("INFO: Patología '" + nombrePatologiaLimpio + "' (ID: " + idPatologiaAGuardar + ") con notas '" + notasEspecificasParaEstaAsociacion + "' asignada al perro ID: " + idPerro);
                 }
             }
-            cargarYMostrarPatologiasAsociadas(idPerro);
-
         } catch (SQLException e) {
             e.printStackTrace();
             UtilidadesVentana.mostrarAlertaError("Error BD (Patologías)", "No se pudieron guardar las patologías asociadas: " + e.getMessage());
@@ -531,12 +513,12 @@ public class FormularioPerroController {
     }
 
     @FXML
-    void Cancelar(MouseEvent event) { // Tu FXML usa onMouseClicked
+    void Cancelar(MouseEvent event) {
         cerrarFormulario();
     }
 
     @FXML
-    void Volver(MouseEvent event) { // Tu FXML usa onMouseClicked
+    void Volver(MouseEvent event) {
         cerrarFormulario();
     }
 
