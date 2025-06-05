@@ -22,11 +22,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -74,18 +70,18 @@ public class MainProtectoraController {
     @FXML private TableColumn<RegistroAdopcionInfo, String> ColumEstadoAdopcion;
 
     // --- Constants ---
-    private static final String RUTA_BASE_IMAGENES_PERROS_RESOURCES = "/assets/Imagenes/perros";
+    private static final String RUTA_BASE_IMAGENES_PERROS_RESOURCES = "/assets/Imagenes/perros/";
     private static final String RUTA_IMAGEN_PLACEHOLDER_PERRO = "/assets/Imagenes/iconos/placeholder_dog.jpg";
     private static final String RUTA_FXML_LOGIN = "/com/proyectointegral2/Vista/Login.fxml";
     private static final String RUTA_FXML_FORMULARIO_PERRO = "/com/proyectointegral2/Vista/FormularioPerro.fxml";
     private static final String RUTA_FXML_PERFIL_PROTECTORA = "/com/proyectointegral2/Vista/PerfilProtectora.fxml";
 
     private static final double HEADER_HEIGHT_ESTIMADA = 70.0;
-    private static final double TARJETA_IMG_AREA_WIDTH = 160.0;
-    private static final double TARJETA_IMG_AREA_HEIGHT = 160.0;
-    private static final double TARJETA_PREF_WIDTH = 190.0;
-    private static final double CARD_HORIZONTAL_GAP = 20.0;
-    private static final double CARD_INTERNAL_PADDING = 10.0;
+    private static final double TARJETA_IMG_AREA_WIDTH = 150.0;
+    private static final double TARJETA_IMG_AREA_HEIGHT = 150.0;
+    private static final double TARJETA_PREF_WIDTH = 180.0;
+    private static final double CARD_HORIZONTAL_GAP = 15.0;
+    private static final double CARD_INTERNAL_PADDING = 8.0;
     private static final double HBOX_TITULO_GRID_HEIGHT_ESTIMADA = 60.0;
     private static final double TABLAS_SECTION_CONTAINER_HEIGHT_ESTIMADA = 350.0;
     private static final double MIN_GRID_CONTAINER_HEIGHT = 250.0;
@@ -127,9 +123,7 @@ public class MainProtectoraController {
             handleDaoInitializationError(e);
             return;
         }
-
         if (!validarYConfigurarSesionProtectora()) return;
-
         configurarColumnasDeTablas();
         cargarYMostrarPerrosEnGrid();
         configurarVisibilidadInicialDeTablas();
@@ -230,9 +224,6 @@ public class MainProtectoraController {
                 ((Stage)mainBorderPane.getScene().getWindow()).isShowing()) {
             Platform.runLater(() -> adaptarUIAlTamanoDeVentana((Stage) mainBorderPane.getScene().getWindow()));
         } else {
-            // Si la ventana no se muestra aún, popularGrid se llamará cuando se muestre
-            // o por el primer evento de cambio de tamaño.
-            // Pero podemos intentar una populación inicial si la lista de perros ya está cargada.
             if (listaDePerrosDeLaProtectora != null && !listaDePerrosDeLaProtectora.isEmpty()) {
                 popularGridConPerrosDeProtectora();
             }
@@ -304,63 +295,91 @@ public class MainProtectoraController {
     private int calcularNumeroDeColumnasSegunAncho(double anchoGridDisponible) {
         if (anchoGridDisponible <= 0 || Double.isNaN(anchoGridDisponible)) {
             System.out.println("WARN: Ancho de grid disponible inválido (" + anchoGridDisponible + ") para calcular columnas, usando 3 por defecto.");
-            return 3; // Un valor por defecto razonable si el ancho no es válido
+            return 3;
         }
 
-        // Obtener el hgap del GridPane si está disponible, sino usar una constante
         double hgap = (dogGrid != null && dogGrid.getHgap() > 0 && !Double.isNaN(dogGrid.getHgap())) ?
                 dogGrid.getHgap() : CARD_HORIZONTAL_GAP;
 
-        // Ancho estimado de una tarjeta (TARJETA_PREF_WIDTH) más su espaciado horizontal (hgap)
         double anchoEstimadoTarjetaConEspacio = TARJETA_PREF_WIDTH + hgap;
 
-        if (anchoEstimadoTarjetaConEspacio <= 0) { // Evitar división por cero o negativo
+        if (anchoEstimadoTarjetaConEspacio <= 0) {
             System.err.println("ERROR: Ancho estimado de tarjeta con espacio es inválido (" + anchoEstimadoTarjetaConEspacio + "). Usando 3 columnas.");
             return 3;
         }
 
         int numColumnasCalculadas = Math.max(1, (int) Math.floor(anchoGridDisponible / anchoEstimadoTarjetaConEspacio));
+        int maxColumnasPermitidas = 6;
+        int columnasFinales = Math.min(numColumnasCalculadas, maxColumnasPermitidas);
 
-        // Limitar el número máximo de columnas (puedes ajustar este límite)
-        int maxColumnas = 8; // Puedes hacerlo una constante de clase si prefieres
-        int columnasFinales = Math.min(numColumnasCalculadas, maxColumnas);
-
-        // System.out.println("Ancho disponible para grid: " + anchoGridDisponible +
-        //                    ", Ancho Tarjeta+Gap Est.: " + anchoEstimadoTarjetaConEspacio +
-        //                    ", Columnas calculadas: " + numColumnasCalculadas +
-        //                    ", Columnas finales: " + columnasFinales);
+        System.out.println("Ancho grid disponible: " + anchoGridDisponible + ", Ancho Tarjeta+Gap: " + anchoEstimadoTarjetaConEspacio + ", Col. Calculadas: " + numColumnasCalculadas + ", Col. Finales: " + columnasFinales);
         return columnasFinales;
     }
 
 
     private void adaptarAnchoDelGridYRepopular(double anchoVentana) {
         if (dogGrid == null || listaDePerrosDeLaProtectora == null || mainBorderPane == null) return;
-        double paddingLateralesVBoxContenedor = 0;
-        if (mainBorderPane.getCenter() instanceof ScrollPane) {
-            ScrollPane scrollPane = (ScrollPane) mainBorderPane.getCenter();
+
+        // Calcular el ancho disponible real para el contenido del GridPane
+        Node centerNode = mainBorderPane.getCenter();
+        double anchoDisponibleParaContenidoGrid = anchoVentana; // Valor inicial
+        if (centerNode instanceof ScrollPane) {
+            ScrollPane scrollPane = (ScrollPane) centerNode;
+            // Restar paddings del ScrollPane y su contenido VBox si los tiene
+            Insets scrollPanePadding = scrollPane.getPadding();
+            anchoDisponibleParaContenidoGrid -= (scrollPanePadding.getLeft() + scrollPanePadding.getRight());
             if (scrollPane.getContent() instanceof VBox) {
                 VBox vBoxPrincipal = (VBox) scrollPane.getContent();
-                paddingLateralesVBoxContenedor = vBoxPrincipal.getPadding().getLeft() + vBoxPrincipal.getPadding().getRight();
+                Insets vBoxPadding = vBoxPrincipal.getPadding();
+                anchoDisponibleParaContenidoGrid -= (vBoxPadding.getLeft() + vBoxPadding.getRight());
+
+                if (vBoxPrincipal.getChildren().size() > 0 && vBoxPrincipal.getChildren().get(0) instanceof VBox) {
+                    VBox vBoxGridContainer = (VBox) vBoxPrincipal.getChildren().get(0);
+                    Insets gridContainerPadding = vBoxGridContainer.getPadding();
+                    anchoDisponibleParaContenidoGrid -= (gridContainerPadding.getLeft() + gridContainerPadding.getRight());
+                }
             }
         }
+        // Restar padding del propio GridPane
         double paddingLateralesGridPane = (dogGrid.getPadding() != null) ? dogGrid.getPadding().getLeft() + dogGrid.getPadding().getRight() : 0;
-        double espacioConsideradoParaScrollbar = 20.0;
-        double anchoDisponibleParaContenidoGrid = anchoVentana - paddingLateralesVBoxContenedor - paddingLateralesGridPane - espacioConsideradoParaScrollbar;
+        anchoDisponibleParaContenidoGrid -= paddingLateralesGridPane;
+        anchoDisponibleParaContenidoGrid -= 20; // Espacio estimado para la barra de scroll vertical si aparece
+
+        System.out.println("Ancho Ventana: " + anchoVentana + ", Ancho Disponible para Contenido Grid: " + anchoDisponibleParaContenidoGrid);
+
+
         int nuevasColumnas = calcularNumeroDeColumnasSegunAncho(anchoDisponibleParaContenidoGrid);
+
+        // Si el ancho disponible es muy pequeño para una sola tarjeta + gaps, forzar 1 columna
+        // y el ScrollPane horizontal deberá actuar.
+        double minWidthParaUnaTarjeta = TARJETA_PREF_WIDTH + (dogGrid.getHgap() > 0 ? dogGrid.getHgap() : CARD_HORIZONTAL_GAP);
+        if (anchoDisponibleParaContenidoGrid < minWidthParaUnaTarjeta) {
+            nuevasColumnas = 1;
+            System.out.println("Ancho muy pequeño, forzando 1 columna.");
+        }
+
+
         boolean necesitaCambioDeColumnas = dogGrid.getColumnConstraints().size() != nuevasColumnas;
         boolean gridVacioPeroHayDatos = dogGrid.getChildren().isEmpty() && !listaDePerrosDeLaProtectora.isEmpty();
         Integer hashListaGuardado = (dogGrid.getUserData() instanceof Integer) ? (Integer) dogGrid.getUserData() : null;
         boolean listaDePerrosHaCambiado = hashListaGuardado == null || !Objects.equals(hashListaGuardado, listaDePerrosDeLaProtectora.hashCode());
 
         if (necesitaCambioDeColumnas || gridVacioPeroHayDatos || listaDePerrosHaCambiado) {
-            if (necesitaCambioDeColumnas) {
-                dogGrid.getColumnConstraints().clear();
+            dogGrid.getColumnConstraints().clear();
+            if (anchoDisponibleParaContenidoGrid >= minWidthParaUnaTarjeta) { // Solo usar percentWidth si cabe al menos una
                 for (int i = 0; i < nuevasColumnas; i++) {
                     ColumnConstraints colConst = new ColumnConstraints();
                     colConst.setPercentWidth(100.0 / nuevasColumnas);
                     colConst.setHgrow(Priority.SOMETIMES);
                     dogGrid.getColumnConstraints().add(colConst);
                 }
+                System.out.println("Columnas reconfiguradas a (percentWidth): " + nuevasColumnas);
+            } else { // Si no cabe ni una, no usar percentWidth, dejar que el GridPane determine su ancho
+                ColumnConstraints colConst = new ColumnConstraints();
+                colConst.setHgrow(Priority.NEVER); // No permitir que crezca más allá de su contenido
+                colConst.setMinWidth(Region.USE_PREF_SIZE);
+                dogGrid.getColumnConstraints().add(colConst); // Solo una columna
+                System.out.println("Columnas reconfiguradas a 1 (pref size) debido a ancho insuficiente.");
             }
             popularGridConPerrosDeProtectora();
             dogGrid.setUserData(listaDePerrosDeLaProtectora.hashCode());
@@ -392,19 +411,27 @@ public class MainProtectoraController {
         }
     }
 
+
     private void popularGridConPerrosDeProtectora() {
-        if (dogGrid == null || listaDePerrosDeLaProtectora == null) {
-            actualizarVisibilidadDelLabelNoPerros();
-            return;
-        }
+        if (dogGrid == null || listaDePerrosDeLaProtectora == null) { /* ... */ return; }
         dogGrid.getChildren().clear();
-        int numColumnas = Math.max(1, dogGrid.getColumnConstraints().size());
-        if (dogGrid.getColumnConstraints().isEmpty()){
+
+        // Asegurarse de que haya al menos una ColumnConstraint si el grid es visible y tiene perros
+        if (dogGrid.getColumnConstraints().isEmpty() && !listaDePerrosDeLaProtectora.isEmpty()) {
+            System.out.println("WARN: popularGrid llamado sin ColumnConstraints. Añadiendo una por defecto.");
             ColumnConstraints colConst = new ColumnConstraints();
-            colConst.setPercentWidth(100.0);
+            // Si el ancho es muy pequeño, no usar percentWidth, sino dejar que el contenido determine
+            // colConst.setPercentWidth(100.0);
+            colConst.setHgrow(Priority.SOMETIMES); // O NEVER si quieres que se ajuste al contenido de la tarjeta
+            colConst.setMinWidth(TARJETA_PREF_WIDTH); // Darle un mínimo
             dogGrid.getColumnConstraints().add(colConst);
-            numColumnas = 1;
         }
+
+        int numColumnas = Math.max(1, dogGrid.getColumnConstraints().size());
+        actualizarVisibilidadDelLabelNoPerros();
+        if (listaDePerrosDeLaProtectora.isEmpty()) return;
+
+        System.out.println("Populando dogGrid Protectora con " + listaDePerrosDeLaProtectora.size() + " perros en " + numColumnas + " columnas.");
         int columna = 0; int fila = 0;
         for (Perro perro : listaDePerrosDeLaProtectora) {
             VBox tarjetaPerro = crearTarjetaPerroParaProtectora(perro);
@@ -412,64 +439,76 @@ public class MainProtectoraController {
             columna++;
             if (columna >= numColumnas) { columna = 0; fila++; }
         }
-        actualizarVisibilidadDelLabelNoPerros();
     }
 
     private VBox crearTarjetaPerroParaProtectora(Perro perro) {
-        VBox card = new VBox(5);
+        VBox card = new VBox(5); // Espaciado vertical interno de la tarjeta
         card.setPrefWidth(TARJETA_PREF_WIDTH);
-        card.setMaxWidth(TARJETA_PREF_WIDTH);
-        card.setMinWidth(TARJETA_PREF_WIDTH);
+        card.setMaxWidth(TARJETA_PREF_WIDTH); // Importante para que no se estire más de lo debido
+        card.setMinWidth(Region.USE_PREF_SIZE); // Permitir que se encoja si es necesario
         card.setAlignment(Pos.TOP_CENTER);
         card.setStyle(String.format(
                 "-fx-background-color: white; -fx-border-color: #E0E0E0; " +
                         "-fx-border-radius: 8; -fx-background-radius: 8; " +
-                        "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2); -fx-padding: %f;",
+                        "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 5, 0, 0, 2); -fx-padding: %f;",
                 CARD_INTERNAL_PADDING
         ));
-        card.setMinHeight(260);
+        card.setMinHeight(250); // Altura mínima de la tarjeta, ajustar según contenido
 
+        // Contenedor para la imagen
         StackPane imageContainer = new StackPane();
+        // Usar las constantes para el área de la imagen
         imageContainer.setPrefSize(TARJETA_IMG_AREA_WIDTH, TARJETA_IMG_AREA_HEIGHT);
-        imageContainer.setMinSize(TARJETA_IMG_AREA_WIDTH, TARJETA_IMG_AREA_HEIGHT);
-        imageContainer.setMaxSize(TARJETA_IMG_AREA_WIDTH, TARJETA_IMG_AREA_HEIGHT);
+        imageContainer.setMinSize(TARJETA_IMG_AREA_WIDTH, TARJETA_IMG_AREA_HEIGHT); // Para que no se encoja demasiado
+        imageContainer.setMaxSize(TARJETA_IMG_AREA_WIDTH, TARJETA_IMG_AREA_HEIGHT); // Para que no se agrande demasiado
+        // imageContainer.setStyle("-fx-background-color: lightblue;"); // Para depurar
 
         ImageView imgView = new ImageView();
-        cargarImagenPerroEnTarjeta(imgView, perro.getFoto());
+        cargarImagenPerroEnTarjeta(imgView, perro.getFoto()); // Tu método de carga
 
         imgView.setPreserveRatio(true);
         imgView.setSmooth(true);
-        imgView.setFitWidth(TARJETA_IMG_AREA_WIDTH);
-        imgView.setFitHeight(TARJETA_IMG_AREA_HEIGHT);
+        imgView.setFitWidth(TARJETA_IMG_AREA_WIDTH);   // Ajustar al ancho del contenedor
+        imgView.setFitHeight(TARJETA_IMG_AREA_HEIGHT); // Ajustar a la altura del contenedor
+        StackPane.setAlignment(imgView, Pos.CENTER); // Centrar la imagen en el StackPane
         imageContainer.getChildren().add(imgView);
-        VBox.setMargin(imageContainer, new Insets(0, 0, 8, 0));
+        VBox.setMargin(imageContainer, new Insets(0, 0, 5, 0)); // Menos margen inferior
 
+        // Nombre del perro
         Label lblNombrePerro = new Label(Objects.requireNonNullElse(perro.getNombre(), "Sin Nombre"));
-        lblNombrePerro.setStyle("-fx-background-color: #A9D18E; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 5; -fx-background-radius: 3;");
+        lblNombrePerro.setStyle("-fx-background-color: #A9D18E; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 4px 8px; -fx-background-radius: 3;");
         lblNombrePerro.setAlignment(Pos.CENTER);
-        lblNombrePerro.setPrefWidth(TARJETA_IMG_AREA_WIDTH);
+        lblNombrePerro.setPrefWidth(TARJETA_IMG_AREA_WIDTH); // Que el label no exceda el ancho de la imagen
         lblNombrePerro.setMaxWidth(TARJETA_IMG_AREA_WIDTH);
-        lblNombrePerro.setTextOverrun(javafx.scene.control.OverrunStyle.ELLIPSIS);
+        lblNombrePerro.setTextOverrun(OverrunStyle.ELLIPSIS);
+        VBox.setMargin(lblNombrePerro, new Insets(0, 0, 3, 0));
 
-        String estadoPerro = "N/D";
-        if (perro.getAdoptado() != null) {
-            estadoPerro = perro.isAdoptado() ? "Adoptado" : "En Adopción";
-        }
+
+        // Estado del perro
+        String estadoPerro = perro.isAdoptado() ? "Adoptado" : "En Adopción"; // Simplificado
         Label lblEstado = new Label(estadoPerro);
-        String styleEstado = "-fx-font-size: 12px; ";
+        String styleEstado = "-fx-font-size: 11px; ";
         if ("Adoptado".equals(estadoPerro)) styleEstado += "-fx-text-fill: grey;";
         else styleEstado += "-fx-text-fill: green; -fx-font-weight:bold;";
         lblEstado.setStyle(styleEstado);
-        VBox.setMargin(lblEstado, new Insets(4, 0, 4, 0));
+        VBox.setMargin(lblEstado, new Insets(0, 0, 5, 0));
 
-        HBox botonesTarjeta = new HBox(10);
-        botonesTarjeta.setAlignment(Pos.CENTER);
+        // Botones de acción en un HBox
+        HBox botonesTarjeta = new HBox(5); // Reducir espaciado entre botones
+        botonesTarjeta.setAlignment(Pos.CENTER); // Centrar HBox de botones
+        // HBox.setHgrow(botonesTarjeta, Priority.ALWAYS); // Permitir que el HBox se expanda si es necesario
+
         Button btnEditar = new Button("Editar");
-        btnEditar.setStyle("-fx-background-color: transparent; -fx-border-color: #3498DB; -fx-text-fill: #3498DB; -fx-border-radius: 3; -fx-font-size:11px; -fx-padding: 3 8;");
+        // Reducir padding y tamaño de fuente de botones para que quepan mejor
+        btnEditar.setStyle("-fx-background-color: transparent; -fx-border-color: #3498DB; -fx-text-fill: #3498DB; -fx-border-radius: 3; -fx-font-size:10px; -fx-padding: 2px 6px;");
         btnEditar.setOnAction(event -> handleEditarPerro(perro));
+        // HBox.setHgrow(btnEditar, Priority.ALWAYS); // Hacer que los botones se expandan equitativamente
+
         Button btnEliminar = new Button("Eliminar");
-        btnEliminar.setStyle("-fx-background-color: transparent; -fx-border-color: #E74C3C; -fx-text-fill: #E74C3C; -fx-border-radius: 3; -fx-font-size:11px; -fx-padding: 3 8;");
+        btnEliminar.setStyle("-fx-background-color: transparent; -fx-border-color: #E74C3C; -fx-text-fill: #E74C3C; -fx-border-radius: 3; -fx-font-size:10px; -fx-padding: 2px 6px;");
         btnEliminar.setOnAction(event -> handleEliminarPerro(perro));
+        // HBox.setHgrow(btnEliminar, Priority.ALWAYS);
+
         botonesTarjeta.getChildren().addAll(btnEditar, btnEliminar);
 
         card.getChildren().addAll(imageContainer, lblNombrePerro, lblEstado, botonesTarjeta);
