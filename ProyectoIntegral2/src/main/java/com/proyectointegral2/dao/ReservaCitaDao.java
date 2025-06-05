@@ -8,6 +8,7 @@ import com.proyectointegral2.utils.ConexionDB;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,21 +21,24 @@ public class ReservaCitaDao {
     private static final String COL_ID_PERRO = "ID_Perro";
     private static final String COL_ID_PROTECTORA = "ID_Protectora";
     private static final String COL_ESTADO_CITA = "Estado_Cita";
+    private static final String COL_DONACION = "Donacion";
 
     public int crearReservaCita(ReservaCita reserva) throws SQLException {
         String sql = "INSERT INTO Reservas_Citas (" +
                 COL_FECHA + ", " + COL_HORA + ", " +
-                COL_ID_CLIENTE + ", " + COL_ID_PERRO + ", " + COL_ID_PROTECTORA + ", " +
-                COL_ESTADO_CITA + ") VALUES (?, ?, ?, ?, ?, ?)";
+                COL_DONACION + ", " + COL_ID_CLIENTE + ", " +
+                COL_ID_PERRO + ", " + COL_ID_PROTECTORA + ", " +
+                COL_ESTADO_CITA + ") VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, new String[] {COL_ID_RESERVA_CITA});) {
+             PreparedStatement pstmt = conn.prepareStatement(sql, new String[]{COL_ID_RESERVA_CITA})) {
 
             pstmt.setDate(1, Date.valueOf(reserva.getFecha()));
-            pstmt.setTime(2, Time.valueOf(reserva.getHora()));
-            pstmt.setInt(3, reserva.getIdCliente());
-            pstmt.setInt(4, reserva.getIdPerro());
-            pstmt.setInt(5, reserva.getIdProtectora());
-            pstmt.setString(6, reserva.getEstadoCita());
+            pstmt.setString(2, reserva.getHora().format(DateTimeFormatter.ofPattern("HH:mm")));
+            pstmt.setDouble(3, reserva.getDonacion());
+            pstmt.setInt(4, reserva.getIdCliente());
+            pstmt.setInt(5, reserva.getIdPerro());
+            pstmt.setInt(6, reserva.getIdProtectora());
+            pstmt.setString(7, reserva.getEstadoCita());
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
@@ -42,13 +46,7 @@ public class ReservaCitaDao {
             }
             try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    String key = generatedKeys.getString(1);
-                    System.out.println("Valor generado: " + key); // Para depuración
-                    try {
-                        return Integer.parseInt(key);
-                    } catch (NumberFormatException e) {
-                        throw new SQLException("El valor generado no es un número: " + key, e);
-                    }
+                    return generatedKeys.getInt(1);
                 } else {
                     throw new SQLException("No se pudo obtener el ID generado para la reserva.");
                 }
