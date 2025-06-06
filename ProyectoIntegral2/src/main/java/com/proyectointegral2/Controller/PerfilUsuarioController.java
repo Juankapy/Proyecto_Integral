@@ -258,7 +258,6 @@ public class PerfilUsuarioController {
         }
 
         if (idCliente <= 0) {
-            // ASUNCIÓN: PLACEHOLDER_HISTORIAL_NO_IDENTIFICADO está definido en la clase
             listViewHistorial.setPlaceholder(new Label(PLACEHOLDER_HISTORIAL_NO_IDENTIFICADO));
             System.err.println("Error: idCliente no válido para cargar historial: " + idCliente);
             return;
@@ -269,6 +268,13 @@ public class PerfilUsuarioController {
 
         try {
             List<ReservaCita> citas = reservaCitaDao.obtenerReservasPorCliente(idCliente);
+
+            System.out.println("DEBUG: Se encontraron " + (citas != null ? citas.size() : 0) + " citas para el cliente ID: " + idCliente);
+            if (citas != null) {
+                for (ReservaCita c : citas) {
+                    System.out.println("DEBUG: Cita -> id: " + c.getIdReserva() + ", fecha: " + c.getFecha() + ", idPerro: " + c.getIdPerro());
+                }
+            }
 
             if (citas != null && !citas.isEmpty()) {
                 for (ReservaCita cita : citas) {
