@@ -81,27 +81,29 @@ public class ReservaCitaDao {
         ReservaCita reserva = new ReservaCita();
         reserva.setIdReserva(rs.getInt(COL_ID_RESERVA_CITA));
         reserva.setFecha(rs.getDate(COL_FECHA).toLocalDate());
-        reserva.setHora(rs.getTime(COL_HORA).toLocalTime());
+
+        // Solución: leer como String y convertir a LocalTime
+        String horaStr = rs.getString(COL_HORA);
+        if (horaStr != null) {
+            // Asegúrate que el formato sea HH:mm o HH:mm:ss según tu base de datos
+            DateTimeFormatter formatter = horaStr.length() == 5
+                    ? DateTimeFormatter.ofPattern("HH:mm")
+                    : DateTimeFormatter.ofPattern("HH:mm:ss");
+            reserva.setHora(LocalTime.parse(horaStr, formatter));
+        } else {
+            reserva.setHora(null);
+        }
+
         reserva.setIdCliente(rs.getInt(COL_ID_CLIENTE));
         reserva.setIdPerro(rs.getInt(COL_ID_PERRO));
         reserva.setIdProtectora(rs.getInt(COL_ID_PROTECTORA));
         reserva.setEstadoCita(rs.getString(COL_ESTADO_CITA));
-        // Si tienes el campo nombrePerro en ReservaCita, puedes setearlo aquí:
+
         try {
             reserva.getClass().getMethod("setNombrePerro", String.class)
                     .invoke(reserva, rs.getString("NombrePerro"));
         } catch (Exception ignored) {}
         return reserva;
-    }
-
-    // Ya implementado, no modificar
-    private BandejaCita mapResultSetToBandejaCita(ResultSet rs) throws SQLException {
-        BandejaCita cita = new BandejaCita();
-        cita.setNombreCliente(rs.getString("nombreCliente"));
-        cita.setNombrePerro(rs.getString("nombrePerro"));
-        cita.setFecha(rs.getDate("Fecha").toLocalDate());
-        cita.setHora(rs.getTime("Hora").toLocalTime());
-        return cita;
     }
 
     public List<ReservaCita> obtenerCitasPorCliente(int idClienteActual) {

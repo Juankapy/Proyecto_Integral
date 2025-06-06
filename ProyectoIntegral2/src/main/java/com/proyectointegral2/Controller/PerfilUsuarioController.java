@@ -90,6 +90,7 @@ public class PerfilUsuarioController {
             this.clienteDAO = new ClienteDao();
             this.reservaCitaDao = new ReservaCitaDao();
             this.usuarioDao = new UsuarioDao();
+            this.perroDao = new PerroDao();
         } catch (Exception e) {
             System.err.println("Error crítico al inicializar DAOs en PerfilUsuarioController: " + e.getMessage());
             e.printStackTrace();
