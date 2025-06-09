@@ -289,7 +289,6 @@ public class FormularioSolicitudAdopcionController {
         nuevaPeticion.setEstado(ESTADO_PETICION_PENDIENTE);
         nuevaPeticion.setIdCliente(clienteSolicitante.getIdCliente());
         nuevaPeticion.setIdPerro(perroAAdoptar.getIdPerro());
-        nuevaPeticion.setMensajePeticion(motivacion);
 
 
         try {

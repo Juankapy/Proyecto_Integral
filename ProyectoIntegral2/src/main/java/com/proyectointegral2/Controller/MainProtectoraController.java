@@ -65,8 +65,8 @@ public class MainProtectoraController {
     @FXML private TableView<RegistroAdopcionInfo> TablaRegistroAdopciones;
     @FXML private TableColumn<RegistroAdopcionInfo, String> ColumNombrePerroAdopcion;
     @FXML private TableColumn<RegistroAdopcionInfo, LocalDate> ColumFechaAdopcion;
-    @FXML private TableColumn<RegistroAdopcionInfo, String> ColumHoraAdopcion;
     @FXML private TableColumn<RegistroAdopcionInfo, String> ColumNombreClienteAdopcion;
+    @FXML private TableColumn<RegistroAdopcionInfo, String> ColumNumeroDeContacto;
     @FXML private TableColumn<RegistroAdopcionInfo, String> ColumEstadoAdopcion;
 
     // --- Constants ---
@@ -85,7 +85,6 @@ public class MainProtectoraController {
     private static final double HBOX_TITULO_GRID_HEIGHT_ESTIMADA = 60.0;
     private static final double TABLAS_SECTION_CONTAINER_HEIGHT_ESTIMADA = 350.0;
     private static final double MIN_GRID_CONTAINER_HEIGHT = 250.0;
-    private static final double PREFERRED_GRID_WIDTH_FALLBACK = 1000.0;
 
 
     // --- Instance Variables ---
@@ -182,9 +181,9 @@ public class MainProtectoraController {
         if (TablaRegistroAdopciones != null) {
             ColumNombrePerroAdopcion.setCellValueFactory(new PropertyValueFactory<>("nombrePerro"));
             ColumFechaAdopcion.setCellValueFactory(new PropertyValueFactory<>("fechaPeticion"));
-            ColumHoraAdopcion.setCellValueFactory(new PropertyValueFactory<>("horaPeticion"));
             ColumNombreClienteAdopcion.setCellValueFactory(new PropertyValueFactory<>("nombreAdoptante"));
             ColumEstadoAdopcion.setCellValueFactory(new PropertyValueFactory<>("estadoPeticion"));
+            ColumNumeroDeContacto.setCellValueFactory(new PropertyValueFactory<>("numeroContacto"));
             TablaRegistroAdopciones.setPlaceholder(new Label("No hay registros de adopción para mostrar."));
         }
     }
@@ -609,13 +608,27 @@ public class MainProtectoraController {
         if (mostrandoRegistroCitas) {
             if (lblRegistroTitulo != null) lblRegistroTitulo.setText("Registro de Citas Programadas");
             if (BtnToggleRegistro != null) BtnToggleRegistro.setText("Ver Adopciones");
-            if (TablaRegistroCitas != null) { TablaRegistroCitas.setVisible(true); cargarDatosParaTablaCitas(); }
-            if (TablaRegistroAdopciones != null) TablaRegistroAdopciones.setVisible(false);
+            if (TablaRegistroCitas != null) {
+                TablaRegistroCitas.setVisible(true);
+                TablaRegistroCitas.toFront();
+                cargarDatosParaTablaCitas();
+            }
+            if (TablaRegistroAdopciones != null) {
+                TablaRegistroAdopciones.setVisible(false);
+                TablaRegistroAdopciones.getItems().clear();
+            }
         } else {
             if (lblRegistroTitulo != null) lblRegistroTitulo.setText("Registro de Adopciones");
             if (BtnToggleRegistro != null) BtnToggleRegistro.setText("Ver Citas");
-            if (TablaRegistroCitas != null) TablaRegistroCitas.setVisible(false);
-            if (TablaRegistroAdopciones != null) { TablaRegistroAdopciones.setVisible(true); cargarDatosParaTablaAdopciones(); }
+            if (TablaRegistroCitas != null) {
+                TablaRegistroCitas.setVisible(false);
+                TablaRegistroCitas.getItems().clear();
+            }
+            if (TablaRegistroAdopciones != null) {
+                TablaRegistroAdopciones.setVisible(true);
+                TablaRegistroAdopciones.toFront();
+                cargarDatosParaTablaAdopciones();
+            }
         }
     }
 
@@ -624,8 +637,7 @@ public class MainProtectoraController {
             if (TablaRegistroCitas != null) TablaRegistroCitas.getItems().clear(); return;
         }
         try {
-            // List<RegistroCitaInfo> datosCitas = reservaCitaDao.obtenerInfoCitasPorProtectora(idProtectoraActual);
-            List<RegistroCitaInfo> datosCitas = new ArrayList<>(); // Simulación
+            List<RegistroCitaInfo> datosCitas = reservaCitaDao.obtenerInfoCitasPorProtectora(idProtectoraActual);
             ObservableList<RegistroCitaInfo> obsDatosCitas = FXCollections.observableArrayList(datosCitas);
             TablaRegistroCitas.setItems(obsDatosCitas);
         } catch (Exception e) { e.printStackTrace(); UtilidadesVentana.mostrarAlertaError("Error BD", "No se pudieron cargar citas."); }
@@ -636,8 +648,12 @@ public class MainProtectoraController {
             if (TablaRegistroAdopciones != null) TablaRegistroAdopciones.getItems().clear(); return;
         }
         try {
-            // List<RegistroAdopcionInfo> datosAdopciones = peticionAdopcionDao.obtenerInfoAdopcionesPorProtectora(idProtectoraActual);
-            List<RegistroAdopcionInfo> datosAdopciones = new ArrayList<>(); // Simulación
+            System.out.println("ID protectora usado: " + idProtectoraActual);
+            List<RegistroAdopcionInfo> datosAdopciones = peticionAdopcionDao.obtenerInfoAdopcionesPorProtectora(idProtectoraActual);
+            System.out.println("Registros encontrados: " + datosAdopciones.size());
+            for (RegistroAdopcionInfo info : datosAdopciones) {
+                System.out.println(info);
+            }
             ObservableList<RegistroAdopcionInfo> obsDatosAdopciones = FXCollections.observableArrayList(datosAdopciones);
             TablaRegistroAdopciones.setItems(obsDatosAdopciones);
         } catch (Exception e) { e.printStackTrace(); UtilidadesVentana.mostrarAlertaError("Error BD", "No se pudieron cargar adopciones.");}

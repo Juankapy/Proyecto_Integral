@@ -54,7 +54,6 @@ public class ReservaCitaDao {
         }
     }
 
-
     public List<ReservaCita> obtenerReservasPorCliente(int idCliente) throws SQLException {
         List<ReservaCita> reservas = new ArrayList<>();
         String sql = "SELECT rc.*, p.Nombre AS NombrePerro " +
@@ -76,16 +75,13 @@ public class ReservaCitaDao {
         return reservas;
     }
 
-    // Método para mapear ResultSet a ReservaCita
     private ReservaCita mapResultSetToReservaCita(ResultSet rs) throws SQLException {
         ReservaCita reserva = new ReservaCita();
         reserva.setIdReserva(rs.getInt(COL_ID_RESERVA_CITA));
         reserva.setFecha(rs.getDate(COL_FECHA).toLocalDate());
 
-        // Solución: leer como String y convertir a LocalTime
         String horaStr = rs.getString(COL_HORA);
         if (horaStr != null) {
-            // Asegúrate que el formato sea HH:mm o HH:mm:ss según tu base de datos
             DateTimeFormatter formatter = horaStr.length() == 5
                     ? DateTimeFormatter.ofPattern("HH:mm")
                     : DateTimeFormatter.ofPattern("HH:mm:ss");
@@ -127,37 +123,8 @@ public class ReservaCitaDao {
                 e.printStackTrace();
             }
             return reservas;
-        }
-
-    public List<RegistroCitaInfo> obtenerCitasParaTablaProtectora(int idProtectoraActual) {
-        List<RegistroCitaInfo> citas = new ArrayList<>();
-        String sql = "SELECT rc.*, p.Nombre AS NombrePerro, c.Nombre AS NombreCliente " +
-                "FROM Reservas_Citas rc " +
-                "JOIN Perros p ON rc.ID_Perro = p.ID_Perro " +
-                "JOIN Cliente c ON rc.ID_Cliente = c.ID_Cliente " +
-                "WHERE rc.ID_Protectora = ?";
-        try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, idProtectoraActual);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    RegistroCitaInfo cita = new RegistroCitaInfo(
-                            rs.getString("NombreCliente"),
-                            rs.getString("NombrePerro"),
-                            rs.getDate(COL_FECHA).toString(),
-                            rs.getTime(COL_HORA).toString(),
-                            rs.getString("TipoServicio"),
-                            rs.getString("Veterinario")
-                    );
-                    citas.add(cita);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return citas;
     }
+
 
     public List<LocalTime> obtenerHorasReservadasPorPerroYFecha(int idPerro, LocalDate fechaSeleccionada) {
         List<LocalTime> horasReservadas = new ArrayList<>();
@@ -176,5 +143,41 @@ public class ReservaCitaDao {
             e.printStackTrace();
         }
         return horasReservadas;
+    }
+
+    public List<RegistroCitaInfo> obtenerInfoCitasPorProtectora(int idProtectora) {
+        List<RegistroCitaInfo> lista = new ArrayList<>();
+        String sql = "SELECT rc.ID_RESERVA_CITA, rc.Fecha, rc.Hora, p.Nombre AS NombrePerro, " +
+                "c.Nombre AS NombreCliente, rc.Estado_Cita " +
+                "FROM Reservas_Citas rc " +
+                "JOIN Perros p ON rc.ID_Perro = p.ID_Perro " +
+                "JOIN Cliente c ON rc.ID_Cliente = c.ID_Cliente " +
+                "WHERE rc.ID_Protectora = ? " +
+                "ORDER BY rc.Fecha DESC, rc.Hora DESC";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idProtectora);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    RegistroCitaInfo info = new RegistroCitaInfo();
+                    info.setIdReservaCita(rs.getInt("ID_RESERVA_CITA"));
+                    info.setFechaCita(rs.getDate("Fecha").toLocalDate());
+                    String horaStr = rs.getString("Hora");
+                    if (horaStr != null) {
+                        DateTimeFormatter formatter = horaStr.length() == 5
+                                ? DateTimeFormatter.ofPattern("HH:mm")
+                                : DateTimeFormatter.ofPattern("HH:mm:ss");
+                        info.setHoraCita(LocalTime.parse(horaStr, formatter));
+                    }
+                    info.setNombrePerro(rs.getString("NombrePerro"));
+                    info.setNombreCliente(rs.getString("NombreCliente"));
+                    info.setEstadoCita(rs.getString("Estado_Cita"));
+                    lista.add(info);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
     }
 }
