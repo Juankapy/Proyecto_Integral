@@ -250,36 +250,19 @@ EXCEPTION
 END registrar_y_enviar_notificacion_a_usuario;
 /
 
--- ========= DISPARADOR: Cambio de estado en una petición de adopción =========
-
-CREATE OR REPLACE TRIGGER estado_peticion
-AFTER UPDATE OF estado ON peticiones_adopcion
+-- ========= DISPARADOR: Cambiar estado de adopcion en Perros =========
+CREATE OR REPLACE TRIGGER adopcion_aceptada
+AFTER UPDATE OF ESTADO_ADOPCION ON PETICIONES_ADOPCION
 FOR EACH ROW
-WHEN (OLD.estado != NEW.estado)
-DECLARE
-    usuario_destino NUMBER;
-    mensaje_estado VARCHAR2(100);
 BEGIN
-    -- Obtener el id_usuario del cliente asociado
-    SELECT c.id_usuario
-    INTO usuario_destino
-    FROM cliente c
-    WHERE c.id_cliente = :NEW.id_cliente;
-
-    mensaje_estado := 'El estado de tu petición de adopción ha cambiado a "' || :NEW.estado || '".';
-
-    IF usuario_destino IS NOT NULL THEN
-        crear_notificacion(
-            mensaje_estado,
-            'Estado Petición',
-            :NEW.id_peticion,
-            'peticiones_adopcion',
-            usuario_destino
-        );
-    END IF;
+  
+  IF :NEW.ESTADO_ADOPCION = 'Aceptada' AND :OLD.ESTADO_ADOPCION != 'Aceptada' THEN
+    UPDATE PERROS
+    SET ADOPTADO = 'S'
+    WHERE ID_PERRO = :NEW.ID_PERRO;
+  END IF;
 END;
 /
-
 -- ========= DISPARADOR: Creacion para CLIENTES =========
 CREATE OR REPLACE TRIGGER clientes_creacion
 BEFORE INSERT ON CLIENTES
@@ -318,13 +301,6 @@ BEGIN
 END;
 /
 
-SELECT DISTINCT P.*, R.NOMBRE_RAZA 
-                FROM PERROS P  
-                JOIN RAZA R ON P.ID_RAZA = R.ID_RAZA  
-                JOIN RESERVAS_CITAS RC ON P.ID_PERRO = RC.ID_PERRO  
-                WHERE RC.ID_CLIENTE = 3 
-                AND (RC.ESTADO_CITA = 'Confirmada' OR RC.ESTADO_CITA = 'Completada')  
-             AND (P.ADOPTADO = 'N' OR P.ADOPTADO = 'R' OR P.ADOPTADO = 'A');
              
 -- 1. USUARIOS
 INSERT INTO USUARIO (ID_USUARIO, NOMBRE_USU, CONTRASENA, ROL) 
