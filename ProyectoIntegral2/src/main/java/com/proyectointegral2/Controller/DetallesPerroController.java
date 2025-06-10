@@ -18,6 +18,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -205,11 +208,24 @@ public class DetallesPerroController {
 
     @FXML
     void ReservarCita(ActionEvent event) {
-        if (perroActual == null || perroActual.isAdoptado()) {  return; }
-        System.out.println("Botón Reservar Cita presionado para: " + perroActual.getNombre());
-        String titulo = "Solicitar Cita con " + perroActual.getNombre();
-        Stage ownerStage = (Stage) BtnReservarCita.getScene().getWindow();
-        UtilidadesVentana.cambiarEscena(FXML_FORMULARIO_SOLICITAR_CITA,"Panel Solictud de Citas", false);
+        if (perroActual == null || perroActual.isAdoptado()) {
+            return;
+        }
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(FXML_FORMULARIO_SOLICITAR_CITA));
+            Parent root = loader.load();
+            FormularioSolicitudCitaController controller = loader.getController();
+            controller.initData(perroActual);
+
+            Stage stage = new Stage();
+            stage.setTitle("Solicitar Cita con " + perroActual.getNombre());
+            stage.setScene(new Scene(root));
+            stage.initOwner(((Node) event.getSource()).getScene().getWindow());
+            stage.show();
+        } catch (Exception e) {
+            UtilidadesVentana.mostrarAlertaError("Error", "No se pudo abrir el formulario de solicitud de cita.");
+            e.printStackTrace();
+        }
     }
 
     @FXML

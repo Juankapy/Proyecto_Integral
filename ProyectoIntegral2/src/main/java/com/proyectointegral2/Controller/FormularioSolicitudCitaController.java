@@ -1,9 +1,7 @@
 package com.proyectointegral2.Controller;
 
-import com.proyectointegral2.Model.Perro;
-import com.proyectointegral2.Model.ReservaCita;
-import com.proyectointegral2.Model.Usuario;
-import com.proyectointegral2.Model.SesionUsuario;
+import com.proyectointegral2.Model.*;
+import com.proyectointegral2.dao.ClienteDao;
 import com.proyectointegral2.dao.ReservaCitaDao;
 import com.proyectointegral2.utils.UtilidadesVentana;
 import javafx.application.Platform;
@@ -26,7 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.List; // Para obtener las citas del DAO
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -59,6 +57,7 @@ public class FormularioSolicitudCitaController {
 
     // --- DAOs ---
     private ReservaCitaDao reservaCitaDao;
+    private ClienteDao clienteDao = new ClienteDao();
 
     /**
      * Método de inicialización del controlador.
@@ -79,6 +78,8 @@ public class FormularioSolicitudCitaController {
 
         if (lblTituloFormulario == null) System.err.println("ERROR FXML: lblTituloFormulario es null en initialize()");
         if (lblNombrePerro == null) System.err.println("ERROR FXML: lblNombrePerro es null en initialize()");
+
+        dpFechaCita.valueProperty().addListener((obs, oldDate, newDate) -> poblarComboBoxHoras());
     }
 
     /**
@@ -117,6 +118,8 @@ public class FormularioSolicitudCitaController {
         if (btnConfirmarSolicitud != null) {
             btnConfirmarSolicitud.setDisable(false);
         }
+
+        poblarComboBoxHoras();
     }
 
     /**
@@ -198,20 +201,44 @@ public class FormularioSolicitudCitaController {
      * Puebla el ComboBox de horas.
      */
     private void poblarComboBoxHoras() {
-        if (cmbHoraCita == null) return;
+        if (cmbHoraCita == null || perroParaCita == null || dpFechaCita == null) return;
         ObservableList<String> horasDisponibles = FXCollections.observableArrayList();
-        LocalTime horaInicio = LocalTime.of(9, 0);
-        LocalTime horaFin = LocalTime.of(17, 0);
+        LocalTime horaInicio = LocalTime.of(10, 0);
+        LocalTime horaFin = LocalTime.of(20, 0);
 
+        LocalDate fechaSeleccionada = dpFechaCita.getValue();
+        LocalDate hoy = LocalDate.now();
+
+        LocalDate fechaMinima = hoy.plusDays(1);
+        LocalDate fechaMaxima = hoy.plusDays(MAX_DIAS_ANTICIPACION_CITA);
+
+        if (fechaSeleccionada == null || fechaSeleccionada.isBefore(fechaMinima) || fechaSeleccionada.isAfter(fechaMaxima)) {
+            cmbHoraCita.setItems(FXCollections.observableArrayList("No hay horas disponibles"));
+            cmbHoraCita.getSelectionModel().selectFirst();
+            return;
+        }
+
+        List<LocalTime> horasOcupadas = reservaCitaDao.obtenerHorasReservadasPorPerroYFecha(perroParaCita.getIdPerro(), fechaSeleccionada);
+
+        LocalTime ahora = LocalTime.now();
         LocalTime horaActual = horaInicio;
         while (!horaActual.isAfter(horaFin)) {
-            horasDisponibles.add(horaActual.format(FORMATO_HORA_USUARIO));
+            boolean esHoraOcupada = horasOcupadas.contains(horaActual);
+            boolean esHoraFutura = true;
+            if (fechaSeleccionada.isEqual(hoy)) {
+                esHoraFutura = horaActual.isAfter(ahora);
+            }
+            if (!esHoraOcupada && esHoraFutura) {
+                horasDisponibles.add(horaActual.format(FORMATO_HORA_USUARIO));
+            }
             horaActual = horaActual.plusMinutes(30);
         }
-        cmbHoraCita.setItems(horasDisponibles);
-        if (!horasDisponibles.isEmpty()) {
-            cmbHoraCita.getSelectionModel().selectFirst();
+
+        if (horasDisponibles.isEmpty()) {
+            horasDisponibles.add("No hay horas disponibles");
         }
+        cmbHoraCita.setItems(horasDisponibles);
+        cmbHoraCita.getSelectionModel().selectFirst();
     }
 
     /**
@@ -306,12 +333,12 @@ public class FormularioSolicitudCitaController {
             return;
         }
 
-        // 1. Verificar límite de citas
+        // Verificar límite de citas
         if (!verificarLimiteDeCitas()) {
             return;
         }
 
-        // 2. Obtener y validar campos
+        // Obtener y validar campos
         LocalDate fechaSeleccionada = dpFechaCita.getValue();
         String horaSeleccionadaStr = cmbHoraCita.getValue();
         String importeStr = txtImporteDonacion.getText().trim();
@@ -320,15 +347,28 @@ public class FormularioSolicitudCitaController {
             return;
         }
 
-        // 3. Parsear datos validados
+        // Obtener el idCliente real
+        Cliente cliente;
+        try {
+            cliente = clienteDao.obtenerClientePorIdUsuario(clienteLogueado.getIdUsuario());
+            if (cliente == null) {
+                UtilidadesVentana.mostrarAlertaError("Error", "No se encontró el cliente asociado al usuario.");
+                return;
+            }
+        } catch (SQLException e) {
+            UtilidadesVentana.mostrarAlertaError("Error de Base de Datos", "No se pudo obtener el cliente: " + e.getMessage());
+            return;
+        }
+
+        // Parsear datos validados
         LocalTime horaSeleccionada = LocalTime.parse(horaSeleccionadaStr, FORMATO_HORA_USUARIO);
         double importeDonacion = Double.parseDouble(importeStr.replace(',', '.'));
 
-        // 4. Crear objeto ReservaCita
+        // Crear objeto ReservaCita
         ReservaCita nuevaReserva = new ReservaCita();
         nuevaReserva.setFecha(fechaSeleccionada);
         nuevaReserva.setHora(horaSeleccionada);
-        nuevaReserva.setIdCliente(clienteLogueado.getIdUsuario());
+        nuevaReserva.setIdCliente(cliente.getIdCliente());
         nuevaReserva.setIdPerro(perroParaCita.getIdPerro());
         nuevaReserva.setIdProtectora(perroParaCita.getIdProtectora());
         nuevaReserva.setEstadoCita(ESTADO_CITA_POR_DEFECTO);
