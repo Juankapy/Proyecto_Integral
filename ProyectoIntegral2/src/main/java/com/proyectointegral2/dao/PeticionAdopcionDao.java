@@ -13,7 +13,7 @@ public class PeticionAdopcionDao {
     public int crearPeticionAdopcion(PeticionAdopcion peticion) throws SQLException {
         String sqlInsert = "INSERT INTO PETICIONES_ADOPCION (FECHA, ESTADO_ADOPCION, ID_CLIENTE, ID_PERRO, ID_PROTECTORA) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement pstmt = conn.prepareStatement(sqlInsert)) {
             pstmt.setDate(1, peticion.getFecha());
             pstmt.setString(2, peticion.getEstado() != null ? peticion.getEstado() : "Pendiente");
             pstmt.setInt(3, peticion.getIdCliente());
@@ -21,13 +21,7 @@ public class PeticionAdopcionDao {
             pstmt.setInt(5, peticion.getIdProtectora());
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) throw new SQLException("No se pudo crear la petición.");
-            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    return generatedKeys.getInt(1);
-                } else {
-                    throw new SQLException("No se pudo obtener el ID generado.");
-                }
-            }
+            return affectedRows;
         }
     }
 
@@ -73,5 +67,27 @@ public class PeticionAdopcionDao {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public List<PeticionAdopcion> obtenerTodasLasPeticiones() {
+        List<PeticionAdopcion> listaPeticiones = new ArrayList<>();
+        String sql = "SELECT ID_PETICION, FECHA, ESTADO_ADOPCION, ID_CLIENTE, ID_PERRO, ID_PROTECTORA FROM PETICIONES_ADOPCION";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                PeticionAdopcion peticion = new PeticionAdopcion();
+                peticion.setIdPeticion(rs.getInt("ID_PETICION"));
+                peticion.setFecha(rs.getDate("FECHA"));
+                peticion.setEstado(rs.getString("ESTADO_ADOPCION"));
+                peticion.setIdCliente(rs.getInt("ID_CLIENTE"));
+                peticion.setIdPerro(rs.getInt("ID_PERRO"));
+                peticion.setIdProtectora(rs.getInt("ID_PROTECTORA"));
+                listaPeticiones.add(peticion);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return listaPeticiones;
     }
 }
