@@ -9,6 +9,7 @@ public class RegistroAdopcionInfo {
     private String nombreAdoptante;
     private String estadoPeticion;
     private String numeroContacto;
+    private int idPerro;
 
     public RegistroAdopcionInfo() {}
 
@@ -38,4 +39,13 @@ public class RegistroAdopcionInfo {
 
     public String getNumeroContacto() { return numeroContacto; }
     public void setNumeroContacto(String numeroContacto) { this.numeroContacto = numeroContacto; }
+
+    public int getIdPerro() {
+        return idPerro;
+    }
+
+    public void setIdPerro(int idPerro) {
+        this.idPerro = idPerro;
+    }
+
 }

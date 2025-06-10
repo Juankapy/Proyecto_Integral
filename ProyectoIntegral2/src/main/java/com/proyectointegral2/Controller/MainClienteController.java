@@ -212,6 +212,9 @@ public class MainClienteController {
             }
             listaBase = new ArrayList<>(this.listaCompletaDePerrosParaCitas);
         }
+        listaBase = listaBase.stream()
+                .filter(p -> !"S".equalsIgnoreCase(p.getAdoptado()))
+                .collect(Collectors.toList());
         aplicarFiltrosDeTextoSobreListaBase(listaBase);
     }
 
@@ -485,9 +488,18 @@ public class MainClienteController {
             DetallesPerroController controller = loader.getController();
             if (controller != null) {
                 controller.initData(perro);
+                // Llama a activarModoAdopcion si estás en modo adopciones
+                if (modoVistaActual == ModoVistaPerros.PARA_ADOPCION_CON_CITA) {
+                    controller.activarModoAdopcion();
+                }
                 UtilidadesVentana.mostrarVentanaComoDialogo(root, titulo, ownerStage);
-            } else { UtilidadesVentana.mostrarAlertaError("Error Interno", "No se pudo cargar el controlador de detalles del perro.");}
-        } catch (Exception e) { e.printStackTrace(); UtilidadesVentana.mostrarAlertaError("Error de Navegación", "No se pudo abrir la vista de detalles del perro: " + e.getMessage());}
+            } else {
+                UtilidadesVentana.mostrarAlertaError("Error Interno", "No se pudo cargar el controlador de detalles del perro.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            UtilidadesVentana.mostrarAlertaError("Error de Navegación", "No se pudo abrir la vista de detalles del perro: " + e.getMessage());
+        }
     }
 
     @FXML

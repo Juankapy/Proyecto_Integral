@@ -246,7 +246,7 @@ public class DetallesPerroController {
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
                 PeticionAdopcionDao peticionAdopcionDao = new PeticionAdopcionDao();
-                int idCliente = SesionUsuario.getEntidadIdEspecifica();
+                int idCliente = SesionUsuario.getEntidadIdEspecifica(); // ID de CLIENTE, no de USUARIO
                 PeticionAdopcion peticion = new PeticionAdopcion();
                 peticion.setFecha(java.sql.Date.valueOf(LocalDate.now()));
                 peticion.setEstado("Pendiente");

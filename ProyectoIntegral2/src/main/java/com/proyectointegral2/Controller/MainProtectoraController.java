@@ -198,13 +198,21 @@ public class MainProtectoraController {
                     btnAceptar.setOnAction(event -> {
                         RegistroAdopcionInfo info = getTableView().getItems().get(getIndex());
                         if (peticionAdopcionDao.actualizarEstadoAdopcion(info.getIdPeticion(), "Aceptada")) {
+                            if (perroDao != null) {
+                                perroDao.actualizarCampoAdoptado(info.getIdPerro(), "S");
+                            }
                             cargarDatosParaTablaAdopciones();
+                            cargarYMostrarPerrosEnGrid(); // Actualiza el grid
                         }
                     });
                     btnCancelar.setOnAction(event -> {
                         RegistroAdopcionInfo info = getTableView().getItems().get(getIndex());
                         if (peticionAdopcionDao.actualizarEstadoAdopcion(info.getIdPeticion(), "Cancelada")) {
+                            if (perroDao != null) {
+                                perroDao.actualizarCampoAdoptado(info.getIdPerro(), "N");
+                            }
                             cargarDatosParaTablaAdopciones();
+                            cargarYMostrarPerrosEnGrid(); // Actualiza el grid
                         }
                     });
                 }
@@ -285,7 +293,6 @@ public class MainProtectoraController {
     }
 
     private void cargarYMostrarPerrosEnGrid() {
-        this.listaDePerrosDeLaProtectora = new ArrayList<>();
         if (perroDao == null || idProtectoraActual <= 0) {
             handlePerroDaoError("PerroDao no inicializado o ID Protectora inválido.");
             return;
@@ -298,7 +305,9 @@ public class MainProtectoraController {
         } catch (SQLException e) {
             handlePerroDaoError("No se pudieron cargar los perros de la protectora: " + e.getMessage());
         }
-        finalizeUIPerrosUpdate();
+
+        popularGridConPerrosDeProtectora();
+        actualizarVisibilidadDelLabelNoPerros();
     }
 
     private void handlePerroDaoError(String errorMessage) {
@@ -308,17 +317,6 @@ public class MainProtectoraController {
         actualizarVisibilidadDelLabelNoPerros();
     }
 
-    private void finalizeUIPerrosUpdate() {
-        actualizarVisibilidadDelLabelNoPerros();
-        if (mainBorderPane.getScene() != null && mainBorderPane.getScene().getWindow() != null &&
-                ((Stage)mainBorderPane.getScene().getWindow()).isShowing()) {
-            Platform.runLater(() -> adaptarUIAlTamanoDeVentana((Stage) mainBorderPane.getScene().getWindow()));
-        } else {
-            if (listaDePerrosDeLaProtectora != null && !listaDePerrosDeLaProtectora.isEmpty()) {
-                popularGridConPerrosDeProtectora();
-            }
-        }
-    }
 
     private void actualizarVisibilidadDelLabelNoPerros() {
         if (lblNoPerrosEnGrid != null && dogGrid != null) {
@@ -766,22 +764,26 @@ public class MainProtectoraController {
             LocalDate hoy = LocalDate.now();
             for (RegistroAdopcionInfo info : datosAdopciones) {
                 if ("Pendiente".equalsIgnoreCase(info.getEstadoPeticion())
-                    && info.getFechaPeticion() != null
-                    && info.getFechaPeticion().plusDays(14).isBefore(hoy)) {
+                        && info.getFechaPeticion() != null
+                        && info.getFechaPeticion().plusDays(14).isBefore(hoy)) {
                     peticionAdopcionDao.actualizarEstadoAdopcion(info.getIdPeticion(), "Cancelada");
                     info.setEstadoPeticion("Cancelada");
+                    if (perroDao != null) {
+                        perroDao.actualizarCampoAdoptado(info.getIdPerro(), "N");
+                    }
                 }
             }
             List<RegistroAdopcionInfo> filtradas = datosAdopciones.stream()
-                .filter(info ->
-                    !("Aceptada".equalsIgnoreCase(info.getEstadoPeticion()) &&
-                      info.getFechaPeticion() != null &&
-                      info.getFechaPeticion().isBefore(hoy.minusDays(14)))
-                )
-                .collect(Collectors.toList());
+                    .filter(info ->
+                            !("Aceptada".equalsIgnoreCase(info.getEstadoPeticion()) &&
+                                    info.getFechaPeticion() != null &&
+                                    info.getFechaPeticion().isBefore(hoy.minusDays(14)))
+                    )
+                    .collect(Collectors.toList());
 
             ObservableList<RegistroAdopcionInfo> obsDatosAdopciones = FXCollections.observableArrayList(filtradas);
             TablaRegistroAdopciones.setItems(obsDatosAdopciones);
+
         } catch (Exception e) {
             e.printStackTrace();
             UtilidadesVentana.mostrarAlertaError("Error BD", "No se pudieron cargar adopciones.");

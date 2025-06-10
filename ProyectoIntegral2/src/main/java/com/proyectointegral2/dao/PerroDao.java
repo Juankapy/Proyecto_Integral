@@ -240,4 +240,17 @@ public class PerroDao {
         perro.setRaza(raza);
         return perro;
     }
+
+    public boolean actualizarCampoAdoptado(int idPerro, String valor) {
+        String sql = "UPDATE PERROS SET ADOPTADO = ? WHERE ID_PERRO = ?";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, valor);
+            stmt.setInt(2, idPerro);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
