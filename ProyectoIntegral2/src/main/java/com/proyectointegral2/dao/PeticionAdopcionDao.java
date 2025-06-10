@@ -60,4 +60,18 @@ public class PeticionAdopcionDao {
         }
         return lista;
     }
+
+    public boolean actualizarEstadoAdopcion(int idPeticion, String nuevoEstado) {
+        String sql = "UPDATE PETICIONES_ADOPCION SET ESTADO_ADOPCION = ? WHERE ID_PETICION = ?";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, nuevoEstado);
+            ps.setInt(2, idPeticion);
+            int filasActualizadas = ps.executeUpdate();
+            return filasActualizadas > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

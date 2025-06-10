@@ -129,8 +129,9 @@
                                                 <TableColumn fx:id="ColumNombrePerroAdopcion" prefWidth="150.0" text="Nombre del Perro" />
                                                 <TableColumn fx:id="ColumFechaAdopcion" prefWidth="120.0" text="Fecha de Peticion" />
                                                 <TableColumn fx:id="ColumNombreClienteAdopcion" prefWidth="200.0" text="Nombre del Adoptante" />
-                                    <TableColumn fx:id="ColumNumeroDeContacto" prefWidth="150.0" text="Numero de Contacto" />
+                                                <TableColumn fx:id="ColumNumeroDeContacto" prefWidth="150.0" text="Numero de Contacto" />
                                                 <TableColumn fx:id="ColumEstadoAdopcion" prefWidth="180.0" text="Estado de la Peticion" />
+                                                <TableColumn fx:id="ColumAceptarCancelarAdopcion" prefWidth="75.0" text="Aceptar / Cancelar" />
                                             </columns>
                                             <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
                                         </TableView>
@@ -141,6 +142,7 @@
                                                 <TableColumn fx:id="ColumHoraCita" prefWidth="268.0" text="Hora" />
                                                 <TableColumn fx:id="ColumNombreClienteCita" prefWidth="283.0" text="Nombre del Cliente" />
                                                 <TableColumn fx:id="ColumEstadoCita" prefWidth="75.0" text="Estado de la Cita" />
+                                                <TableColumn fx:id="ColumAceptarCancelarCita" prefWidth="75.0" text="Aceptar / Cancelar" />
                                             </columns>
                                             <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
                                         </TableView>
@@ -151,14 +153,6 @@
                                 <Insets top="20.0" />
                             </VBox.margin>
                         </VBox>
-                  <HBox alignment="TOP_RIGHT" prefHeight="40.0" prefWidth="998.0">
-                     <children>
-                        <Button fx:id="BtnCancelar" mnemonicParsing="false" onAction="#Cancelar" prefHeight="50.0" prefWidth="93.0" text="Cancelar" />
-                        <Region prefHeight="25.0" prefWidth="74.0" />
-                        <Button fx:id="BtnAceptar" mnemonicParsing="false" onAction="#Aceptar" prefHeight="44.0" prefWidth="95.0" text="Aceptar" />
-                        <Region prefHeight="25.0" prefWidth="17.0" />
-                     </children>
-                  </HBox>
                     </children>
                 </VBox>
             </content>

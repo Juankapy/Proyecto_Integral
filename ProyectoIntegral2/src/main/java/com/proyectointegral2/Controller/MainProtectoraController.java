@@ -61,6 +61,7 @@ public class MainProtectoraController {
     @FXML private TableColumn<RegistroCitaInfo, LocalTime> ColumHoraCita;
     @FXML private TableColumn<RegistroCitaInfo, String> ColumNombreClienteCita;
     @FXML private TableColumn<RegistroCitaInfo, String> ColumEstadoCita;
+    @FXML private TableColumn<RegistroCitaInfo, String> ColumAceptarCancelarCita;
 
     @FXML private TableView<RegistroAdopcionInfo> TablaRegistroAdopciones;
     @FXML private TableColumn<RegistroAdopcionInfo, String> ColumNombrePerroAdopcion;
@@ -68,6 +69,7 @@ public class MainProtectoraController {
     @FXML private TableColumn<RegistroAdopcionInfo, String> ColumNombreClienteAdopcion;
     @FXML private TableColumn<RegistroAdopcionInfo, String> ColumNumeroDeContacto;
     @FXML private TableColumn<RegistroAdopcionInfo, String> ColumEstadoAdopcion;
+    @FXML private TableColumn<RegistroAdopcionInfo, String> ColumAceptarCancelarAdopcion;
 
     // --- Constants ---
     private static final String RUTA_BASE_IMAGENES_PERROS_RESOURCES = "/assets/Imagenes/perros/";
@@ -170,14 +172,6 @@ public class MainProtectoraController {
     }
 
     private void configurarColumnasDeTablas() {
-        if (TablaRegistroCitas != null) {
-            ColumNombrePerro.setCellValueFactory(new PropertyValueFactory<>("nombrePerro"));
-            ColumDiaCita.setCellValueFactory(new PropertyValueFactory<>("fechaCita"));
-            ColumHoraCita.setCellValueFactory(new PropertyValueFactory<>("horaCita"));
-            ColumNombreClienteCita.setCellValueFactory(new PropertyValueFactory<>("nombreCliente"));
-            ColumEstadoCita.setCellValueFactory(new PropertyValueFactory<>("estadoCita"));
-            TablaRegistroCitas.setPlaceholder(new Label("No hay citas programadas para mostrar."));
-        }
         if (TablaRegistroAdopciones != null) {
             ColumNombrePerroAdopcion.setCellValueFactory(new PropertyValueFactory<>("nombrePerro"));
             ColumFechaAdopcion.setCellValueFactory(new PropertyValueFactory<>("fechaPeticion"));
@@ -185,6 +179,103 @@ public class MainProtectoraController {
             ColumEstadoAdopcion.setCellValueFactory(new PropertyValueFactory<>("estadoPeticion"));
             ColumNumeroDeContacto.setCellValueFactory(new PropertyValueFactory<>("numeroContacto"));
             TablaRegistroAdopciones.setPlaceholder(new Label("No hay registros de adopción para mostrar."));
+
+            ColumEstadoAdopcion.setCellFactory(col -> new TableCell<RegistroAdopcionInfo, String>() {
+                @Override
+                protected void updateItem(String estado, boolean empty) {
+                    super.updateItem(estado, empty);
+                    setGraphic(null);
+                    setText(empty || estado == null ? "" : estado);
+                }
+            });
+
+            ColumAceptarCancelarAdopcion.setCellFactory(col -> new TableCell<RegistroAdopcionInfo, String>() {
+                private final Button btnAceptar = new Button("Aceptar");
+                private final Button btnCancelar = new Button("Cancelar");
+                private final HBox hbox = new HBox(5, btnAceptar, btnCancelar);
+
+                {
+                    btnAceptar.setOnAction(event -> {
+                        RegistroAdopcionInfo info = getTableView().getItems().get(getIndex());
+                        if (peticionAdopcionDao.actualizarEstadoAdopcion(info.getIdPeticion(), "Aceptada")) {
+                            cargarDatosParaTablaAdopciones();
+                        }
+                    });
+                    btnCancelar.setOnAction(event -> {
+                        RegistroAdopcionInfo info = getTableView().getItems().get(getIndex());
+                        if (peticionAdopcionDao.actualizarEstadoAdopcion(info.getIdPeticion(), "Cancelada")) {
+                            cargarDatosParaTablaAdopciones();
+                        }
+                    });
+                }
+
+                @Override
+                protected void updateItem(String estado, boolean empty) {
+                    super.updateItem(estado, empty);
+                    RegistroAdopcionInfo info = empty ? null : getTableView().getItems().get(getIndex());
+                    if (empty || info == null || info.getEstadoPeticion() == null) {
+                        setGraphic(null);
+                    } else if (!"Completada".equalsIgnoreCase(info.getEstadoPeticion())
+                            && !"Aceptada".equalsIgnoreCase(info.getEstadoPeticion())) {
+                        setGraphic(hbox);
+                    } else {
+                        setGraphic(null);
+                    }
+                }
+            });
+        }
+
+        if (TablaRegistroCitas != null) {
+            ColumNombrePerro.setCellValueFactory(new PropertyValueFactory<>("nombrePerro"));
+            ColumDiaCita.setCellValueFactory(new PropertyValueFactory<>("fechaCita"));
+            ColumHoraCita.setCellValueFactory(new PropertyValueFactory<>("horaCita"));
+            ColumNombreClienteCita.setCellValueFactory(new PropertyValueFactory<>("nombreCliente"));
+            ColumEstadoCita.setCellValueFactory(new PropertyValueFactory<>("estadoCita"));
+            TablaRegistroCitas.setPlaceholder(new Label("No hay citas programadas para mostrar."));
+
+            ColumEstadoCita.setCellFactory(col -> new TableCell<RegistroCitaInfo, String>() {
+                @Override
+                protected void updateItem(String estado, boolean empty) {
+                    super.updateItem(estado, empty);
+                    setGraphic(null);
+                    setText(empty || estado == null ? "" : estado);
+                }
+            });
+
+            ColumAceptarCancelarCita.setCellFactory(col -> new TableCell<RegistroCitaInfo, String>() {
+                private final Button btnAceptar = new Button("Aceptar");
+                private final Button btnCancelar = new Button("Cancelar");
+                private final HBox hbox = new HBox(5, btnAceptar, btnCancelar);
+
+                {
+                    btnAceptar.setOnAction(event -> {
+                        RegistroCitaInfo info = getTableView().getItems().get(getIndex());
+                        if (reservaCitaDao.actualizarEstadoCita(info.getIdReservaCita(), "Confirmada")) {
+                            cargarDatosParaTablaCitas();
+                        }
+                    });
+                    btnCancelar.setOnAction(event -> {
+                        RegistroCitaInfo info = getTableView().getItems().get(getIndex());
+                        if (reservaCitaDao.actualizarEstadoCita(info.getIdReservaCita(), "Cancelada")) {
+                            cargarDatosParaTablaCitas();
+                        }
+                    });
+                }
+
+                @Override
+                protected void updateItem(String estado, boolean empty) {
+                    super.updateItem(estado, empty);
+                    RegistroCitaInfo info = empty ? null : getTableView().getItems().get(getIndex());
+                    if (empty || info == null || info.getEstadoCita() == null) {
+                        setGraphic(null);
+                    } else if (!"Completada".equalsIgnoreCase(info.getEstadoCita())
+                            && !"Aceptada".equalsIgnoreCase(info.getEstadoCita())) {
+                        setGraphic(hbox);
+                    } else {
+                        setGraphic(null);
+                    }
+                }
+            });
         }
     }
 
@@ -592,8 +683,8 @@ public class MainProtectoraController {
             Parent root = loader.load();
             PerfilProtectoraController perfilController = loader.getController(); // Asume que existe
             if (perfilController != null) {
-                perfilController.initData(this.protectoraInfoActual, this.usuarioCuentaLogueada); // Asume este initData
-                UtilidadesVentana.cambiarEscenaConRoot(root, "Perfil de " + this.nombreProtectoraActual, false); // Perfil es fijo
+                perfilController.initData(this.protectoraInfoActual, this.usuarioCuentaLogueada);
+                UtilidadesVentana.cambiarEscenaConRoot(root, "Perfil de " + this.nombreProtectoraActual, false);
             } else { UtilidadesVentana.mostrarAlertaError("Error Interno", "No se pudo cargar el controlador del perfil de protectora."); }
         } catch (IOException e) { e.printStackTrace(); UtilidadesVentana.mostrarAlertaError("Error Navegación", "No se pudo abrir el perfil de la protectora: " + e.getMessage()); }
     }
@@ -634,37 +725,67 @@ public class MainProtectoraController {
 
     private void cargarDatosParaTablaCitas() {
         if (TablaRegistroCitas == null || reservaCitaDao == null || idProtectoraActual <= 0) {
-            if (TablaRegistroCitas != null) TablaRegistroCitas.getItems().clear(); return;
+            if (TablaRegistroCitas != null) TablaRegistroCitas.getItems().clear();
+            return;
         }
         try {
             List<RegistroCitaInfo> datosCitas = reservaCitaDao.obtenerInfoCitasPorProtectora(idProtectoraActual);
-            ObservableList<RegistroCitaInfo> obsDatosCitas = FXCollections.observableArrayList(datosCitas);
+            LocalDate hoy = LocalDate.now();
+            for (RegistroCitaInfo info : datosCitas) {
+                if (("Confirmada").equalsIgnoreCase(info.getEstadoCita())
+                    && info.getFechaCita() != null
+                    && info.getFechaCita().isBefore(hoy)) {
+                    reservaCitaDao.actualizarEstadoCita(info.getIdReservaCita(), "Completada");
+                    info.setEstadoCita("Completada");
+                }
+            }
+            List<RegistroCitaInfo> filtradas = datosCitas.stream()
+                .filter(info ->
+                    !("Completada".equalsIgnoreCase(info.getEstadoCita()) &&
+                      info.getFechaCita() != null &&
+                      info.getFechaCita().isBefore(hoy.minusDays(14)))
+                )
+                .collect(Collectors.toList());
+
+            ObservableList<RegistroCitaInfo> obsDatosCitas = FXCollections.observableArrayList(filtradas);
             TablaRegistroCitas.setItems(obsDatosCitas);
-        } catch (Exception e) { e.printStackTrace(); UtilidadesVentana.mostrarAlertaError("Error BD", "No se pudieron cargar citas."); }
+        } catch (Exception e) {
+            e.printStackTrace();
+            UtilidadesVentana.mostrarAlertaError("Error BD", "No se pudieron cargar citas.");
+        }
     }
 
     private void cargarDatosParaTablaAdopciones() {
         if (TablaRegistroAdopciones == null || peticionAdopcionDao == null || idProtectoraActual <= 0) {
-            if (TablaRegistroAdopciones != null) TablaRegistroAdopciones.getItems().clear(); return;
+            if (TablaRegistroAdopciones != null) TablaRegistroAdopciones.getItems().clear();
+            return;
         }
         try {
             System.out.println("ID protectora usado: " + idProtectoraActual);
             List<RegistroAdopcionInfo> datosAdopciones = peticionAdopcionDao.obtenerInfoAdopcionesPorProtectora(idProtectoraActual);
-            System.out.println("Registros encontrados: " + datosAdopciones.size());
+            LocalDate hoy = LocalDate.now();
             for (RegistroAdopcionInfo info : datosAdopciones) {
-                System.out.println(info);
+                if ("Pendiente".equalsIgnoreCase(info.getEstadoPeticion())
+                    && info.getFechaPeticion() != null
+                    && info.getFechaPeticion().plusDays(14).isBefore(hoy)) {
+                    peticionAdopcionDao.actualizarEstadoAdopcion(info.getIdPeticion(), "Cancelada");
+                    info.setEstadoPeticion("Cancelada");
+                }
             }
-            ObservableList<RegistroAdopcionInfo> obsDatosAdopciones = FXCollections.observableArrayList(datosAdopciones);
+            List<RegistroAdopcionInfo> filtradas = datosAdopciones.stream()
+                .filter(info ->
+                    !("Aceptada".equalsIgnoreCase(info.getEstadoPeticion()) &&
+                      info.getFechaPeticion() != null &&
+                      info.getFechaPeticion().isBefore(hoy.minusDays(14)))
+                )
+                .collect(Collectors.toList());
+
+            ObservableList<RegistroAdopcionInfo> obsDatosAdopciones = FXCollections.observableArrayList(filtradas);
             TablaRegistroAdopciones.setItems(obsDatosAdopciones);
-        } catch (Exception e) { e.printStackTrace(); UtilidadesVentana.mostrarAlertaError("Error BD", "No se pudieron cargar adopciones.");}
+        } catch (Exception e) {
+            e.printStackTrace();
+            UtilidadesVentana.mostrarAlertaError("Error BD", "No se pudieron cargar adopciones.");
+        }
     }
 
-    @FXML
-    public void Cancelar(ActionEvent event) {
-
-    }
-    @FXML
-    public void Aceptar(ActionEvent event) {
-
-    }
 }

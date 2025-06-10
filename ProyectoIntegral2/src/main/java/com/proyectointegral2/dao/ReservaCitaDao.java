@@ -180,4 +180,18 @@ public class ReservaCitaDao {
         }
         return lista;
     }
+
+    public boolean actualizarEstadoCita(int idReservaCita, String nuevoEstado) {
+        String sql = "UPDATE RESERVAS_CITAS SET ESTADO_CITA = ? WHERE ID_RESERVA_CITA = ?";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, nuevoEstado);
+            ps.setInt(2, idReservaCita);
+            int filasActualizadas = ps.executeUpdate();
+            return filasActualizadas > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
