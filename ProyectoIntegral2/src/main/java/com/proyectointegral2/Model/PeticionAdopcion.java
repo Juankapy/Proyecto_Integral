@@ -8,15 +8,15 @@ public class PeticionAdopcion {
     private String estado;
     private int idCliente;
     private int idPerro;
-    private String mensajePeticion;
+    private int idProtectora;
 
-    public PeticionAdopcion(int idPeticion, Date fecha, String estado, int idCliente, int idPerro, String mensajePeticion) {
+    public PeticionAdopcion(int idPeticion, Date fecha, String estado, int idCliente, int idPerro, int idProtectora) {
         this.idPeticion = idPeticion;
         this.fecha = fecha;
         this.estado = estado;
         this.idCliente = idCliente;
         this.idPerro = idPerro;
-        this.mensajePeticion = mensajePeticion;
+        this.idProtectora = idProtectora;
     }
 
     public PeticionAdopcion() {
@@ -25,7 +25,7 @@ public class PeticionAdopcion {
         this.estado = "";
         this.idCliente = 0;
         this.idPerro = 0;
-        this.mensajePeticion = "";
+        this.idProtectora = 0;
     }
 
     public int getIdPeticion() { return idPeticion; }
@@ -43,11 +43,7 @@ public class PeticionAdopcion {
     public int getIdPerro() { return idPerro; }
     public void setIdPerro(int idPerro) { this.idPerro = idPerro; }
 
-    public String getMensajePeticion() {
-        return mensajePeticion;
-    }
+    public int getIdProtectora() { return idProtectora; }
+    public void setIdProtectora(int idProtectora) { this.idProtectora = idProtectora; }
 
-    public void setMensajePeticion(String mensajePeticion) {
-        mensajePeticion = mensajePeticion;
-    }
 }

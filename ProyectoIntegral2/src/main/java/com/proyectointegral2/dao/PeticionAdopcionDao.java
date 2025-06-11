@@ -5,76 +5,89 @@ import com.proyectointegral2.Model.RegistroAdopcionInfo;
 import com.proyectointegral2.utils.ConexionDB;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PeticionAdopcionDao{
+public class PeticionAdopcionDao {
 
     public int crearPeticionAdopcion(PeticionAdopcion peticion) throws SQLException {
-        String sqlInsert = "INSERT INTO Peticiones_Adopcion (Fecha, Estado, ID_Cliente, ID_Perro,MENSAJE_PETICION) VALUES (?, ?, ?, ?,?)";
+        String sqlInsert = "INSERT INTO PETICIONES_ADOPCION (FECHA, ESTADO_ADOPCION, ID_CLIENTE, ID_PERRO, ID_PROTECTORA) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement pstmt = conn.prepareStatement(sqlInsert)) {
             pstmt.setDate(1, peticion.getFecha());
             pstmt.setString(2, peticion.getEstado() != null ? peticion.getEstado() : "Pendiente");
             pstmt.setInt(3, peticion.getIdCliente());
             pstmt.setInt(4, peticion.getIdPerro());
-            pstmt.setString(5, peticion.getMensajePeticion());
+            pstmt.setInt(5, peticion.getIdProtectora());
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) throw new SQLException("No se pudo crear la petición.");
-            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    return generatedKeys.getInt(1);
-                } else {
-                    throw new SQLException("No se pudo obtener el ID generado.");
-                }
-            }
+            return affectedRows;
         }
     }
 
-    public List<RegistroAdopcionInfo> obtenerAdopcionesAceptadasParaTabla(int idProtectora) throws SQLException {
-        List<RegistroAdopcionInfo> registros = new ArrayList<>();
-        String sql = "SELECT pa.ID_PETICION, p.NOMBRE AS NOMBRE_PERRO, pa.FECHA AS FECHA_ADOPCION, " +
-                "c.NOMBRE || ' ' || c.APELLIDOS AS NOMBRE_ADOPTANTE, c.EMAIL AS CONTACTO_ADOPTANTE " +
-                // " 'N/A' AS HORA_ADOPCION " + // Si no tienes hora específica de adopción
+    public List<RegistroAdopcionInfo> obtenerInfoAdopcionesPorProtectora(int idProtectora) {
+        List<RegistroAdopcionInfo> lista = new ArrayList<>();
+        String sql = "SELECT pa.ID_PETICION, pa.FECHA, p.NOMBRE AS NombrePerro, c.NOMBRE AS NombreAdoptante, c.TELEFONO AS NumeroContacto, pa.ESTADO_ADOPCION " +
                 "FROM PETICIONES_ADOPCION pa " +
                 "JOIN PERROS p ON pa.ID_PERRO = p.ID_PERRO " +
                 "JOIN CLIENTE c ON pa.ID_CLIENTE = c.ID_CLIENTE " +
-                "WHERE p.ID_PROTECTORA = ? AND pa.ESTADO = 'Aceptada' " + // Solo las aceptadas
-                "ORDER BY pa.FECHA DESC, p.NOMBRE ASC";
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        try {
-            conn = ConexionDB.getConnection(); // Tu clase de conexión
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, idProtectora);
-            rs = pstmt.executeQuery();
-            while (rs.next()) {
-                int idPeticion = rs.getInt("ID_PETICION");
-                String nombrePerro = rs.getString("NOMBRE_PERRO");
-                LocalDate fechaAdopcion = rs.getDate("FECHA_ADOPCION").toLocalDate();
-                String horaAdopcion = "N/A"; // Si tuvieras una columna de hora en PETICIONES_ADOPCION, la leerías aquí
-                String nombreAdoptante = rs.getString("NOMBRE_ADOPTANTE");
-                String contactoAdoptante = rs.getString("CONTACTO_ADOPTANTE"); // Podrías preferir el teléfono: c.TELEFONO
-
-                registros.add(new RegistroAdopcionInfo(idPeticion, nombrePerro, fechaAdopcion, horaAdopcion, nombreAdoptante, contactoAdoptante));
+                "WHERE pa.ID_PROTECTORA = ? " +
+                "ORDER BY pa.FECHA DESC, pa.ESTADO_ADOPCION DESC";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idProtectora);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    RegistroAdopcionInfo info = new RegistroAdopcionInfo();
+                    info.setIdPeticion(rs.getInt("ID_PETICION"));
+                    java.sql.Date fechaSql = rs.getDate("FECHA");
+                    info.setFechaPeticion(fechaSql != null ? fechaSql.toLocalDate() : null);
+                    info.setNombrePerro(rs.getString("NombrePerro"));
+                    info.setNombreAdoptante(rs.getString("NombreAdoptante"));
+                    info.setNumeroContacto(rs.getString("NumeroContacto"));
+                    info.setEstadoPeticion(rs.getString("ESTADO_ADOPCION"));
+                    lista.add(info);
+                }
             }
-        } finally {
-            if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
-            if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { e.printStackTrace(); }
-            if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return registros;
+        return lista;
     }
 
-    private PeticionAdopcion mapResultSetToPeticionAdopcion(ResultSet rs) throws SQLException {
-        PeticionAdopcion peticion = new PeticionAdopcion();
-        peticion.setIdPeticion(rs.getInt("ID_Peticion"));
-        peticion.setFecha(rs.getDate("Fecha"));
-        peticion.setEstado(rs.getString("Estado"));
-        peticion.setIdCliente(rs.getInt("ID_Cliente"));
-        peticion.setIdPerro(rs.getInt("ID_Perro"));
-        return peticion;
+    public boolean actualizarEstadoAdopcion(int idPeticion, String nuevoEstado) {
+        String sql = "UPDATE PETICIONES_ADOPCION SET ESTADO_ADOPCION = ? WHERE ID_PETICION = ?";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, nuevoEstado);
+            ps.setInt(2, idPeticion);
+            int filasActualizadas = ps.executeUpdate();
+            return filasActualizadas > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public List<PeticionAdopcion> obtenerTodasLasPeticiones() {
+        List<PeticionAdopcion> listaPeticiones = new ArrayList<>();
+        String sql = "SELECT ID_PETICION, FECHA, ESTADO_ADOPCION, ID_CLIENTE, ID_PERRO, ID_PROTECTORA FROM PETICIONES_ADOPCION";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                PeticionAdopcion peticion = new PeticionAdopcion();
+                peticion.setIdPeticion(rs.getInt("ID_PETICION"));
+                peticion.setFecha(rs.getDate("FECHA"));
+                peticion.setEstado(rs.getString("ESTADO_ADOPCION"));
+                peticion.setIdCliente(rs.getInt("ID_CLIENTE"));
+                peticion.setIdPerro(rs.getInt("ID_PERRO"));
+                peticion.setIdProtectora(rs.getInt("ID_PROTECTORA"));
+                listaPeticiones.add(peticion);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return listaPeticiones;
     }
 }

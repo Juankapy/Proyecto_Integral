@@ -39,8 +39,7 @@ public class MainClienteController {
         EVENTOS
     }
 
-    // --- Constantes (sin cambios) ---
-    // Constante que faltaba para la verificación de rol
+    // --- Constantes ---
     private static final String ROL_ESPERADO_CLIENTE = "CLIENTE";
     private static final String RUTA_IMAGEN_PLACEHOLDER_PERRO = "/assets/Imagenes/iconos/placeholder_dog.jpg";
     private static final String CRITERIO_BUSQUEDA_NOMBRE = "Nombre";
@@ -74,16 +73,16 @@ public class MainClienteController {
     @FXML private Button BtnReservar;
     @FXML private ComboBox<String> comboCriterioBusqueda;
 
-    // --- Listas de Datos (sin cambios) ---
+    // --- Listas de Datos ---
     private List<Perro> listaCompletaDePerrosParaCitas;
     private List<Perro> listaPerrosConCitaPreviaParaAdopcion;
     private List<Perro> perrosFiltradosParaMostrar;
     private List<Perro> listaBase = new ArrayList<>();
 
-    // --- DAOs (sin cambios) ---
+    // --- DAOs ---
     private PerroDao perroDao;
 
-    // --- Estado del Controlador (sin cambios) ---
+    // --- Estado del Controlador ---
     private Usuario usuarioLogueado;
     private ModoVistaPerros modoVistaActual = ModoVistaPerros.PARA_CITAS;
 
@@ -122,7 +121,6 @@ public class MainClienteController {
     }
 
     private void deshabilitarFuncionalidadPrincipal() {
-        // ... (sin cambios) ...
     }
 
     /**
@@ -160,7 +158,6 @@ public class MainClienteController {
         return true;
     }
 
-    // --- MÉTODOS QUE NO CAMBIAN ---
     private void cargarDatosInicialesPerrosParaCitas() {
         if (perroDao == null) {
             System.err.println("ERROR: PerroDao no inicializado en cargarDatosInicialesPerrosParaCitas.");
@@ -215,6 +212,9 @@ public class MainClienteController {
             }
             listaBase = new ArrayList<>(this.listaCompletaDePerrosParaCitas);
         }
+        listaBase = listaBase.stream()
+                .filter(p -> !"S".equalsIgnoreCase(p.getAdoptado()))
+                .collect(Collectors.toList());
         aplicarFiltrosDeTextoSobreListaBase(listaBase);
     }
 
@@ -372,18 +372,20 @@ public class MainClienteController {
     }
 
     private void popularGridConPerros() {
+        if (dogScrollPane.getContent() != dogGrid) {
+            dogScrollPane.setContent(dogGrid);
+        }
         System.out.println("DEBUG: Repoblando grid con " + perrosFiltradosParaMostrar.size() + " perros.");
         dogGrid.getChildren().clear();
         int columna = 0;
         int fila = 0;
         for (Perro perro : perrosFiltradosParaMostrar) {
             try {
-                // Aquí va tu lógica para cargar la tarjeta del perro
                 VBox tarjeta = crearTarjetaPerro(perro);
                 dogGrid.add(tarjeta, columna, fila);
                 System.out.println("DEBUG: Tarjeta añadida para perro: " + perro.getNombre());
                 columna++;
-                if (columna == 4) {
+                if (columna == 5) {
                     columna = 0;
                     fila++;
                 }
@@ -486,9 +488,18 @@ public class MainClienteController {
             DetallesPerroController controller = loader.getController();
             if (controller != null) {
                 controller.initData(perro);
+                // Llama a activarModoAdopcion si estás en modo adopciones
+                if (modoVistaActual == ModoVistaPerros.PARA_ADOPCION_CON_CITA) {
+                    controller.activarModoAdopcion();
+                }
                 UtilidadesVentana.mostrarVentanaComoDialogo(root, titulo, ownerStage);
-            } else { UtilidadesVentana.mostrarAlertaError("Error Interno", "No se pudo cargar el controlador de detalles del perro.");}
-        } catch (Exception e) { e.printStackTrace(); UtilidadesVentana.mostrarAlertaError("Error de Navegación", "No se pudo abrir la vista de detalles del perro: " + e.getMessage());}
+            } else {
+                UtilidadesVentana.mostrarAlertaError("Error Interno", "No se pudo cargar el controlador de detalles del perro.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            UtilidadesVentana.mostrarAlertaError("Error de Navegación", "No se pudo abrir la vista de detalles del perro: " + e.getMessage());
+        }
     }
 
     @FXML

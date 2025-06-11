@@ -211,27 +211,6 @@ public class ClienteDao {
     }
 
     /**
-     * Obtiene todos los clientes de la base de datos.
-     * @return Lista de Clientes.
-     * @throws SQLException Error de BD.
-     */
-    public List<Cliente> obtenerTodosLosClientes() throws SQLException {
-        List<Cliente> clientes = new ArrayList<>();
-        String sql = "SELECT * FROM " + TABLA_CLIENTE + " ORDER BY " + COL_APELLIDOS + ", " + COL_NOMBRE;
-        try (Connection conn = ConexionDB.getConnection();
-             Statement stmt = conn.createStatement(); // PreparedStatement no es necesario aquí si no hay parámetros
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                clientes.add(mapResultSetToCliente(rs));
-            }
-        } catch (SQLException e) {
-            System.err.println("Error SQL al obtener todos los clientes: " + e.getMessage());
-            throw e;
-        }
-        return clientes;
-    }
-
-    /**
      * Actualiza los datos de un cliente existente en la base de datos.
      * @param cliente El objeto Cliente con los datos actualizados.
      * @return true si la actualización fue exitosa (al menos una fila afectada), false en caso contrario.

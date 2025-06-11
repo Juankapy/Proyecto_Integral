@@ -8,6 +8,7 @@ import com.proyectointegral2.utils.ConexionDB;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,21 +21,24 @@ public class ReservaCitaDao {
     private static final String COL_ID_PERRO = "ID_Perro";
     private static final String COL_ID_PROTECTORA = "ID_Protectora";
     private static final String COL_ESTADO_CITA = "Estado_Cita";
+    private static final String COL_DONACION = "Donacion";
 
     public int crearReservaCita(ReservaCita reserva) throws SQLException {
         String sql = "INSERT INTO Reservas_Citas (" +
                 COL_FECHA + ", " + COL_HORA + ", " +
-                COL_ID_CLIENTE + ", " + COL_ID_PERRO + ", " + COL_ID_PROTECTORA + ", " +
-                COL_ESTADO_CITA + ") VALUES (?, ?, ?, ?, ?, ?)";
+                COL_DONACION + ", " + COL_ID_CLIENTE + ", " +
+                COL_ID_PERRO + ", " + COL_ID_PROTECTORA + ", " +
+                COL_ESTADO_CITA + ") VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, new String[] {COL_ID_RESERVA_CITA});) {
+             PreparedStatement pstmt = conn.prepareStatement(sql, new String[]{COL_ID_RESERVA_CITA})) {
 
             pstmt.setDate(1, Date.valueOf(reserva.getFecha()));
-            pstmt.setTime(2, Time.valueOf(reserva.getHora()));
-            pstmt.setInt(3, reserva.getIdCliente());
-            pstmt.setInt(4, reserva.getIdPerro());
-            pstmt.setInt(5, reserva.getIdProtectora());
-            pstmt.setString(6, reserva.getEstadoCita());
+            pstmt.setString(2, reserva.getHora().format(DateTimeFormatter.ofPattern("HH:mm")));
+            pstmt.setDouble(3, reserva.getDonacion());
+            pstmt.setInt(4, reserva.getIdCliente());
+            pstmt.setInt(5, reserva.getIdPerro());
+            pstmt.setInt(6, reserva.getIdProtectora());
+            pstmt.setString(7, reserva.getEstadoCita());
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
@@ -42,20 +46,13 @@ public class ReservaCitaDao {
             }
             try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    String key = generatedKeys.getString(1);
-                    System.out.println("Valor generado: " + key); // Para depuración
-                    try {
-                        return Integer.parseInt(key);
-                    } catch (NumberFormatException e) {
-                        throw new SQLException("El valor generado no es un número: " + key, e);
-                    }
+                    return generatedKeys.getInt(1);
                 } else {
                     throw new SQLException("No se pudo obtener el ID generado para la reserva.");
                 }
             }
         }
     }
-
 
     public List<ReservaCita> obtenerReservasPorCliente(int idCliente) throws SQLException {
         List<ReservaCita> reservas = new ArrayList<>();
@@ -78,32 +75,31 @@ public class ReservaCitaDao {
         return reservas;
     }
 
-    // Método para mapear ResultSet a ReservaCita
     private ReservaCita mapResultSetToReservaCita(ResultSet rs) throws SQLException {
         ReservaCita reserva = new ReservaCita();
         reserva.setIdReserva(rs.getInt(COL_ID_RESERVA_CITA));
         reserva.setFecha(rs.getDate(COL_FECHA).toLocalDate());
-        reserva.setHora(rs.getTime(COL_HORA).toLocalTime());
+
+        String horaStr = rs.getString(COL_HORA);
+        if (horaStr != null) {
+            DateTimeFormatter formatter = horaStr.length() == 5
+                    ? DateTimeFormatter.ofPattern("HH:mm")
+                    : DateTimeFormatter.ofPattern("HH:mm:ss");
+            reserva.setHora(LocalTime.parse(horaStr, formatter));
+        } else {
+            reserva.setHora(null);
+        }
+
         reserva.setIdCliente(rs.getInt(COL_ID_CLIENTE));
         reserva.setIdPerro(rs.getInt(COL_ID_PERRO));
         reserva.setIdProtectora(rs.getInt(COL_ID_PROTECTORA));
         reserva.setEstadoCita(rs.getString(COL_ESTADO_CITA));
-        // Si tienes el campo nombrePerro en ReservaCita, puedes setearlo aquí:
+
         try {
             reserva.getClass().getMethod("setNombrePerro", String.class)
                     .invoke(reserva, rs.getString("NombrePerro"));
         } catch (Exception ignored) {}
         return reserva;
-    }
-
-    // Ya implementado, no modificar
-    private BandejaCita mapResultSetToBandejaCita(ResultSet rs) throws SQLException {
-        BandejaCita cita = new BandejaCita();
-        cita.setNombreCliente(rs.getString("nombreCliente"));
-        cita.setNombrePerro(rs.getString("nombrePerro"));
-        cita.setFecha(rs.getDate("Fecha").toLocalDate());
-        cita.setHora(rs.getTime("Hora").toLocalTime());
-        return cita;
     }
 
     public List<ReservaCita> obtenerCitasPorCliente(int idClienteActual) {
@@ -127,37 +123,8 @@ public class ReservaCitaDao {
                 e.printStackTrace();
             }
             return reservas;
-        }
-
-    public List<RegistroCitaInfo> obtenerCitasParaTablaProtectora(int idProtectoraActual) {
-        List<RegistroCitaInfo> citas = new ArrayList<>();
-        String sql = "SELECT rc.*, p.Nombre AS NombrePerro, c.Nombre AS NombreCliente " +
-                "FROM Reservas_Citas rc " +
-                "JOIN Perros p ON rc.ID_Perro = p.ID_Perro " +
-                "JOIN Cliente c ON rc.ID_Cliente = c.ID_Cliente " +
-                "WHERE rc.ID_Protectora = ?";
-        try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, idProtectoraActual);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    RegistroCitaInfo cita = new RegistroCitaInfo(
-                            rs.getString("NombreCliente"),
-                            rs.getString("NombrePerro"),
-                            rs.getDate(COL_FECHA).toString(),
-                            rs.getTime(COL_HORA).toString(),
-                            rs.getString("TipoServicio"),
-                            rs.getString("Veterinario")
-                    );
-                    citas.add(cita);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return citas;
     }
+
 
     public List<LocalTime> obtenerHorasReservadasPorPerroYFecha(int idPerro, LocalDate fechaSeleccionada) {
         List<LocalTime> horasReservadas = new ArrayList<>();
@@ -176,5 +143,55 @@ public class ReservaCitaDao {
             e.printStackTrace();
         }
         return horasReservadas;
+    }
+
+    public List<RegistroCitaInfo> obtenerInfoCitasPorProtectora(int idProtectora) {
+        List<RegistroCitaInfo> lista = new ArrayList<>();
+        String sql = "SELECT rc.ID_RESERVA_CITA, rc.Fecha, rc.Hora, p.Nombre AS NombrePerro, " +
+                "c.Nombre AS NombreCliente, rc.Estado_Cita " +
+                "FROM Reservas_Citas rc " +
+                "JOIN Perros p ON rc.ID_Perro = p.ID_Perro " +
+                "JOIN Cliente c ON rc.ID_Cliente = c.ID_Cliente " +
+                "WHERE rc.ID_Protectora = ? " +
+                "ORDER BY rc.Fecha DESC, rc.Hora DESC";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idProtectora);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    RegistroCitaInfo info = new RegistroCitaInfo();
+                    info.setIdReservaCita(rs.getInt("ID_RESERVA_CITA"));
+                    info.setFechaCita(rs.getDate("Fecha").toLocalDate());
+                    String horaStr = rs.getString("Hora");
+                    if (horaStr != null) {
+                        DateTimeFormatter formatter = horaStr.length() == 5
+                                ? DateTimeFormatter.ofPattern("HH:mm")
+                                : DateTimeFormatter.ofPattern("HH:mm:ss");
+                        info.setHoraCita(LocalTime.parse(horaStr, formatter));
+                    }
+                    info.setNombrePerro(rs.getString("NombrePerro"));
+                    info.setNombreCliente(rs.getString("NombreCliente"));
+                    info.setEstadoCita(rs.getString("Estado_Cita"));
+                    lista.add(info);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+
+    public boolean actualizarEstadoCita(int idReservaCita, String nuevoEstado) {
+        String sql = "UPDATE RESERVAS_CITAS SET ESTADO_CITA = ? WHERE ID_RESERVA_CITA = ?";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, nuevoEstado);
+            ps.setInt(2, idReservaCita);
+            int filasActualizadas = ps.executeUpdate();
+            return filasActualizadas > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

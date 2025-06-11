@@ -372,6 +372,7 @@ public class FormularioSolicitudCitaController {
         nuevaReserva.setIdPerro(perroParaCita.getIdPerro());
         nuevaReserva.setIdProtectora(perroParaCita.getIdProtectora());
         nuevaReserva.setEstadoCita(ESTADO_CITA_POR_DEFECTO);
+        nuevaReserva.setDonacion(importeDonacion);
 
         try {
             int idReservaCreada = reservaCitaDao.crearReservaCita(nuevaReserva);

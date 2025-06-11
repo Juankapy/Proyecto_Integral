@@ -11,13 +11,15 @@ public class ReservaCita {
     private int idCliente;
     private int idPerro;
     private int idProtectora;
+    private double donacion;
 
     public ReservaCita() {}
 
-    public ReservaCita(int idReserva, LocalDate fecha, LocalTime hora, String estadoCita, int idCliente,int idPerro, int idProtectora) {
+    public ReservaCita(int idReserva, LocalDate fecha, LocalTime hora,double donacion, String estadoCita, int idCliente,int idPerro, int idProtectora) {
         this.idReserva = idReserva;
         this.fecha = fecha;
         this.hora = hora;
+        this.donacion = donacion;
         this.estadoCita = estadoCita;
         this.idCliente = idCliente;
         this.idPerro = idPerro;
@@ -78,5 +80,13 @@ public class ReservaCita {
 
     public String getEstadoCita() {
         return estadoCita;
+    }
+
+    public double getDonacion() {
+        return donacion;
+    }
+
+    public void setDonacion(double donacion) {
+        this.donacion = donacion;
     }
 }

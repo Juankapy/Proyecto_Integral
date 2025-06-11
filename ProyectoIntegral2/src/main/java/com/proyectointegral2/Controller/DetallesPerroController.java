@@ -1,11 +1,9 @@
 package com.proyectointegral2.Controller;
 
-import com.proyectointegral2.Model.IdentificacionPatologia;
-import com.proyectointegral2.Model.Patologia;
-import com.proyectointegral2.Model.Perro;
-import com.proyectointegral2.Model.Protectora;
+import com.proyectointegral2.Model.*;
 import com.proyectointegral2.dao.IdentificacionPatologiaDao;
 import com.proyectointegral2.dao.PatologiaDao;
+import com.proyectointegral2.dao.PeticionAdopcionDao;
 import com.proyectointegral2.dao.ProtectoraDao;
 import com.proyectointegral2.utils.UtilidadesExcepciones;
 import com.proyectointegral2.utils.UtilidadesVentana;
@@ -13,7 +11,9 @@ import com.proyectointegral2.utils.UtilidadesVentana;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
@@ -29,6 +29,7 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class DetallesPerroController {
@@ -228,10 +229,37 @@ public class DetallesPerroController {
         }
     }
 
-    @FXML
-    void handleVolver(ActionEvent event) {
-        Node source = (Node) event.getSource();
-        Stage stage = (Stage) source.getScene().getWindow();
-        stage.close();
+    public void activarModoAdopcion() {
+        BtnReservarCita.setText("Pedir Adopción");
+        BtnReservarCita.setDisable(false);
+        BtnReservarCita.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-background-radius: 20; -fx-font-size: 16px; -fx-font-weight: bold;");
+        BtnReservarCita.setOnAction(this::pedirAdopcion);
+    }
+
+    private void pedirAdopcion(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmar adopción");
+        alert.setHeaderText(null);
+        alert.setContentText("¿Deseas solicitar la adopción de este perro?");
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            try {
+                PeticionAdopcionDao peticionAdopcionDao = new PeticionAdopcionDao();
+                int idCliente = SesionUsuario.getEntidadIdEspecifica(); // ID de CLIENTE, no de USUARIO
+                PeticionAdopcion peticion = new PeticionAdopcion();
+                peticion.setFecha(java.sql.Date.valueOf(LocalDate.now()));
+                peticion.setEstado("Pendiente");
+                peticion.setIdCliente(idCliente);
+                peticion.setIdPerro(perroActual.getIdPerro());
+                peticion.setIdProtectora(perroActual.getIdProtectora());
+                peticionAdopcionDao.crearPeticionAdopcion(peticion);
+                UtilidadesExcepciones.mostrarInformacion("Petición registrada", null, "Tu petición de adopción ha sido registrada.");
+                BtnReservarCita.setDisable(true);
+            } catch (Exception e) {
+                UtilidadesVentana.mostrarAlertaError("Error", "No se pudo registrar la petición de adopción.");
+                e.printStackTrace();
+            }
+        }
     }
 }
