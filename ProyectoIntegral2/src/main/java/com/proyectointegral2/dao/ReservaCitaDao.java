@@ -11,6 +11,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ReservaCitaDao {
 
@@ -51,6 +52,17 @@ public class ReservaCitaDao {
                     throw new SQLException("No se pudo obtener el ID generado para la reserva.");
                 }
             }
+        }
+    }
+
+    public void eliminarCitasPorPerroEstadosFijos(int idPerro) throws SQLException {
+        System.out.println("SQL: DELETE FROM Reservas_Citas WHERE ID_Perro = " + idPerro + " AND Estado_Cita IN ('Pendiente', 'Confirmada', 'Cancelada')");
+        String sql = "DELETE FROM Reservas_Citas WHERE ID_Perro = ? AND Estado_Cita IN ('Pendiente', 'Confirmada', 'Cancelada')";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idPerro);
+            int filasAfectadas = stmt.executeUpdate();
+            System.out.println("Filas eliminadas: " + filasAfectadas);
         }
     }
 

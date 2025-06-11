@@ -201,8 +201,23 @@ public class MainProtectoraController {
                             if (perroDao != null) {
                                 perroDao.actualizarCampoAdoptado(info.getIdPerro(), "S");
                             }
+                            if (reservaCitaDao != null) {
+                                try {
+                                    reservaCitaDao.eliminarCitasPorPerroEstadosFijos(info.getIdPerro());
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            if (peticionAdopcionDao != null) {
+                                try {
+                                    peticionAdopcionDao.cancelarOtrasPeticionesDeAdopcion(info.getIdPerro(), info.getIdPeticion());
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                }
+                            }
                             cargarDatosParaTablaAdopciones();
-                            cargarYMostrarPerrosEnGrid(); // Actualiza el grid
+                            cargarYMostrarPerrosEnGrid();
+                            cargarDatosParaTablaCitas();
                         }
                     });
                     btnCancelar.setOnAction(event -> {
@@ -212,7 +227,7 @@ public class MainProtectoraController {
                                 perroDao.actualizarCampoAdoptado(info.getIdPerro(), "N");
                             }
                             cargarDatosParaTablaAdopciones();
-                            cargarYMostrarPerrosEnGrid(); // Actualiza el grid
+                            cargarYMostrarPerrosEnGrid();
                         }
                     });
                 }

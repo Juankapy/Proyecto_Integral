@@ -69,25 +69,13 @@ public class PeticionAdopcionDao {
         }
     }
 
-    public List<PeticionAdopcion> obtenerTodasLasPeticiones() {
-        List<PeticionAdopcion> listaPeticiones = new ArrayList<>();
-        String sql = "SELECT ID_PETICION, FECHA, ESTADO_ADOPCION, ID_CLIENTE, ID_PERRO, ID_PROTECTORA FROM PETICIONES_ADOPCION";
+    public void cancelarOtrasPeticionesDeAdopcion(int idPerro, int idPeticionAceptada) throws SQLException {
+        String sql = "UPDATE PETICIONES_ADOPCION SET ESTADO_ADOPCION = 'Cancelada' WHERE ID_PERRO = ? AND ID_PETICION <> ?";
         try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                PeticionAdopcion peticion = new PeticionAdopcion();
-                peticion.setIdPeticion(rs.getInt("ID_PETICION"));
-                peticion.setFecha(rs.getDate("FECHA"));
-                peticion.setEstado(rs.getString("ESTADO_ADOPCION"));
-                peticion.setIdCliente(rs.getInt("ID_CLIENTE"));
-                peticion.setIdPerro(rs.getInt("ID_PERRO"));
-                peticion.setIdProtectora(rs.getInt("ID_PROTECTORA"));
-                listaPeticiones.add(peticion);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idPerro);
+            stmt.setInt(2, idPeticionAceptada);
+            stmt.executeUpdate();
         }
-        return listaPeticiones;
     }
 }
