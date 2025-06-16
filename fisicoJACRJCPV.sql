@@ -170,85 +170,105 @@ CREATE TABLE REDES_SOCIALES (
 
 ALTER TABLE CLIENTE ADD RUTA_FOTO_PERFIL VARCHAR2(255);
 
--- ========= FUNCIÓN MEJORADA: Obtener ID de usuario de la protectora a la que pertenece un perro =========
-CREATE OR REPLACE FUNCTION obtener_id_usuario_de_protectora_por_perro( id_perro_especifico IN PERROS.ID_PERRO%TYPE)
-RETURN USUARIO.ID_USUARIO%TYPE
-IS
-    id_usuario_resultado USUARIO.ID_USUARIO%TYPE;
+Set serveroutput on;
+-- ========= FUNCIÓN: Contar cuantos perros han sido adoptados =========
+CREATE OR REPLACE FUNCTION CONTAR_PERROS_ADOPTADOS (
+    id_protectora_esplicito protectora.id_protectora%Type
+)
+RETURN NUMBER
+AS
+    suma_total NUMBER := 0;
     
+    nombre_protectora protectora.nombre%TYPE;
+    
+    CURSOR estado_perros IS
+        SELECT ADOPTADO
+        FROM PERROS
+        WHERE ID_PROTECTORA = id_protectora_esplicito; 
+
 BEGIN
     
-    SELECT protectora_del_perro.ID_USUARIO
-    INTO id_usuario_resultado
-    FROM PERROS perro_buscado
-    JOIN PROTECTORA protectora_del_perro ON perro_buscado.ID_PROTECTORA = protectora_del_perro.ID_PROTECTORA
-    WHERE perro_buscado.ID_PERRO = id_perro_especifico;
+    SELECT nombre INTO nombre_protectora
+    FROM PROTECTORA
+    WHERE ID_PROTECTORA = id_protectora_esplicito;
 
-    RETURN id_usuario_resultado;
+    FOR perro IN estado_perros LOOP
+        IF perro.ADOPTADO = 'S' THEN
+            suma_total := suma_total + 1;
+        END IF;
+    END LOOP;
+    
+    RETURN suma_total;
+
+EXCEPTION
+    
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Error: No se ha encontrado ninguna protectora con el ID ' || id_protectora_esplicito || '.');
+        RETURN -1; 
+
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Ha ocurrido un error inesperado: ' || SQLERRM);
+        RETURN -2; 
+        
+END CONTAR_PERROS_ADOPTADOS;
+/
+
+Begin
+    DBMS_OUTPUT.PUT_LINE('El numero de citas totales son: ' || CONTAR_PERROS_ADOPTADOS(1)||'.');
+END;
+/
+
+
+-- ========= PROCEDIMIENTO: Mostrar todos las citas pendientes de un cliente =========
+CREATE OR REPLACE PROCEDURE VER_CITAS_PENDIENTES_CLIENTE (
+    id_cliente_especifico cliente.id_cliente%Type
+)
+AS
+    nombre_cliente CLIENTE.NOMBRE%TYPE;
+    encontre_alguna_cita BOOLEAN := FALSE;
+
+    CURSOR citas_cliente IS
+        SELECT FECHA, HORA, ESTADO_CITA
+        FROM RESERVAS_CITAS
+        WHERE ID_CLIENTE = id_cliente_especifico;
+    
+    una_cita citas_cliente%ROWTYPE;
+
+BEGIN
+    SELECT NOMBRE INTO nombre_cliente
+    FROM CLIENTE
+    WHERE ID_CLIENTE = id_cliente_especifico;
+
+    DBMS_OUTPUT.PUT_LINE('Citas pendientes de: ' || nombre_cliente || '.');
+
+    OPEN citas_cliente;
+
+    LOOP
+        FETCH citas_cliente INTO una_cita;
+        EXIT WHEN citas_cliente%NOTFOUND;
+        
+        IF una_cita.ESTADO_CITA = 'Pendiente' THEN
+            DBMS_OUTPUT.PUT_LINE('Fecha: ' || TO_CHAR(una_cita.FECHA, 'DD/MM/YYYY') || ', Hora: ' || una_cita.HORA);
+            encontre_alguna_cita := TRUE; 
+        END IF;
+    END LOOP;
+
+    CLOSE citas_cliente;
+
+    IF NOT encontre_alguna_cita THEN
+        DBMS_OUTPUT.PUT_LINE('Este cliente no tiene ninguna cita pendiente en este momento.');
+    END IF;
 
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
-    DBMS_OUTPUT.PUT_LINE('Error Grave: Ningun usuario de protectora encontrado para el perro con ID: ' || id_perro_especifico);
-    RAISE;
-
-    WHEN TOO_MANY_ROWS THEN
-    DBMS_OUTPUT.PUT_LINE('Error Grave: Múltiples usuarios de protectora encontrados para el perro con ID: ' || id_perro_especifico);
-    RAISE;
-
-    WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('Error inesperado en "obtener_id_usuario_de_protectora_por_perro" para perro ID ' || id_perro_especifico || ': ' || SQLERRM);
-    RAISE; 
-END obtener_id_usuario_de_protectora_por_perro;
-/
-
--- ========= PROCEDIMIENTO MEJORADO: Registrar una notificación y asignarla a un usuario específico =========
-CREATE OR REPLACE PROCEDURE registrar_y_enviar_notificacion_a_usuario(
-    texto_del_mensaje IN NOTIFICACION.MENSAJE%TYPE,
-    categoria_notificacion IN NOTIFICACION.TIPO_NOTIFICACION%TYPE,
-    id_elemento_relacionado IN NOTIFICACION.ID_ENTIDAD_RELACIONADA%TYPE,
-    tabla_elemento_relacionado IN NOTIFICACION.ENTIDAD_TIPO%TYPE,
-    id_del_usuario_destino IN USUARIO.ID_USUARIO%TYPE
-)
-IS
-    id_de_la_nueva_notificacion NOTIFICACION.ID_NOTIFICACION%TYPE;
-    existe_usuario_destino NUMBER;                           
-    error_usuario_destino_no_existe EXCEPTION;
-    
-    PRAGMA EXCEPTION_INIT(error_usuario_destino_no_existe, -20003); 
-BEGIN
-    -- Paso 1: Verificar que el usuario al que queremos notificar realmente existe en la tabla USUARIO.
-    SELECT COUNT(*)
-    INTO existe_usuario_destino
-    FROM USUARIO
-    WHERE ID_USUARIO = id_del_usuario_destino;
-
-    IF existe_usuario_destino = 0 THEN
-    RAISE error_usuario_destino_no_existe;
-    END IF;
-
-    -- Paso 2: Si el usuario existe, insertamos el registro principal de la notificación.
-    INSERT INTO NOTIFICACION (MENSAJE,TIPO_NOTIFICACION,ID_ENTIDAD_RELACIONADA,ENTIDAD_TIPO) 
-    VALUES (texto_del_mensaje,categoria_notificacion,id_elemento_relacionado,tabla_elemento_relacionado)
-    
-    RETURNING ID_NOTIFICACION INTO id_de_la_nueva_notificacion;
-
-    -- Paso 3: Registramos que esta notificación ha sido recibida por el usuario destino.
-    INSERT INTO NOTIFICACIONES_RECIBIDAS (ID_USUARIO,ID_NOTIFICACION) 
-    VALUES (id_del_usuario_destino,id_de_la_nueva_notificacion);
-
-EXCEPTION
-    WHEN error_usuario_destino_no_existe THEN
-        DBMS_OUTPUT.PUT_LINE('Error al registrar notificación: El usuario destino con ID ' || id_del_usuario_destino || ' no fue encontrado.');
-        RAISE;
-
-    WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Error al registrar notificación: Se intentó insertar un valor duplicado que viola una restricción de unicidad. Detalles: ' || SQLERRM);
-        RAISE;
-
+        DBMS_OUTPUT.PUT_LINE('Error: El cliente con ID ' || id_cliente_especifico || ' no existe.');
     WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE('Error inesperado en "registrar_y_enviar_notificacion_a_usuario". Detalles: ' || SQLERRM);
-        RAISE;
-END registrar_y_enviar_notificacion_a_usuario;
+        DBMS_OUTPUT.PUT_LINE('Ha ocurrido un error inesperado: ' || SQLERRM);
+
+END VER_CITAS_PENDIENTES_CLIENTE;
 /
+
+exec VER_CITAS_PENDIENTES_CLIENTE(2);
 
 -- ========= DISPARADOR: Cambiar estado de adopcion en Perros =========
 CREATE OR REPLACE TRIGGER adopcion_aceptada
@@ -265,7 +285,7 @@ END;
 /
 -- ========= DISPARADOR: Creacion para CLIENTES =========
 CREATE OR REPLACE TRIGGER clientes_creacion
-BEFORE INSERT ON CLIENTES
+BEFORE INSERT ON CLIENTE
 FOR EACH ROW
 BEGIN
     :NEW.FECHA_CREACION := SYSDATE;
@@ -275,7 +295,7 @@ END;
 
 -- ========= DISPARADOR: Actualizacion para CLIENTES =========
 CREATE OR REPLACE TRIGGER clientes_actualizacion
-BEFORE UPDATE ON CLIENTES
+BEFORE UPDATE ON CLIENTE
 FOR EACH ROW
 BEGIN
     :NEW.FECHA_MODIFICACION := SYSDATE;
@@ -284,7 +304,7 @@ END;
 
 -- ========= DISPARADOR: Creacion para PROTECTORAS =========
 CREATE OR REPLACE TRIGGER protectoras_creacion
-BEFORE INSERT ON PROTECTORAS
+BEFORE INSERT ON PROTECTORA
 FOR EACH ROW
 BEGIN
     :NEW.FECHA_CREACION := SYSDATE;
@@ -294,7 +314,7 @@ END;
 
 -- ========= DISPARADOR: Actualizacion para PROTECTORAS =========
 CREATE OR REPLACE TRIGGER protectoras_actualizacion
-BEFORE UPDATE ON PROTECTORAS
+BEFORE UPDATE ON PROTECTORA
 FOR EACH ROW
 BEGIN
     :NEW.FECHA_MODIFICACION := SYSDATE;
@@ -325,12 +345,6 @@ VALUES (SEQ_CLIENTE_ID.NEXTVAL, '12345678A', 'Ana', 'García López', TO_DATE('199
 INSERT INTO CLIENTE (ID_CLIENTE, NIF, NOMBRE, APELLIDOS, FECHA_NACIMIENTO, PROVINCIA, CIUDAD, CALLE, CP, TELEFONO, EMAIL, ID_USUARIO, RUTA_FOTO_PERFIL)
 VALUES (SEQ_CLIENTE_ID.NEXTVAL, '87654321B', 'Carlos', 'Martínez Ruiz', TO_DATE('1985-03-22', 'YYYY-MM-DD'), 'Barcelona', 'Barcelona', 'Avenida Diagonal 100', '08018', '600998877', 'carlos.martinez@email.com', 3, NULL);
 
-SELECT pa.ID_PETICION, pa.FECHA, p.NOMBRE AS NombrePerro, c.NOMBRE AS NombreAdoptante, c.TELEFONO AS NumeroContacto, pa.ESTADO_ADOPCION 
-                FROM PETICIONES_ADOPCION pa 
-                JOIN PERROS p ON pa.ID_PERRO = p.ID_PERRO 
-                JOIN CLIENTE c ON pa.ID_CLIENTE = c.ID_CLIENTE 
-                WHERE pa.ID_PROTECTORA = 1 
-                ORDER BY pa.FECHA, pa.ESTADO_ADOPCION DESC;
 
 -- 3. PROTECTORAS
 -- Asumimos que el ID_USUARIO 2 corresponde a 'protectora_happy'
