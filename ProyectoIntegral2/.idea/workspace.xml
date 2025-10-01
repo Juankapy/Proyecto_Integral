@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="850e23de-3df3-4e39-bb04-a6dd84ae8106" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="CSS File" />
+        <option value="FxmlFile" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+    &quot;associatedIndex&quot;: 6 }</component>
+  <component name="ProjectId" id="2x1wRszBZoUNuo6nkgR5sh5N9SW" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.MainApp.executor&quot;: &quot;Run&quot;,
+    &quot;JAR Application.ojdbc8-23.8.0.25.04.jar.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/artur/Desktop/Proyecto_Integral/ProyectoIntegral2&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.62413794&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;oracle&quot;
+    ]
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.proyectointegral2.Controller" />
+      <recent name="com.proyectointegral2.Model" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\artur\Desktop\Proyecto_Integral\ProyectoIntegral2\src\main\resources\com\proyectointegral2\Vista" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\damda\OneDrive\Escritorio\Proyecto_Integral\ProyectoIntegral2\libs" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Application.MainApp">
+    <configuration name="MainApp" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.proyectointegral2.MainApp" />
+      <module name="ProyectoIntegral2" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.proyectointegral2.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ojdbc8-23.8.0.25.04.jar" type="JarApplication" temporary="true">
+      <option name="JAR_PATH" value="$PROJECT_DIR$/libs/ojdbc8-23.8.0.25.04.jar" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.MainApp" />
+        <item itemvalue="JAR Application.ojdbc8-23.8.0.25.04.jar" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.26094.121" />
+        <option value="bundled-js-predefined-d6986cc7102b-b26f3e71634d-JavaScript-IU-251.26094.121" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="850e23de-3df3-4e39-bb04-a6dd84ae8106" name="Changes" comment="" />
+      <created>1747118883161</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1747118883161</updated>
+      <workItem from="1747118884447" duration="5100000" />
+      <workItem from="1747129110153" duration="714000" />
+      <workItem from="1747129875904" duration="921000" />
+      <workItem from="1747130824972" duration="5525000" />
+      <workItem from="1747215571683" duration="75000" />
+      <workItem from="1747216559492" duration="3463000" />
+      <workItem from="1747234586657" duration="2105000" />
+      <workItem from="1747293459989" duration="2737000" />
+      <workItem from="1747296231487" duration="2286000" />
+      <workItem from="1747308515339" duration="1213000" />
+      <workItem from="1747309754109" duration="759000" />
+      <workItem from="1747322192680" duration="117000" />
+      <workItem from="1747322317139" duration="973000" />
+      <workItem from="1747323790932" duration="1105000" />
+      <workItem from="1747324907590" duration="5068000" />
+      <workItem from="1747330415656" duration="5193000" />
+      <workItem from="1747562777903" duration="7518000" />
+      <workItem from="1747417100921" duration="2505000" />
+      <workItem from="1747571129049" duration="2204000" />
+      <workItem from="1747638733305" duration="10341000" />
+      <workItem from="1747651755355" duration="461000" />
+      <workItem from="1747672508901" duration="14811000" />
+      <workItem from="1747743831038" duration="14397000" />
+      <workItem from="1747760942128" duration="5399000" />
+      <workItem from="1747859352395" duration="266000" />
+      <workItem from="1747926713103" duration="22571000" />
+      <workItem from="1747977899050" duration="9339000" />
+      <workItem from="1748180892980" duration="600000" />
+      <workItem from="1748288609630" duration="5696000" />
+      <workItem from="1748361349208" duration="2128000" />
+      <workItem from="1748878203559" duration="11462000" />
+      <workItem from="1748934016642" duration="6840000" />
+      <workItem from="1748968192713" duration="6131000" />
+      <workItem from="1749030132001" duration="3534000" />
+      <workItem from="1749062741898" duration="3775000" />
+      <workItem from="1749068521690" duration="705000" />
+      <workItem from="1749239926607" duration="258000" />
+      <workItem from="1749240190729" duration="2347000" />
+      <workItem from="1749303887170" duration="5244000" />
+      <workItem from="1749396635270" duration="17000" />
+      <workItem from="1749460854409" duration="17887000" />
+      <workItem from="1749538319407" duration="10130000" />
+      <workItem from="1749570214767" duration="2552000" />
+      <workItem from="1749572905435" duration="1052000" />
+      <workItem from="1749576946106" duration="3972000" />
+      <workItem from="1749580956063" duration="194000" />
+      <workItem from="1749581157160" duration="2024000" />
+      <workItem from="1749583304521" duration="98000" />
+      <workItem from="1749662775956" duration="3641000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="Connection conn = ConexionDB.getConnection();" language="JAVA" />
+        <watch expression="lblNombrePerro" language="JAVA" />
+      </configuration>
+    </watches-manager>
+  </component>
+</project>

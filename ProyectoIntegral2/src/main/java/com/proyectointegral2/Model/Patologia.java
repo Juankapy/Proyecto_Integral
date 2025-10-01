@@ -1,38 +1,27 @@
 package com.proyectointegral2.Model;
 
 public class Patologia {
-    private int id;
+    private int idPatologia;
     private String nombre;
     private String descripcion;
 
-    // Constructor con todos los atributos
-    public Patologia(int id, String nombre, String descripcion) {
-        this.id = id;
+    public Patologia() {
+    }
+
+    public Patologia(int idPatologia, String nombre, String descripcion) {
+        this.idPatologia = idPatologia;
         this.nombre = nombre;
         this.descripcion = descripcion;
     }
 
-    // Getters y Setters
-    public int getId() {
-        return id;
+    public int getIdPatologia() { return idPatologia; }
+    public void setIdPatologia(int idPatologia) {
+        this.idPatologia = idPatologia;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-    public String getNombre() {
-        return nombre;
-    }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 }

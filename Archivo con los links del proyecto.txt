@@ -1,0 +1,10 @@
+Estos son los links del proyecto integral de Jose Antonio Campos Rueda y Juan Carlos Perea Velasco.
+
+Link del canva/mockup.
+https://www.canva.com/design/DAGkOMWo4_E/VvObpDHvh2cG47RkSveNMA/edit
+
+Link del git. Importante descargar la rama que se llama Jose.
+https://github.com/Juankapy/Proyecto_Integral.git
+
+Link del trello.
+https://trello.com/invite/b/67fd2a7eebe7881d68f5fab0/ATTI7427af0a483dd87c9b76ad19414e9adf04103895/dogpuccino

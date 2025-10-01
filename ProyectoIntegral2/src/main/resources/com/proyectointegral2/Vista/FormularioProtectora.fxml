@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="formularioProtectoraPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="781.0" prefWidth="700.0" style="-fx-background-color: #F5F1EA;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyectointegral2.Controller.FormularioProtectoraController">
+    <top>
+        <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="15.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets left="20.0" right="20.0" top="15.0" />
+            </padding>
+            <children>
+                <ImageView fx:id="imgIconoVolver" fitHeight="28.0" fitWidth="28.0" onMouseClicked="#handleVolver" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
+                    <image>
+                        <Image url="@../../../assets/Imagenes/iconos/salir.png" />
+                    </image>
+                </ImageView>
+                <Label fx:id="lblTituloFormulario" text="Editar Datos de la Protectora" textFill="#3E2723">
+                    <font>
+                        <Font name="System Bold" size="24.0" />
+                    </font>
+                </Label>
+            </children>
+        </HBox>
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;" BorderPane.alignment="CENTER">
+            <content>
+                <VBox alignment="TOP_CENTER" spacing="25.0">
+                    <padding>
+                        <Insets bottom="20.0" left="50.0" right="50.0" top="20.0" />
+                    </padding>
+                    <children>
+                        <VBox alignment="CENTER" spacing="10.0">
+                            <children>
+                                <ImageView fx:id="imgFotoProtectoraEditable" fitHeight="130.0" fitWidth="130.0" pickOnBounds="true" preserveRatio="true" style="-fx-background-color: #E0E0E0; -fx-border-color: #A1887F; -fx-border-radius: 65; -fx-background-radius: 65;">
+                                    <image>
+                                        <Image url="@../../../assets/Imagenes/iconos/sinusuario.jpg" />
+                                    </image>
+                                </ImageView>
+                                <Button fx:id="btnCambiarFotoProtectora" mnemonicParsing="false" onAction="#handleCambiarFoto" style="-fx-background-color: #6495ED; -fx-text-fill: white; -fx-background-radius: 5;" text="Cambiar Imagen">
+                                    <font><Font size="13.0" /></font>
+                                </Button>
+                            </children>
+                            <VBox.margin>
+                                <Insets bottom="15.0" />
+                            </VBox.margin>
+                        </VBox>
+
+                        <GridPane hgap="10.0" vgap="12.0">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="150.0" /> <!-- Ancho para etiquetas -->
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="350.0" />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" /> <!-- Nombre Protectora -->
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" /> <!-- CIF -->
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" /> <!-- Email Protectora -->
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" /> <!-- Teléfono Protectora -->
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" /> <!-- Calle -->
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" /> <!-- Ciudad -->
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" /> <!-- Provincia -->
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" /> <!-- CP -->
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            </rowConstraints>
+                            <children>
+                                <Label style="-fx-text-fill:black" text="Nombre Protectora:" GridPane.halignment="RIGHT">
+                                    <font><Font name="System Bold" size="14.0" /></font>
+                                </Label>
+                                <TextField fx:id="txtNombreProtectora" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" GridPane.columnIndex="1" />
+
+                                <Label style="-fx-text-fill:black" text="CIF:" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                                    <font><Font name="System Bold" size="14.0" /></font>
+                                </Label>
+                                <TextField fx:id="txtCIF" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                                <Label style="-fx-text-fill:black" text="Email Protectora:" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+                                    <font><Font name="System Bold" size="14.0" /></font>
+                                </Label>
+                                <TextField fx:id="txtEmailProtectora" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                                <Label style="-fx-text-fill:black" text="Teléfono Protectora:" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                                    <font><Font name="System Bold" size="14.0" /></font>
+                                </Label>
+                                <TextField fx:id="txtTelefonoProtectora" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                                <Label style="-fx-text-fill:black" text="Calle:" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
+                                    <font><Font name="System Bold" size="14.0" /></font>
+                                </Label>
+                                <TextField fx:id="txtCalleProtectora" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+                                <Label style="-fx-text-fill:black" text="Ciudad:" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
+                                    <font><Font name="System Bold" size="14.0" /></font>
+                                </Label>
+                                <TextField fx:id="txtCiudadProtectora" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+
+                                <Label style="-fx-text-fill:black" text="Provincia:" GridPane.halignment="RIGHT" GridPane.rowIndex="6">
+                                    <font><Font name="System Bold" size="14.0" /></font>
+                                </Label>
+                                <TextField fx:id="txtProvinciaProtectora" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+
+                                <Label style="-fx-text-fill:black" text="Código Postal:" GridPane.halignment="RIGHT" GridPane.rowIndex="7">
+                                    <font><Font name="System Bold" size="14.0" /></font>
+                                </Label>
+                                <TextField fx:id="txtCPProtectora" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+
+                                <Label style="-fx-text-fill:black" text="Nueva Contraseña (cuenta):" wrapText="true" GridPane.halignment="RIGHT" GridPane.rowIndex="8">
+                                    <font><Font name="System Bold" size="14.0" /></font>
+                                </Label>
+                                <PasswordField fx:id="txtPasswordCuenta" promptText="Dejar en blanco para no cambiar" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+
+                                <Label style="-fx-text-fill:black" text="Confirmar Contraseña:" wrapText="true" GridPane.halignment="RIGHT" GridPane.rowIndex="9">
+                                    <font><Font name="System Bold" size="14.0" /></font>
+                                </Label>
+                                <PasswordField fx:id="txtConfirmPasswordCuenta" promptText="Dejar en blanco para no cambiar" style="-fx-border-color: #A1887F; -fx-border-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+
+                            </children>
+                        </GridPane>
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" prefHeight="75.0" prefWidth="700.0" spacing="15.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="20.0" left="40.0" right="40.0" top="10.0" />
+            </padding>
+            <children>
+                <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#handleCancelar" style="-fx-background-color: red; -fx-text-fill: white; -fx-background-radius: 8;" text="Cancelar">
+                    <font><Font name="System Bold" size="14.0" /></font>
+                    <padding><Insets bottom="8.0" left="20.0" right="20.0" top="8.0" /></padding>
+                </Button>
+                <Button fx:id="btnGuardarCambios" mnemonicParsing="false" onAction="#handleGuardarCambios" style="-fx-background-color: #D2691E; -fx-text-fill: white; -fx-background-radius: 8;" text="Guardar Cambios">
+                    <font><Font name="System Bold" size="14.0" /></font>
+                    <padding><Insets bottom="8.0" left="20.0" right="20.0" top="8.0" /></padding>
+                </Button>
+            </children>
+        </HBox>
+    </bottom>
+</BorderPane>

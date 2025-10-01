@@ -1,0 +1,183 @@
+Index: target/classes/com/proyectointegral2/Vista/registro_protectora.fxml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n\r\n<?import javafx.scene.text.*?>\r\n<?import javafx.scene.control.*?>\r\n<?import javafx.scene.image.*?>\r\n<?import java.lang.*?>\r\n<?import javafx.scene.layout.*?>\r\n<?import javafx.geometry.Insets?>\r\n<?import javafx.scene.control.Label?>\r\n<?import javafx.scene.layout.VBox?>\r\n<?import javafx.scene.control.Button?>\r\n\r\n<AnchorPane maxHeight=\"-Infinity\" maxWidth=\"-Infinity\" minHeight=\"-Infinity\" minWidth=\"-Infinity\" prefHeight=\"471.0\" prefWidth=\"673.0\" style=\"-fx-background-color: #f5f1ea;\" xmlns=\"http://javafx.com/javafx/8\" xmlns:fx=\"http://javafx.com/fxml/1\" fx:controller=\"main.java.com.Controller.RegistroProtectoraController\">\r\n   <children>\r\n      <HBox fx:id=\"HboxImg\" layoutX=\"358.0\" prefHeight=\"404.0\" prefWidth=\"269.0\">\r\n         <children>\r\n            <ImageView fx:id=\"ImgLateralLogin\" fitHeight=\"473.0\" fitWidth=\"319.0\" pickOnBounds=\"true\" preserveRatio=\"true\">\r\n               <image>\r\n                  <Image url=\"@../../../assets/Imagenes/perros/ImgLogin.jpg\" />\r\n               </image>\r\n            </ImageView>\r\n         </children>\r\n      </HBox>\r\n      <TextField fx:id=\"TxtNombre\" layoutX=\"39.0\" layoutY=\"98.0\" prefHeight=\"25.0\" prefWidth=\"124.0\" style=\"-fx-border-color: #d2691e; -fx-border-radius: 8px;\" AnchorPane.bottomAnchor=\"348.0\" AnchorPane.leftAnchor=\"39.0\" AnchorPane.rightAnchor=\"510.0\" AnchorPane.topAnchor=\"98.0\" />\r\n      <Label layoutX=\"40.0\" layoutY=\"75.0\" text=\"Nombre\">\r\n         <font>\r\n            <Font name=\"Modern No. 20\" size=\"16.0\" />\r\n         </font></Label>\r\n      <ImageView fx:id=\"ImgIconoDog\" fitHeight=\"72.0\" fitWidth=\"92.0\" layoutX=\"2.0\" layoutY=\"400.0\" pickOnBounds=\"true\" preserveRatio=\"true\">\r\n         <image>\r\n            <Image url=\"@../../../assets/Imagenes/iconos/icono-bgless.png\" />\r\n         </image>\r\n      </ImageView>\r\n      <ImageView fx:id=\"ImgUsuario\" fitHeight=\"50.0\" fitWidth=\"51.0\" layoutX=\"158.0\" layoutY=\"14.0\" pickOnBounds=\"true\" preserveRatio=\"true\">\r\n         <image>\r\n            <Image url=\"@../../../assets/Imagenes/iconos/usuario-orange.png\" />\r\n         </image>\r\n      </ImageView>\r\n      <Button fx:id=\"BtnConfirmar\" layoutX=\"137.0\" layoutY=\"424.0\" mnemonicParsing=\"false\" onAction=\"#ConfirmarRegistroProtectora\" prefHeight=\"21.0\" prefWidth=\"93.0\" style=\"-fx-background-color: #d2691e; -fx-background-radius: 12px;\" text=\"Confirmar\" textFill=\"#fafafa\">\r\n         <font>\r\n            <Font name=\"Modern No. 20\" size=\"14.0\" />\r\n         </font></Button>\r\n      <Label layoutX=\"193.0\" layoutY=\"75.0\" text=\"Apellidos\">\r\n         <font>\r\n            <Font name=\"Modern No. 20\" size=\"16.0\" />\r\n         </font>\r\n      </Label>\r\n      <TextField fx:id=\"TxtApellido\" layoutX=\"192.0\" layoutY=\"98.0\" prefHeight=\"25.0\" prefWidth=\"137.0\" style=\"-fx-border-color: #d2691e; -fx-border-radius: 8px;\" AnchorPane.bottomAnchor=\"348.0\" AnchorPane.leftAnchor=\"192.0\" AnchorPane.rightAnchor=\"344.0\" AnchorPane.topAnchor=\"98.0\" />\r\n      <TextField fx:id=\"TxtDireccion\" layoutX=\"39.0\" layoutY=\"156.0\" prefHeight=\"25.0\" prefWidth=\"124.0\" style=\"-fx-border-color: #d2691e; -fx-border-radius: 8px;\" AnchorPane.bottomAnchor=\"290.0\" AnchorPane.leftAnchor=\"39.0\" AnchorPane.rightAnchor=\"510.0\" AnchorPane.topAnchor=\"156.0\" />\r\n      <Label layoutX=\"194.0\" layoutY=\"132.0\" text=\"Provincia\">\r\n         <font>\r\n            <Font name=\"Modern No. 20\" size=\"16.0\" />\r\n         </font>\r\n      </Label>\r\n      <Label layoutX=\"40.0\" layoutY=\"132.0\" text=\"Dirección\">\r\n         <font>\r\n            <Font name=\"Modern No. 20\" size=\"16.0\" />\r\n         </font>\r\n      </Label>\r\n      <TextField fx:id=\"TxtProvincia\" layoutX=\"192.0\" layoutY=\"156.0\" prefHeight=\"25.0\" prefWidth=\"137.0\" style=\"-fx-border-color: #d2691e; -fx-border-radius: 8px;\" AnchorPane.bottomAnchor=\"290.0\" AnchorPane.leftAnchor=\"192.0\" AnchorPane.rightAnchor=\"344.0\" AnchorPane.topAnchor=\"156.0\" />\r\n      <Label layoutX=\"44.0\" layoutY=\"248.0\" text=\"Ciudad\">\r\n         <font>\r\n            <Font name=\"Modern No. 20\" size=\"16.0\" />\r\n         </font>\r\n      </Label>\r\n      <Label layoutX=\"43.0\" layoutY=\"190.0\" text=\"CP\">\r\n         <font>\r\n            <Font name=\"Modern No. 20\" size=\"16.0\" />\r\n         </font>\r\n      </Label>\r\n      <TextField fx:id=\"TxtCP\" layoutX=\"42.0\" layoutY=\"216.0\" prefHeight=\"25.0\" prefWidth=\"124.0\" style=\"-fx-border-color: #d2691e; -fx-border-radius: 8px;\" AnchorPane.bottomAnchor=\"230.0\" AnchorPane.leftAnchor=\"42.0\" AnchorPane.rightAnchor=\"507.0\" AnchorPane.topAnchor=\"216.0\" />\r\n      <TextField fx:id=\"TxtCiudad\" layoutX=\"43.0\" layoutY=\"271.0\" prefHeight=\"25.0\" prefWidth=\"124.0\" style=\"-fx-border-color: #d2691e; -fx-border-radius: 8px;\" AnchorPane.bottomAnchor=\"175.0\" AnchorPane.leftAnchor=\"43.0\" AnchorPane.rightAnchor=\"506.0\" AnchorPane.topAnchor=\"271.0\" />\r\n      <Label layoutX=\"194.0\" layoutY=\"190.0\" text=\"Teléfono\">\r\n         <font>\r\n            <Font name=\"Modern No. 20\" size=\"16.0\" />\r\n         </font>\r\n      </Label>\r\n      <TextField fx:id=\"TxtTel\" layoutX=\"193.0\" layoutY=\"215.0\" prefHeight=\"25.0\" prefWidth=\"137.0\" style=\"-fx-border-color: #d2691e; -fx-border-radius: 8px;\" AnchorPane.bottomAnchor=\"231.0\" AnchorPane.leftAnchor=\"193.0\" AnchorPane.rightAnchor=\"343.0\" AnchorPane.topAnchor=\"215.0\" />\r\n      <Label layoutX=\"42.0\" layoutY=\"296.0\" text=\"Correo eléctronico\">\r\n         <font>\r\n            <Font name=\"Modern No. 20\" size=\"16.0\" />\r\n         </font>\r\n      </Label>\r\n      <TextField fx:id=\"TxtCorreo\" layoutX=\"42.0\" layoutY=\"321.0\" prefHeight=\"25.0\" prefWidth=\"288.0\" style=\"-fx-border-color: #d2691e; -fx-border-radius: 8px;\" AnchorPane.bottomAnchor=\"125.0\" AnchorPane.leftAnchor=\"42.0\" AnchorPane.rightAnchor=\"343.0\" AnchorPane.topAnchor=\"321.0\" />\r\n      <TextField fx:id=\"TxtContra\" layoutX=\"44.0\" layoutY=\"374.0\" prefHeight=\"25.0\" prefWidth=\"288.0\" style=\"-fx-border-color: #d2691e; -fx-border-radius: 8px;\" AnchorPane.bottomAnchor=\"72.0\" AnchorPane.leftAnchor=\"44.0\" AnchorPane.rightAnchor=\"341.0\" AnchorPane.topAnchor=\"374.0\" />\r\n      <Label layoutX=\"45.0\" layoutY=\"350.0\" text=\"Contraseña\">\r\n         <font>\r\n            <Font name=\"Modern No. 20\" size=\"16.0\" />\r\n         </font>\r\n      </Label>\r\n      <ImageView fx:id=\"ImgIconoSalida\" fitHeight=\"25.0\" fitWidth=\"20.0\" layoutX=\"18.0\" layoutY=\"19.0\" opacity=\"0.86\" pickOnBounds=\"true\" preserveRatio=\"true\">\r\n         <image>\r\n            <Image url=\"@../../../assets/Imagenes/iconos/salir.png\" />\r\n         </image>\r\n      </ImageView>\r\n      <Label layoutX=\"193.0\" layoutY=\"248.0\" text=\"CIF\">\r\n         <font>\r\n            <Font name=\"Modern No. 20\" size=\"16.0\" />\r\n         </font>\r\n      </Label>\r\n      <TextField fx:id=\"TxtCIF\" layoutX=\"191.0\" layoutY=\"271.0\" prefHeight=\"25.0\" prefWidth=\"137.0\" style=\"-fx-border-color: #d2691e; -fx-border-radius: 8px;\" AnchorPane.bottomAnchor=\"175.0\" AnchorPane.leftAnchor=\"191.0\" AnchorPane.rightAnchor=\"345.0\" AnchorPane.topAnchor=\"271.0\" />\r\n   </children>\r\n</AnchorPane>\r\n
+===================================================================
+diff --git a/target/classes/com/proyectointegral2/Vista/registro_protectora.fxml b/target/classes/com/proyectointegral2/Vista/registro_protectora.fxml
+--- a/target/classes/com/proyectointegral2/Vista/registro_protectora.fxml	(revision 4a0caa48bf966ffd9e931b0cce388378409c8ce3)
++++ b/target/classes/com/proyectointegral2/Vista/registro_protectora.fxml	(date 1747205174221)
+@@ -1,16 +1,11 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ 
+-<?import javafx.scene.text.*?>
+ <?import javafx.scene.control.*?>
+ <?import javafx.scene.image.*?>
+-<?import java.lang.*?>
+ <?import javafx.scene.layout.*?>
+-<?import javafx.geometry.Insets?>
+-<?import javafx.scene.control.Label?>
+-<?import javafx.scene.layout.VBox?>
+-<?import javafx.scene.control.Button?>
++<?import javafx.scene.text.*?>
+ 
+-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="471.0" prefWidth="673.0" style="-fx-background-color: #f5f1ea;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.com.Controller.RegistroProtectoraController">
++<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="471.0" prefWidth="673.0" style="-fx-background-color: #f5f1ea;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyectointegral2.Controller.RegistroProtectoraController">
+    <children>
+       <HBox fx:id="HboxImg" layoutX="358.0" prefHeight="404.0" prefWidth="269.0">
+          <children>
+@@ -88,7 +83,7 @@
+             <Font name="Modern No. 20" size="16.0" />
+          </font>
+       </Label>
+-      <ImageView fx:id="ImgIconoSalida" fitHeight="25.0" fitWidth="20.0" layoutX="18.0" layoutY="19.0" opacity="0.86" pickOnBounds="true" preserveRatio="true">
++      <ImageView fx:id="ImgIconoSalida" fitHeight="25.0" fitWidth="20.0" layoutX="18.0" layoutY="19.0" onMouseClicked="#CerrarVentana" opacity="0.86" pickOnBounds="true" preserveRatio="true">
+          <image>
+             <Image url="@../../../assets/Imagenes/iconos/salir.png" />
+          </image>
+Index: target/classes/com/proyectointegral2/Vista/inicio_choose.fxml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n\r\n<?import javafx.scene.text.*?>\r\n<?import javafx.scene.control.*?>\r\n<?import javafx.scene.image.*?>\r\n<?import java.lang.*?>\r\n<?import javafx.scene.layout.*?>\r\n<?import javafx.geometry.Insets?>\r\n<?import javafx.scene.control.Label?>\r\n<?import javafx.scene.layout.VBox?>\r\n<?import javafx.scene.control.Button?>\r\n\r\n<AnchorPane fx:controller=\"com.proyectointegral2.Controller.InicioChooseController\" maxHeight=\"-Infinity\" maxWidth=\"-Infinity\" minHeight=\"-Infinity\" minWidth=\"-Infinity\" prefHeight=\"233.0\" prefWidth=\"557.0\" style=\"-fx-background-color: #f5f1ea;\" xmlns=\"http://javafx.com/javafx/8\" xmlns:fx=\"http://javafx.com/fxml/1\">\r\n   <children>\r\n      <Label fx:id=\"LabelCliente\" layoutX=\"84.0\" layoutY=\"178.0\" onDragDetected=\"#PulsarCliente\" text=\"Cliente\">\r\n         <font>\r\n            <Font name=\"Modern No. 20\" size=\"16.0\" />\r\n         </font></Label>\r\n      <Label fx:id=\"LabelProtectora\" layoutX=\"379.0\" layoutY=\"178.0\" onDragDetected=\"#PulsarProtectora\" text=\"Protectora\">\r\n         <font>\r\n            <Font name=\"Modern No. 20\" size=\"16.0\" />\r\n         </font></Label>\r\n      <ImageView fitHeight=\"58.0\" fitWidth=\"52.0\" layoutX=\"253.0\" layoutY=\"8.0\" pickOnBounds=\"true\" preserveRatio=\"true\">\r\n         <image>\r\n            <Image url=\"@../../../assets/Imagenes/iconos/icono-bgless.png\" />\r\n         </image>\r\n      </ImageView>\r\n      <ImageView fx:id=\"ImgCliente\" fitHeight=\"106.0\" fitWidth=\"103.0\" layoutX=\"59.0\" layoutY=\"51.0\" onDragDetected=\"#PulsarCliente\" pickOnBounds=\"true\" preserveRatio=\"true\" />\r\n      <ImageView fx:id=\"ImgProtectora\" fitHeight=\"106.0\" fitWidth=\"103.0\" layoutX=\"362.0\" layoutY=\"51.0\" onDragDetected=\"#PulsarProtectora\" pickOnBounds=\"true\" preserveRatio=\"true\" />\r\n   </children>\r\n</AnchorPane>\r\n
+===================================================================
+diff --git a/target/classes/com/proyectointegral2/Vista/inicio_choose.fxml b/target/classes/com/proyectointegral2/Vista/inicio_choose.fxml
+--- a/target/classes/com/proyectointegral2/Vista/inicio_choose.fxml	(revision 4a0caa48bf966ffd9e931b0cce388378409c8ce3)
++++ b/target/classes/com/proyectointegral2/Vista/inicio_choose.fxml	(date 1747205174221)
+@@ -1,25 +1,11 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ 
+-<?import javafx.scene.text.*?>
+ <?import javafx.scene.control.*?>
+ <?import javafx.scene.image.*?>
+-<?import java.lang.*?>
+ <?import javafx.scene.layout.*?>
+-<?import javafx.geometry.Insets?>
+-<?import javafx.scene.control.Label?>
+-<?import javafx.scene.layout.VBox?>
+-<?import javafx.scene.control.Button?>
+ 
+-<AnchorPane fx:controller="com.proyectointegral2.Controller.InicioChooseController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="233.0" prefWidth="557.0" style="-fx-background-color: #f5f1ea;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
++<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="233.0" prefWidth="557.0" style="-fx-background-color: #f5f1ea;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyectointegral2.Controller.InicioChooseController">
+    <children>
+-      <Label fx:id="LabelCliente" layoutX="84.0" layoutY="178.0" onDragDetected="#PulsarCliente" text="Cliente">
+-         <font>
+-            <Font name="Modern No. 20" size="16.0" />
+-         </font></Label>
+-      <Label fx:id="LabelProtectora" layoutX="379.0" layoutY="178.0" onDragDetected="#PulsarProtectora" text="Protectora">
+-         <font>
+-            <Font name="Modern No. 20" size="16.0" />
+-         </font></Label>
+       <ImageView fitHeight="58.0" fitWidth="52.0" layoutX="253.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true">
+          <image>
+             <Image url="@../../../assets/Imagenes/iconos/icono-bgless.png" />
+@@ -27,5 +13,7 @@
+       </ImageView>
+       <ImageView fx:id="ImgCliente" fitHeight="106.0" fitWidth="103.0" layoutX="59.0" layoutY="51.0" onDragDetected="#PulsarCliente" pickOnBounds="true" preserveRatio="true" />
+       <ImageView fx:id="ImgProtectora" fitHeight="106.0" fitWidth="103.0" layoutX="362.0" layoutY="51.0" onDragDetected="#PulsarProtectora" pickOnBounds="true" preserveRatio="true" />
++      <Button fx:id="BtnCliente" layoutX="85.0" layoutY="174.0" mnemonicParsing="false" onAction="#PulsarCliente" text="Cliente" />
++      <Button fx:id="BtnProtectora" layoutX="388.0" layoutY="174.0" mnemonicParsing="false" onAction="#PulsarProtectora" text="Protectora" />
+    </children>
+ </AnchorPane>
+Index: target/classes/com/proyectointegral2/Vista/registro_cliente.fxml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n\r\n<?import javafx.scene.text.*?>\r\n<?import javafx.scene.control.*?>\r\n<?import javafx.scene.image.*?>\r\n<?import java.lang.*?>\r\n<?import javafx.scene.layout.*?>\r\n<?import javafx.geometry.Insets?>\r\n<?import javafx.scene.control.Label?>\r\n<?import javafx.scene.layout.VBox?>\r\n<?import javafx.scene.control.Button?>\r\n\r\n<AnchorPane maxHeight=\"-Infinity\" maxWidth=\"-Infinity\" minHeight=\"-Infinity\" minWidth=\"-Infinity\" prefHeight=\"438.0\" prefWidth=\"650.0\" style=\"-fx-background-color: #f5f1ea;\" xmlns=\"http://javafx.com/javafx/8\" xmlns:fx=\"http://javafx.com/fxml/1\" fx:controller=\"main.java.com.Controller.RegistroController\">\r\n   <children>\r\n      <HBox fx:id=\"HboxImg\" layoutX=\"358.0\" prefHeight=\"404.0\" prefWidth=\"269.0\">\r\n         <children>\r\n            <ImageView fx:id=\"ImgLateralLogin\" fitHeight=\"438.0\" fitWidth=\"297.0\" pickOnBounds=\"true\" preserveRatio=\"true\">\r\n               <image>\r\n                  <Image url=\"@../../../assets/Imagenes/perros/ImgLogin.jpg\" />\r\n               </image>\r\n            </ImageView>\r\n         </children>\r\n      </HBox>\r\n      <TextField fx:id=\"TxtNombre\" layoutX=\"37.0\" layoutY=\"107.0\" prefHeight=\"25.0\" prefWidth=\"122.0\" style=\"-fx-border-color: #d2691e; -fx-border-radius: 8px;\" AnchorPane.bottomAnchor=\"306.0\" AnchorPane.leftAnchor=\"37.0\" AnchorPane.rightAnchor=\"491.0\" AnchorPane.topAnchor=\"107.0\" />\r\n      <Label layoutX=\"37.0\" layoutY=\"83.0\" text=\"Nombre\">\r\n         <font>\r\n            <Font name=\"Modern No. 20\" size=\"16.0\" />\r\n         </font></Label>\r\n      <ImageView fx:id=\"ImgIconoDog\" fitHeight=\"72.0\" fitWidth=\"92.0\" layoutX=\"1.0\" layoutY=\"365.0\" pickOnBounds=\"true\" preserveRatio=\"true\">\r\n         <image>\r\n            <Image url=\"@../../../assets/Imagenes/iconos/icono-bgless.png\" />\r\n         </image>\r\n      </ImageView>\r\n      <ImageView fx:id=\"ImgUsuario\" fitHeight=\"50.0\" fitWidth=\"51.0\" layoutX=\"158.0\" layoutY=\"14.0\" pickOnBounds=\"true\" preserveRatio=\"true\">\r\n         <image>\r\n            <Image url=\"@../../../assets/Imagenes/iconos/usuario-orange.png\" />\r\n         </image>\r\n      </ImageView>\r\n      <Button fx:id=\"BtnConfirmar\" layoutX=\"136.0\" layoutY=\"387.0\" mnemonicParsing=\"false\" onAction=\"#ConfirmarRegistro\" prefHeight=\"21.0\" prefWidth=\"93.0\" style=\"-fx-background-color: #d2691e; -fx-background-radius: 12px;\" text=\"Confirmar\" textFill=\"#fafafa\">\r\n         <font>\r\n            <Font name=\"Modern No. 20\" size=\"14.0\" />\r\n         </font></Button>\r\n      <Label layoutX=\"196.0\" layoutY=\"83.0\" text=\"Apellidos\">\r\n         <font>\r\n            <Font name=\"Modern No. 20\" size=\"16.0\" />\r\n         </font>\r\n      </Label>\r\n      <TextField fx:id=\"TxtApellido\" layoutX=\"193.0\" layoutY=\"107.0\" prefHeight=\"25.0\" prefWidth=\"140.0\" style=\"-fx-border-color: #d2691e; -fx-border-radius: 8px;\" AnchorPane.bottomAnchor=\"306.0\" AnchorPane.leftAnchor=\"193.0\" AnchorPane.rightAnchor=\"317.0\" AnchorPane.topAnchor=\"107.0\" />\r\n      <TextField fx:id=\"TxtDireccion\" layoutX=\"37.0\" layoutY=\"166.0\" prefHeight=\"25.0\" prefWidth=\"122.0\" style=\"-fx-border-color: #d2691e; -fx-border-radius: 8px;\" AnchorPane.bottomAnchor=\"247.0\" AnchorPane.leftAnchor=\"37.0\" AnchorPane.rightAnchor=\"491.0\" AnchorPane.topAnchor=\"166.0\" />\r\n      <Label layoutX=\"195.0\" layoutY=\"141.0\" text=\"Provincia\">\r\n         <font>\r\n            <Font name=\"Modern No. 20\" size=\"16.0\" />\r\n         </font>\r\n      </Label>\r\n      <Label layoutX=\"37.0\" layoutY=\"141.0\" text=\"Dirección\">\r\n         <font>\r\n            <Font name=\"Modern No. 20\" size=\"16.0\" />\r\n         </font>\r\n      </Label>\r\n      <TextField fx:id=\"TxtProvincia\" layoutX=\"192.0\" layoutY=\"165.0\" prefHeight=\"25.0\" prefWidth=\"140.0\" style=\"-fx-border-color: #d2691e; -fx-border-radius: 8px;\" AnchorPane.bottomAnchor=\"248.0\" AnchorPane.leftAnchor=\"192.0\" AnchorPane.rightAnchor=\"318.0\" AnchorPane.topAnchor=\"165.0\" />\r\n      <Label layoutX=\"116.0\" layoutY=\"202.0\" text=\"Ciudad\">\r\n         <font>\r\n            <Font name=\"Modern No. 20\" size=\"16.0\" />\r\n         </font>\r\n      </Label>\r\n      <Label layoutX=\"39.0\" layoutY=\"202.0\" text=\"CP\">\r\n         <font>\r\n            <Font name=\"Modern No. 20\" size=\"16.0\" />\r\n         </font>\r\n      </Label>\r\n      <TextField fx:id=\"TxtCP\" layoutX=\"39.0\" layoutY=\"224.0\" prefHeight=\"25.0\" prefWidth=\"63.0\" style=\"-fx-border-color: #d2691e; -fx-border-radius: 8px;\" AnchorPane.bottomAnchor=\"189.0\" AnchorPane.leftAnchor=\"39.0\" AnchorPane.rightAnchor=\"548.0\" AnchorPane.topAnchor=\"224.0\" />\r\n      <TextField fx:id=\"TxtCiudad\" layoutX=\"117.0\" layoutY=\"225.0\" prefHeight=\"25.0\" prefWidth=\"93.0\" style=\"-fx-border-color: #d2691e; -fx-border-radius: 8px;\" AnchorPane.bottomAnchor=\"188.0\" AnchorPane.leftAnchor=\"117.0\" AnchorPane.rightAnchor=\"440.0\" AnchorPane.topAnchor=\"225.0\" />\r\n      <Label layoutX=\"227.0\" layoutY=\"200.0\" text=\"Teléfono\">\r\n         <font>\r\n            <Font name=\"Modern No. 20\" size=\"16.0\" />\r\n         </font>\r\n      </Label>\r\n      <TextField fx:id=\"TxtTel\" layoutX=\"227.0\" layoutY=\"225.0\" prefHeight=\"25.0\" prefWidth=\"99.0\" style=\"-fx-border-color: #d2691e; -fx-border-radius: 8px;\" AnchorPane.bottomAnchor=\"188.0\" AnchorPane.leftAnchor=\"227.0\" AnchorPane.rightAnchor=\"324.0\" AnchorPane.topAnchor=\"225.0\" />\r\n      <Label layoutX=\"42.0\" layoutY=\"261.0\" text=\"Correo eléctronico\">\r\n         <font>\r\n            <Font name=\"Modern No. 20\" size=\"16.0\" />\r\n         </font>\r\n      </Label>\r\n      <TextField fx:id=\"TxtCorreo\" layoutX=\"42.0\" layoutY=\"286.0\" prefWidth=\"292.0\" style=\"-fx-border-color: #d2691e; -fx-border-radius: 8px;\" AnchorPane.bottomAnchor=\"127.0\" AnchorPane.leftAnchor=\"42.0\" AnchorPane.rightAnchor=\"324.0\" AnchorPane.topAnchor=\"286.0\" />\r\n      <TextField fx:id=\"TxtContra\" layoutX=\"44.0\" layoutY=\"343.0\" prefHeight=\"25.0\" prefWidth=\"284.0\" style=\"-fx-border-color: #d2691e; -fx-border-radius: 8px;\" AnchorPane.bottomAnchor=\"70.0\" AnchorPane.leftAnchor=\"44.0\" AnchorPane.rightAnchor=\"322.0\" AnchorPane.topAnchor=\"343.0\" />\r\n      <Label layoutX=\"45.0\" layoutY=\"318.0\" text=\"Contraseña\">\r\n         <font>\r\n            <Font name=\"Modern No. 20\" size=\"16.0\" />\r\n         </font>\r\n      </Label>\r\n      <ImageView fx:id=\"ImgIconoSalida\" fitHeight=\"25.0\" fitWidth=\"20.0\" layoutX=\"18.0\" layoutY=\"19.0\" opacity=\"0.86\" pickOnBounds=\"true\" preserveRatio=\"true\">\r\n         <image>\r\n            <Image url=\"@../../../assets/Imagenes/iconos/salir.png\" />\r\n         </image>\r\n      </ImageView>\r\n   </children>\r\n</AnchorPane>\r\n
+===================================================================
+diff --git a/target/classes/com/proyectointegral2/Vista/registro_cliente.fxml b/target/classes/com/proyectointegral2/Vista/registro_cliente.fxml
+--- a/target/classes/com/proyectointegral2/Vista/registro_cliente.fxml	(revision 4a0caa48bf966ffd9e931b0cce388378409c8ce3)
++++ b/target/classes/com/proyectointegral2/Vista/registro_cliente.fxml	(date 1747205174221)
+@@ -10,7 +10,7 @@
+ <?import javafx.scene.layout.VBox?>
+ <?import javafx.scene.control.Button?>
+ 
+-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="438.0" prefWidth="650.0" style="-fx-background-color: #f5f1ea;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.com.Controller.RegistroController">
++<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="438.0" prefWidth="650.0" style="-fx-background-color: #f5f1ea;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyectointegral2.Controller.RegistroClienteController">
+    <children>
+       <HBox fx:id="HboxImg" layoutX="358.0" prefHeight="404.0" prefWidth="269.0">
+          <children>
+@@ -36,7 +36,7 @@
+             <Image url="@../../../assets/Imagenes/iconos/usuario-orange.png" />
+          </image>
+       </ImageView>
+-      <Button fx:id="BtnConfirmar" layoutX="136.0" layoutY="387.0" mnemonicParsing="false" onAction="#ConfirmarRegistro" prefHeight="21.0" prefWidth="93.0" style="-fx-background-color: #d2691e; -fx-background-radius: 12px;" text="Confirmar" textFill="#fafafa">
++      <Button fx:id="BtnConfirmar" layoutX="136.0" layoutY="387.0" mnemonicParsing="false" onAction="#ConfirmarRegistroCliente" prefHeight="21.0" prefWidth="93.0" style="-fx-background-color: #d2691e; -fx-background-radius: 12px;" text="Confirmar" textFill="#fafafa">
+          <font>
+             <Font name="Modern No. 20" size="14.0" />
+          </font></Button>
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"850e23de-3df3-4e39-bb04-a6dd84ae8106\" name=\"Changes\" comment=\"\" />\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Class\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$/..\" />\r\n  </component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 6\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"2x1wRszBZoUNuo6nkgR5sh5N9SW\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;Application.MainApp.executor&quot;: &quot;Run&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,\r\n    &quot;git-widget-placeholder&quot;: &quot;Jose&quot;,\r\n    &quot;last_opened_file_path&quot;: &quot;C:/Users/damda/OneDrive/Escritorio/Proyecto_Integral/ProyectoIntegral2&quot;,\r\n    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,\r\n    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;\r\n  }\r\n}</component>\r\n  <component name=\"SharedIndexes\">\r\n    <attachedChunks>\r\n      <set>\r\n        <option value=\"bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.25410.129\" />\r\n        <option value=\"bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-IU-251.25410.129\" />\r\n      </set>\r\n    </attachedChunks>\r\n  </component>\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"850e23de-3df3-4e39-bb04-a6dd84ae8106\" name=\"Changes\" comment=\"\" />\r\n      <created>1747118883161</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1747118883161</updated>\r\n      <workItem from=\"1747118884447\" duration=\"5100000\" />\r\n      <workItem from=\"1747129415781\" duration=\"437000\" />\r\n      <workItem from=\"1747130114251\" duration=\"306000\" />\r\n    </task>\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n</project>
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 4a0caa48bf966ffd9e931b0cce388378409c8ce3)
++++ b/.idea/workspace.xml	(date 1747207760863)
+@@ -4,7 +4,24 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="850e23de-3df3-4e39-bb04-a6dd84ae8106" name="Changes" comment="" />
++    <list default="true" id="850e23de-3df3-4e39-bb04-a6dd84ae8106" name="Changes" comment="">
++      <change afterPath="$PROJECT_DIR$/src/main/java/com/proyectointegral2/Controller/DetallesPerroController.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/resources/com/proyectointegral2/Vista/detalles_perro.fxml" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/resources/com/proyectointegral2/Vista/formulario_perro.fxml" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/resources/com/proyectointegral2/Vista/main_cliente.fxml" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/resources/com/proyectointegral2/Vista/main_potectora.fxml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/com/proyectointegral2/Controller/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/proyectointegral2/Controller/LoginController.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/com/proyectointegral2/Controller/RegistroProtectoraController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/proyectointegral2/Controller/RegistroProtectoraController.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/Imagenes/iconos/protectora_icon.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/assets/Imagenes/iconos/protectora_icon.png" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/resources/com/proyectointegral2/Vista/Main.fxml" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Controller/InicioChooseController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Controller/InicioChooseController.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Controller/RegistroClienteController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Controller/RegistroClienteController.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Controller/RegistroProtectoraController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Controller/RegistroProtectoraController.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Vista/Main.fxml" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Vista/inicio_choose.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Vista/inicio_choose.fxml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Vista/registro_cliente.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Vista/registro_cliente.fxml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Vista/registro_protectora.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/proyectointegral2/Vista/registro_protectora.fxml" afterDir="false" />
++    </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+@@ -28,21 +45,21 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent">{
+-  &quot;keyToString&quot;: {
+-    &quot;Application.MainApp.executor&quot;: &quot;Run&quot;,
+-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+-    &quot;git-widget-placeholder&quot;: &quot;Jose&quot;,
+-    &quot;last_opened_file_path&quot;: &quot;C:/Users/damda/OneDrive/Escritorio/Proyecto_Integral/ProyectoIntegral2&quot;,
+-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
++  <component name="PropertiesComponent"><![CDATA[{
++  "keyToString": {
++    "Application.MainApp.executor": "Run",
++    "RunOnceActivity.ShowReadmeOnStart": "true",
++    "RunOnceActivity.git.unshallow": "true",
++    "git-widget-placeholder": "JuanK",
++    "last_opened_file_path": "C:/Users/damda/OneDrive/Escritorio/Proyecto_Integral/ProyectoIntegral2",
++    "node.js.detected.package.eslint": "true",
++    "node.js.detected.package.tslint": "true",
++    "node.js.selected.package.eslint": "(autodetect)",
++    "node.js.selected.package.tslint": "(autodetect)",
++    "nodejs_package_manager_path": "npm",
++    "vue.rearranger.settings.migration": "true"
+   }
+-}</component>
++}]]></component>
+   <component name="SharedIndexes">
+     <attachedChunks>
+       <set>
+@@ -61,6 +78,7 @@
+       <workItem from="1747118884447" duration="5100000" />
+       <workItem from="1747129415781" duration="437000" />
+       <workItem from="1747130114251" duration="306000" />
++      <workItem from="1747207437559" duration="320000" />
+     </task>
+     <servers />
+   </component>

@@ -1,0 +1,49 @@
+/* === Estilos Generales para Botones === */
+.button {
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(one-pass-box, rgba(0,0,0,0.1), 2, 0, 1, 1);
+    -fx-padding: 8px 20px;
+    -fx-border-color: transparent;
+}
+
+/* === Botón de Reservar Cita (Naranja) === */
+.button.reservar {
+    -fx-background-color: #e67e22;
+}
+
+.button.reservar:hover {
+    -fx-background-color: #d35400;
+}
+
+/* === Botón de Adopciones (Verde) === */
+.button.adopciones {
+    -fx-background-color: #2ecc71;
+}
+
+.button.adopciones:hover {
+    -fx-background-color: #27ae60;
+}
+
+/* === Botón de Eventos (Azul) === */
+.button.eventos {
+    -fx-background-color: #3498db;
+}
+
+.button.eventos:hover {
+    -fx-background-color: #2980b9;
+}
+
+/* === Botón de Navegación Secundaria o Perfil (Gris Claro) === */
+.button.icono {
+    -fx-background-color: transparent;
+    -fx-text-fill: #555;
+}
+
+.button.icono:hover {
+    -fx-text-fill: #000;
+}

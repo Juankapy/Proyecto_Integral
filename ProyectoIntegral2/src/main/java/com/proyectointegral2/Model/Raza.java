@@ -1,30 +1,35 @@
 package com.proyectointegral2.Model;
 
 public class Raza {
-    private int id;
-    private String nombre;
+    private int idRaza;
+    private String nombreRaza;
 
-    // Constructor con todos los atributos
-    public Raza(int id, String nombre) {
-        this.id = id;
-        this.nombre = nombre;
+    public Raza(String nombreRaza) {
+        this.nombreRaza = nombreRaza;
     }
+
+    public Raza(int idRaza, String nombreRaza) {
+        this.idRaza = idRaza;
+        this.nombreRaza = nombreRaza;
+    }
+
+    // Constructor vacío (buena práctica)
+    public Raza() {}
 
     // Getters y Setters
-    public int getId() {
-        return id;
+    public int getIdRaza() {
+        return idRaza;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setIdRaza(int idRaza) {
+        this.idRaza = idRaza;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getNombreRaza() {
+        return nombreRaza;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setNombreRaza(String nombreRaza) {
+        this.nombreRaza = nombreRaza;
     }
-
 }

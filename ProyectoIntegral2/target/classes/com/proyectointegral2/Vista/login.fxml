@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
+
+<AnchorPane prefHeight="550.0" prefWidth="814.0" style="-fx-background-color: #f5f1ea;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyectointegral2.Controller.LoginController">
+   <children>
+      <HBox fx:id="HboxImg" layoutX="447.0" prefHeight="550.0" prefWidth="353.0">
+         <children>
+            <ImageView fx:id="ImgLateralLogin" fitHeight="550.0" fitWidth="373.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../assets/Imagenes/perros/ImgLogin.jpg" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
+      <TextField fx:id="TxtNombreUsuario" layoutX="85.0" layoutY="199.0" prefHeight="36.0" prefWidth="269.0" style="-fx-border-color: #d2691e; -fx-border-radius: 8px;" />
+      <Label layoutX="88.0" layoutY="162.0" text="Nombre de Usuario">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+      <Label layoutX="85.0" layoutY="265.0" text="Contraseña">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+      <ImageView fx:id="ImgIconoDog" fitHeight="86.0" fitWidth="90.0" layoutX="21.0" layoutY="429.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../assets/Imagenes/iconos/icono-bgless.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="ImgUsuario" fitHeight="72.0" fitWidth="72.0" layoutX="184.0" layoutY="33.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../assets/Imagenes/iconos/usuario-orange.png" />
+         </image>
+      </ImageView>
+      <Button fx:id="BtnConfirmar" layoutX="169.0" layoutY="382.0" mnemonicParsing="false" onMouseClicked="#ConfirmarInicio" prefHeight="36.0" prefWidth="101.0" style="-fx-background-color: #d2691e; -fx-background-radius: 12px;" text="Confirmar" textFill="#fafafa">
+         <font>
+            <Font size="16.0" />
+         </font></Button>
+      <Label layoutX="211.0" layoutY="476.0" text="¿No tienes cuenta?" wrapText="true">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Hyperlink fx:id="HyRegistrarse" layoutX="329.0" layoutY="472.0" onAction="#IrARegistro" text="Resgistrate" underline="true">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Hyperlink>
+      <PasswordField fx:id="TxtContra" layoutX="85.0" layoutY="301.0" prefHeight="36.0" prefWidth="269.0" style="-fx-border-color: #d2691e; -fx-border-radius: 8px;" />
+   </children>
+</AnchorPane>

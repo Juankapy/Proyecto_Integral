@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="mainBorderPane" prefHeight="900.0" prefWidth="1080.0" style="-fx-background-color: #FDF5E6;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyectointegral2.Controller.MainProtectoraController">
+    <top>
+        <HBox alignment="CENTER_LEFT" prefHeight="70.0" spacing="10.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="10.0" left="30.0" right="30.0" top="10.0" />
+            </padding>
+            <children>
+                <ImageView fx:id="logoImageView" fitHeight="67.0" fitWidth="196.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../../../assets/Imagenes/iconos/dogiconlateral.png" />
+                    </image>
+                </ImageView>
+                <Region HBox.hgrow="ALWAYS" />
+                <ImageView fx:id="ImgIconBandeja" fitHeight="40.0" fitWidth="40.0" onMouseClicked="#IrABandeja" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
+                    <image>
+                        <Image url="@../../../assets/Imagenes/iconos/bandeja-de-entrada-blue.png" />
+                    </image>
+                    <HBox.margin>
+                        <Insets right="10.0" />
+                    </HBox.margin>
+                </ImageView>
+                <ImageView fx:id="ImgIconUsuario" fitHeight="40.0" fitWidth="40.0" onMouseClicked="#IrAPerfilUsuario" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
+                    <image>
+                        <Image url="@../../../assets/Imagenes/iconos/usuario-main-blue.png" />
+                    </image>
+                </ImageView>
+            </children>
+        </HBox>
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent; -fx-background: transparent;" VBox.vgrow="ALWAYS">
+            <content>
+                <VBox spacing="25.0">
+                    <padding>
+                        <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
+                    </padding>
+                    <children>
+                        <VBox spacing="10.0">
+                            <children>
+                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                    <children>
+                                        <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-border-width: 0 0 3 0; -fx-padding: 0 0 5 0; -fx-text-fill:black;" text="Mis perros en adopción">
+                                            <font>
+                                                <Font name="System Bold" size="22.0" />
+                                            </font>
+                                        </Label>
+                                        <Region HBox.hgrow="ALWAYS" />
+                                        <Button fx:id="BtnNuevoPerro" mnemonicParsing="false" onAction="#NuevoPerro" prefHeight="36.0" prefWidth="234.0" style="-fx-background-color: #E67E22; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" text="+ Añadir nuevo perro">
+                                            <padding>
+                                                <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                                            </padding>
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <!-- GridPane para las tarjetas de perro. Los hijos se añadirán dinámicamente. -->
+                                <Label fx:id="lblNoPerrosEnGrid" style="-fx-font-size: 16px; -fx-text-fill: #707070;" text="Esta protectora aún no tiene perros registrados." visible="false" />
+                                <GridPane fx:id="dogGrid" hgap="20.0" vgap="20.0">
+                                    <columnConstraints>
+                                        <!-- Las ColumnConstraints se definirán/ajustarán en el controlador -->
+                                        <!-- Puedes dejar algunas por defecto para el SceneBuilder si quieres -->
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" />
+                                    </columnConstraints>
+                                    <rowConstraints>
+                                        <!-- Las RowConstraints también son opcionales si el grid crece -->
+                                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                    </rowConstraints>
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                    </padding>
+                                    <!-- LOS VBox DE EJEMPLO HAN SIDO ELIMINADOS DE AQUÍ -->
+                                    <!-- LAS TARJETAS DE PERRO SE AÑADIRÁN DINÁMICAMENTE POR EL CONTROLADOR -->
+                                </GridPane>
+                            </children>
+                        </VBox>
+
+                        <!-- SECCIÓN DE REGISTROS (Tablas) -->
+                        <VBox spacing="10.0">
+                            <children>
+                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                    <children>
+                                        <Label fx:id="lblRegistroTitulo" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #5D4037;" text="Citas de mis perros">
+                                            <font>
+                                                <Font name="System Bold" size="18.0" />
+                                            </font>
+                                        </Label>
+                                        <Region HBox.hgrow="ALWAYS" />
+                                        <Button fx:id="BtnToggleRegistro" mnemonicParsing="false" onAction="#RegistroAdopciones" style="-fx-background-color: #6495ED; -fx-text-fill: white; -fx-background-radius: 5; -fx-font-weight: bold;" text="Registro de adopciones" />
+                                    </children>
+                                </HBox>
+
+                                <StackPane fx:id="tablasStackPane" prefHeight="300.0">
+                                    <children>
+
+                                        <TableView fx:id="TablaRegistroAdopciones" style="-fx-border-color: #8A2BE2; -fx-border-width: 2;" visible="false">
+                                            <columns>
+                                                <TableColumn fx:id="ColumNombrePerroAdopcion" prefWidth="150.0" text="Nombre del Perro" />
+                                                <TableColumn fx:id="ColumFechaAdopcion" prefWidth="120.0" text="Fecha de Peticion" />
+                                                <TableColumn fx:id="ColumNombreClienteAdopcion" prefWidth="200.0" text="Nombre del Adoptante" />
+                                                <TableColumn fx:id="ColumNumeroDeContacto" prefWidth="150.0" text="Numero de Contacto" />
+                                                <TableColumn fx:id="ColumEstadoAdopcion" prefWidth="180.0" text="Estado de la Peticion" />
+                                                <TableColumn fx:id="ColumAceptarCancelarAdopcion" prefWidth="75.0" text="Aceptar / Cancelar" />
+                                            </columns>
+                                            <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
+                                        </TableView>
+                                        <TableView fx:id="TablaRegistroCitas" style="-fx-border-width: 2;">
+                                            <columns>
+                                                <TableColumn fx:id="ColumNombrePerro" prefWidth="150.0" text="Nombre del Perro" />
+                                                <TableColumn fx:id="ColumDiaCita" prefWidth="130.0" text="Dia de la Cita" />
+                                                <TableColumn fx:id="ColumHoraCita" prefWidth="268.0" text="Hora" />
+                                                <TableColumn fx:id="ColumNombreClienteCita" prefWidth="283.0" text="Nombre del Cliente" />
+                                                <TableColumn fx:id="ColumEstadoCita" prefWidth="75.0" text="Estado de la Cita" />
+                                                <TableColumn fx:id="ColumAceptarCancelarCita" prefWidth="75.0" text="Aceptar / Cancelar" />
+                                            </columns>
+                                            <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
+                                        </TableView>
+                                    </children>
+                                </StackPane>
+                            </children>
+                            <VBox.margin>
+                                <Insets top="20.0" />
+                            </VBox.margin>
+                        </VBox>
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>
